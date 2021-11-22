@@ -8,7 +8,7 @@ Hash 校验工具
 
 # 界面介绍
 
-![主界面-文件](HashTool/Resource/MainWindowFile.png)
+![主界面-文件](https://cdn.jsdelivr.net/gh/KiyanYang/HashTool@main/HashTool/Resource/MainWindowFile.png)
 
 - **模式**：在左上角的下拉框中选择模式，一共有“文件”、“文件夹”、“文本”三种模式。其中“文件夹”模式下只会计算此文件夹所含的文件，不会计算其子文件夹内的文件。
 - **输入**：在上面的输入框输入“文件路径”、“文件夹路径”或“文本”，并选择相应模式进行计算。可以拖放“文件”或“文件夹”到此自动获取路径，也可以点击右上角“选择文件”按钮自动获取“文件”路径。
@@ -16,7 +16,7 @@ Hash 校验工具
 - **保存**：保存结果有 3 种格式：`yaml`、`json`、`txt`。
 - **对比**。在最下方的两个文本框输入哈希值自动对比。
 - **进度条**：在“文件”和“文本”模式下只有主进度条，“文件夹”模式下还有一个副进度条用来显示文件进度，如下图所示。
-  ![主界面-文件夹](HashTool/Resource/MainWindowFolder.png)
+  ![主界面-文件夹](https://cdn.jsdelivr.net/gh/KiyanYang/HashTool@main/HashTool/Resource/MainWindowFolder.png)
 
 # 使用
 

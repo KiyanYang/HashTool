@@ -5,6 +5,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 using HashTool.ViewModel;
 
@@ -14,7 +15,7 @@ namespace HashTool.Model
     {
         private static string HashFormat(byte[] data)
         {
-            var sBuilder = new StringBuilder();
+            StringBuilder sBuilder = new();
 
             foreach (byte b in data)
             {
@@ -32,11 +33,10 @@ namespace HashTool.Model
             }
         }
 
-        private static Dictionary<string, HashAlgorithm> GetHashAlgorithmDictDict(Dictionary<string, bool?> isCheckedDict)
+        private static Dictionary<string, HashAlgorithm> GetHashAlgorithmDict(Dictionary<string, bool?> isCheckedDict)
         {
-            Dictionary<string, HashAlgorithm> hashAlgorithmDict = new Dictionary<string, HashAlgorithm>();
-            //添加所选择的哈希算法
-            foreach (var kvp in isCheckedDict)
+            Dictionary<string, HashAlgorithm> hashAlgorithmDict = new();
+            foreach (KeyValuePair<string, bool?> kvp in isCheckedDict)
             {
                 if (kvp.Value == true)
                 {
@@ -52,19 +52,19 @@ namespace HashTool.Model
                             hashAlgorithmDict.Add(kvp.Key, hashAlgorithm);
                         }
                     }
-                } 
+                }
             }
             return hashAlgorithmDict;
         }
 
         public static Dictionary<string, string> HashString(InputValue inputValue)
         {
-            //创建哈希算法实现的实例列表
-            Dictionary<string, HashAlgorithm> hashAlgorithmDict = GetHashAlgorithmDictDict(inputValue.isCheckedDict);
-            Dictionary<string, string> hashValueDict = new Dictionary<string, string>();
+            Dictionary<string, HashAlgorithm> hashAlgorithmDict = GetHashAlgorithmDict(inputValue.isCheckedDict);
+            Dictionary<string, string> hashValueDict = new();
+            byte[] hashVal;
             foreach (string hashName in hashAlgorithmDict.Keys)
             {
-                byte[] hashVal = hashAlgorithmDict[hashName].ComputeHash(Encoding.UTF8.GetBytes(inputValue.input));
+                hashVal = hashAlgorithmDict[hashName].ComputeHash(Encoding.UTF8.GetBytes(inputValue.input));
                 hashValueDict.Add(hashName, HashFormat(hashVal));
             }
             hashValueDict.Add("IsCanceled", "No");
@@ -74,23 +74,29 @@ namespace HashTool.Model
 
         private static Dictionary<string, string> HashStream(ManualResetEvent resetEvent, CancellationToken token, FileInfo fileInfo, Dictionary<string, bool?> isCheckeds, BackgroundWorker bgWorker, double maximum, int offset)
         {
-            FileStream fileStream = fileInfo.Open(FileMode.Open, FileAccess.Read, FileShare.Read);
+            #region 初始化文件流，哈希算法实例字典，返回初值
+            using FileStream fileStream = fileInfo.Open(FileMode.Open, FileAccess.Read, FileShare.Read);
             fileStream.Position = 0;
-            //创建哈希算法实现的实例列表
-            Dictionary<string, HashAlgorithm> hashAlgorithms = GetHashAlgorithmDictDict(isCheckeds);
-            Dictionary<string, string> hashValueDict = new Dictionary<string, string>();
+            Dictionary<string, HashAlgorithm> hashAlgorithms = GetHashAlgorithmDict(isCheckeds);
+            Dictionary<string, string> hashValueDict = new();
             hashValueDict.Add("IsCanceled", "Yes");
-            //定义文件流读取参数或变量
-            int bufferSize = 1024 * 1024;  //自定义缓冲区大小1024KB
+            #endregion
+
+            #region 定义文件流读取参数及变量
+            //自定义缓冲区大小1024KB
+            int bufferSize = 1024 * 1024;
             byte[] buffer = new byte[bufferSize];
-            byte[] output = new byte[bufferSize];
-            int readLength;  //每次实际读取长度
+            //每次实际读取长度
+            int readLength;
+            #endregion
+
             while ((readLength = fileStream.Read(buffer, 0, bufferSize)) > 0)
             {
                 foreach (HashAlgorithm hashAlgorithm in hashAlgorithms.Values)
                 {
-                    hashAlgorithm.TransformBlock(buffer, 0, readLength, output, 0);
+                    hashAlgorithm.TransformBlock(buffer, 0, readLength, null, 0);
                 }
+
                 #region 取消 暂停 继续
                 if (token.IsCancellationRequested)
                 {
@@ -98,11 +104,13 @@ namespace HashTool.Model
                 }
                 resetEvent.WaitOne();
                 #endregion
+
                 //设置进度条为 maximum 份, 并且对多文件流设置偏移量
                 bgWorker.ReportProgress((int)(fileStream.Position * maximum / fileStream.Length + maximum * offset));
             }
+
             //进行最后一次哈希计算, 并保存结果
-            foreach (var kvp in hashAlgorithms)
+            foreach (KeyValuePair<string, HashAlgorithm> kvp in hashAlgorithms)
             {
                 kvp.Value.TransformFinalBlock(buffer, 0, 0);
                 var hashValue = kvp.Value.Hash;
@@ -113,13 +121,80 @@ namespace HashTool.Model
             }
             hashValueDict["IsCanceled"] = "No";
             DisposeHashAlgorithm(hashAlgorithms);
-            fileStream.Dispose();
+            return hashValueDict;
+        }
+
+        private static Dictionary<string, string> HashStreamParallel(ManualResetEvent resetEvent, CancellationToken token, FileInfo fileInfo, Dictionary<string, bool?> isCheckeds, BackgroundWorker bgWorker, double maximum, int offset)
+        {
+            #region 初始化文件流，哈希算法实例字典，返回初值
+            using FileStream fileStream = fileInfo.Open(FileMode.Open, FileAccess.Read, FileShare.Read);
+            fileStream.Position = 0;
+            Dictionary<string, HashAlgorithm> hashAlgorithms = GetHashAlgorithmDict(isCheckeds);
+            Dictionary<string, string> hashValueDict = new();
+            hashValueDict.Add("IsCanceled", "Yes");
+            #endregion
+
+            #region 定义文件流读取参数及变量
+            // 自定义缓冲区大小 1024 KB
+            int bufferSize = 1024 * 1024;
+            byte[] buffer = new byte[bufferSize];
+            // 每次实际读取长度，此初值仅为启动作用，真正的赋值在屏障内完成
+            int readLength = bufferSize;
+            #endregion
+
+            #region 使用屏障完成多算法的并行计算
+            using Barrier barrier = new Barrier(hashAlgorithms.Count, (b) =>
+            {
+                readLength = fileStream.Read(buffer, 0, bufferSize);
+
+                #region 取消 暂停 继续
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
+                resetEvent.WaitOne();
+                #endregion
+
+                // 设置进度条为 maximum 份, 并且对多文件流设置偏移量
+                bgWorker.ReportProgress((int)(fileStream.Position * maximum / fileStream.Length + maximum * offset));
+
+            });
+            // 定义动作，先屏障同步并完成读取文件、报告进度等操作，再并行计算
+            Action<HashAlgorithm> action = (hashAlgorithm) =>
+            {
+                while (readLength > 0)
+                {
+                    barrier.SignalAndWait();
+                    hashAlgorithm.TransformBlock(buffer, 0, readLength, null, 0);
+                }
+            };
+            // 开启并行动作
+            Parallel.ForEach(hashAlgorithms.Values, action);
+            #endregion
+
+            // 判断是否进行最后一次哈希计算
+            if (!token.IsCancellationRequested)
+            {
+                foreach (KeyValuePair<string, HashAlgorithm> kvp in hashAlgorithms)
+                {
+                    kvp.Value.TransformFinalBlock(buffer, 0, 0);
+                    var hashValue = kvp.Value.Hash;
+                    if (hashValue != null)
+                    {
+                        hashValueDict.Add(kvp.Key, HashFormat(hashValue));
+                    }
+                }
+                hashValueDict["IsCanceled"] = "No";
+            }
+
+            DisposeHashAlgorithm(hashAlgorithms);
             return hashValueDict;
         }
 
         public static Dictionary<string, string> HashFile(ManualResetEvent resetEvent, CancellationToken token, InputValue inputValue, BackgroundWorker backgroundWorker, double maximum)
         {
-            return HashStream(resetEvent, token, new FileInfo(inputValue.input), inputValue.isCheckedDict, backgroundWorker, maximum, 0);
+            //return HashStream(resetEvent, token, new FileInfo(inputValue.input), inputValue.isCheckedDict, backgroundWorker, maximum, 0);
+            return HashStreamParallel(resetEvent, token, new FileInfo(inputValue.input), inputValue.isCheckedDict, backgroundWorker, maximum, 0);
         }
 
         public static Dictionary<string, string> HashFile(ManualResetEvent resetEvent, CancellationToken token, InputValue inputValue, BackgroundWorker backgroundWorker)
@@ -133,7 +208,8 @@ namespace HashTool.Model
             Dictionary<string, Dictionary<string, string>> fileHashValue = new Dictionary<string, Dictionary<string, string>>();
             for (int i = 0; i < fileInfos.Length; i++)
             {
-                fileHashValue.Add(fileInfos[i].FullName, HashStream(resetEvent, token, fileInfos[i], inputValue.isCheckedDict, backgroundWorker, maximum, i));
+                //fileHashValue.Add(fileInfos[i].FullName, HashStream(resetEvent, token, fileInfos[i], inputValue.isCheckedDict, backgroundWorker, maximum, i));
+                fileHashValue.Add(fileInfos[i].FullName, HashStreamParallel(resetEvent, token, fileInfos[i], inputValue.isCheckedDict, backgroundWorker, maximum, i));
             }
             return fileHashValue;
         }
@@ -202,11 +278,12 @@ namespace HashTool.Model
             }
             private static uint CalculateHash(uint seed, byte[] buffer, int offset, int length)
             {
-                if (!((buffer != null) && (offset >= 0) && (length >= 0) && (offset <= buffer.Length - length)))
+                if ((buffer == null) || (offset < 0) || (length < 0) || (offset > buffer.Length - length))
                 {
-                    throw new ArgumentException("参数异常，请检查调用方");
+                    throw new ArgumentException("参数异常");
                 }
-                uint crc32 = seed;  //寄存器初始值
+                // 寄存器初始值
+                uint crc32 = seed;
                 while (length > 0)
                 {
                     unchecked
@@ -220,6 +297,5 @@ namespace HashTool.Model
                 return crc32;
             }
         }
-        
     }
 }

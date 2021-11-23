@@ -10,6 +10,7 @@
         <converter:RelativeWidthConverter x:Key="RelativeWidthConverter" />
         <converter:ProportionStringConverter x:Key="ProportionStringConverter" />
     </Window.Resources>
+
     <ScrollViewer Margin="8,8,8,8">
         <hc:SimpleStackPanel x:Name="simpleStackPanel" Orientation="Vertical" Margin="8,0,8,0">
             <hc:SimpleStackPanel.Resources>

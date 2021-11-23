@@ -5,7 +5,6 @@ using System.Windows.Controls;
 
 using Microsoft.Win32;
 using HashTool.ViewModel;
-using System.IO;
 
 namespace HashTool.View
 {
@@ -24,20 +23,25 @@ namespace HashTool.View
         #region 输入行
         private void comboBoxInputMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (sender is ComboBox comboBox)
+            Dispatcher.Invoke(() =>
             {
-                if (simplePanelFiles != null)
+                if (sender is ComboBox comboBox)
                 {
-                    if (((ComboBoxItem)comboBox.SelectedItem).Content is "文件夹")
+                    if (simplePanelFiles != null)
                     {
-                        simplePanelFiles.Visibility = Visibility.Visible;
-                    }
-                    else
-                    {
-                        simplePanelFiles.Visibility = Visibility.Collapsed;
+                        if (((ComboBoxItem)comboBox.SelectedItem).Content is "文件夹")
+                        {
+                            simplePanelFiles.Visibility = Visibility.Visible;
+                        }
+                        else
+                        {
+                            simplePanelFiles.Visibility = Visibility.Collapsed;
+                        }
+                        progressBarFile.Value = progressBarFile.Minimum;
+                        progressBarFiles.Value = progressBarFiles.Minimum;
                     }
                 }
-            }
+            });
         }
         private void TextBoxInput_PreviewDragOver(object sender, DragEventArgs e)  //不能使用PreviewDragEnter, 否则在TextBox内无法捕获数据
         {
@@ -217,7 +221,7 @@ namespace HashTool.View
         private InputValue GetInputValue()
         {
             InputValue inputValue = new();
-            //传递上下文数据
+
             Dispatcher.Invoke(() =>
             {
                 inputValue.inputMode = comboBoxInputMode.Text;

@@ -151,19 +151,13 @@ namespace HashTool.ViewModel
                 }
 
                 HashResultAllHistory.allHistory.AddRange(FormatHashResult.BuildHashResult(_hashResults));
-
-                _dispatcher.Invoke(new Action(() =>
-                {
-                    _progressBarFile.Value = _progressBarFile.Maximum;
-                    _progressBarFiles.Value = _progressBarFiles.Maximum;
-                }));
             }
         }
         private void bgWorkerMain_ProgressChanged(object? sender, ProgressChangedEventArgs e)
         {
             _dispatcher.Invoke(new Action(() =>
             {
-                _progressBarFile.Value = e.ProgressPercentage % 1000;
+                _progressBarFile.Value = (e.ProgressPercentage - 1) % 1000 + 1;
                 _progressBarFiles.Value = Math.Floor(e.ProgressPercentage/1000.0);
             }));
         }

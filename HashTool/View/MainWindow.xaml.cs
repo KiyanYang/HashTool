@@ -160,21 +160,24 @@ namespace HashTool.View
         {
             if (progressBarFile.Value > progressBarFile.Minimum && progressBarFile.Value < progressBarFile.Maximum)
             {
-                if ((string)buttonRest.Content == "暂停")
+                switch ((string)buttonRest.Content)
                 {
-                    if (_hashAndProgress is not null)
-                    {
-                        _hashAndProgress.HashReset();
-                        buttonRest.Content = "继续";
-                    }
-                }
-                else if ((string)buttonRest.Content == "继续")
-                {
-                    if (_hashAndProgress is not null)
-                    {
-                        _hashAndProgress.HashSet();
-                        buttonRest.Content = "暂停";
-                    }
+                    case "暂停":
+                        if (_hashAndProgress is not null)
+                        {
+                            _hashAndProgress.HashReset();
+                            buttonRest.Content = "继续";
+                            buttonRest.SetResourceReference(StyleProperty, "ButtonSuccess");
+                        }
+                        break;
+                    case "继续":
+                        if (_hashAndProgress is not null)
+                        {
+                            _hashAndProgress.HashSet();
+                            buttonRest.Content = "暂停";
+                            buttonRest.SetResourceReference(StyleProperty, "ButtonPrimary");
+                        }
+                        break;
                 }
             }
         }
@@ -187,14 +190,12 @@ namespace HashTool.View
                     _hashAndProgress.HashCancel();
                     _hashAndProgress = null;
                 }
-                else
-                {
-                    HandyControl.Controls.MessageBox.Info("暂无结果");
-                }
 
                 progressBarFile.Value = progressBarFile.Minimum;
                 progressBarFiles.Value = progressBarFiles.Minimum;
                 buttonRest.Content = "暂停";
+                buttonRest.SetResourceReference(StyleProperty, "ButtonPrimary");
+                HandyControl.Controls.Growl.SuccessGlobal("已取消！");
             }
         }
         private void ButtonViewResult_Click(object sender, RoutedEventArgs e)

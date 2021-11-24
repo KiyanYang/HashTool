@@ -121,9 +121,10 @@
                                 Click="ButtonViewResult_Click" />
                         <Button Content="开始"
                                 Click="ButtonStart_Click" />
-                        <Button Content="暂停"
+                        <Button x:Name="buttonRest"
+                                Content="暂停"
                                 Click="ButtonReset_Click"
-                                x:Name="buttonRest" />
+                                Margin="8,0,8,0" />
                         <Button Content="取消"
                                 Click="ButtonCancel_Click" />
                     </hc:SimpleStackPanel>

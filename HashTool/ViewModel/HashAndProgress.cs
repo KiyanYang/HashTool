@@ -165,6 +165,10 @@ namespace HashTool.ViewModel
         {
             using Task<Dictionary<string, string>> hashTask = Task.Run(
                 () => Compute.HashString(_inputValue));
+            _dispatcher.Invoke(new Action(() =>
+            {
+                _progressBarFile.Value = _progressBarFile.Maximum;
+            }));
             BulidHashResult(hashTask.Result);
         }
         private void bgWorkerMain_DoWork_File(object? sender, DoWorkEventArgs e)

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text.Json.Serialization;
 using System.Windows.Data;
 
 namespace HashTool.ViewModel
@@ -61,70 +60,56 @@ namespace HashTool.ViewModel
         private string sha512 = string.Empty;
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        [JsonIgnore]
         public string IsCanceled
         {
             get { return isCanceled; }
             set { UpdateProper(ref isCanceled, value); }
         }
-
-        [JsonPropertyOrder(-3)]
         public string InputMode
         {
             get { return inputMode; }
             set { UpdateProper(ref inputMode, value); }
         }
-
-        [JsonPropertyOrder(-2)]
         public string Input
         {
             get { return input; }
             set { UpdateProper(ref input, value); }
         }
-
         public string FileSize
         {
             get { return fileSize; }
             set { UpdateProper(ref fileSize, value); }
         }
-
-        [JsonPropertyOrder(-1)]
         public string LastWriteTime
         {
             get { return lastWriteTime; }
             set { UpdateProper(ref lastWriteTime, value); }
         }
-
         public string MD5
         {
             get { return md5; }
             set { UpdateProper(ref md5, value); }
         }
-
         public string CRC32
         {
             get { return crc32; }
             set { UpdateProper(ref crc32, value); }
         }
-
         public string SHA1
         {
             get { return sha1; }
             set { UpdateProper(ref sha1, value); }
         }
-
         public string SHA256
         {
             get { return sha256; }
             set { UpdateProper(ref sha256, value); }
         }
-
         public string SHA384
         {
             get { return sha384; }
             set { UpdateProper(ref sha384, value); }
         }
-        
         public string SHA512
         {
             get { return sha512; }
@@ -148,9 +133,9 @@ namespace HashTool.ViewModel
     public class HashResultFolderInfo : INotifyPropertyChanged
     {
         private string folderPath = string.Empty;
-        
+
         public event PropertyChangedEventHandler? PropertyChanged;
-        
+
         public string FolderPath
         {
             get { return folderPath; }

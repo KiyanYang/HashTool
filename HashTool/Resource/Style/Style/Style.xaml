@@ -1,36 +1,43 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:hc="https://handyorg.github.io/handycontrol"
-        xmlns:userConverter="clr-namespace:HashTool.Converter"
-        xmlns:langs="clr-namespace:HandyControl.Properties.Langs;assembly=HandyControl"
-        xmlns:controls="https://handyorg.github.io/handycontrol">
-
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:hc="https://handyorg.github.io/handycontrol"
+                    xmlns:userConverter="clr-namespace:HashTool.Converter"
+                    xmlns:langs="clr-namespace:HandyControl.Properties.Langs;assembly=HandyControl"
+                    xmlns:controls="https://handyorg.github.io/handycontrol">
     <userConverter:ProportionStringConverter x:Key="ProportionStringConverter" />
-
     <langs:LangProvider x:Key="Langs" />
-    
-    <Style x:Key="UserProgressBarSuccess" BasedOn="{StaticResource ProgressBarBaseStyle}" TargetType="ProgressBar">
-        <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
+    <Style x:Key="UserProgressBarSuccess"
+           BasedOn="{StaticResource ProgressBarBaseStyle}"
+           TargetType="ProgressBar">
+        <Setter Property="Foreground"
+                Value="{DynamicResource SuccessBrush}" />
         <Setter Property="controls:VisualElement.Text">
             <Setter.Value>
-                <MultiBinding Converter="{StaticResource Number2PercentageConverter}" StringFormat="{}{0:F1} %">
-                    <Binding Path="Value" RelativeSource="{RelativeSource Self}" />
-                    <Binding Path="Maximum" RelativeSource="{RelativeSource Self}" ConverterParameter="1000" />
+                <MultiBinding Converter="{StaticResource Number2PercentageConverter}"
+                              StringFormat="{}{0:F1} %">
+                    <Binding Path="Value"
+                             RelativeSource="{RelativeSource Self}" />
+                    <Binding Path="Maximum"
+                             RelativeSource="{RelativeSource Self}"
+                             ConverterParameter="1000" />
                 </MultiBinding>
             </Setter.Value>
         </Setter>
     </Style>
-
-    <Style x:Key="UserProgressBarSuccessProportion" BasedOn="{StaticResource ProgressBarBaseStyle}" TargetType="ProgressBar">
-        <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}" />
+    <Style x:Key="UserProgressBarSuccessProportion"
+           BasedOn="{StaticResource ProgressBarBaseStyle}"
+           TargetType="ProgressBar">
+        <Setter Property="Foreground"
+                Value="{DynamicResource SuccessBrush}" />
         <Setter Property="controls:VisualElement.Text">
             <Setter.Value>
                 <MultiBinding Converter="{StaticResource ProportionStringConverter}">
-                    <Binding Path="Value" RelativeSource="{RelativeSource Self}" />
-                    <Binding Path="Maximum" RelativeSource="{RelativeSource Self}" />
+                    <Binding Path="Value"
+                             RelativeSource="{RelativeSource Self}" />
+                    <Binding Path="Maximum"
+                             RelativeSource="{RelativeSource Self}" />
                 </MultiBinding>
             </Setter.Value>
         </Setter>
     </Style>
-
 </ResourceDictionary>

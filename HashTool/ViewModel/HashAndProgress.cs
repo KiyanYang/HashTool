@@ -144,7 +144,7 @@ namespace HashTool.ViewModel
                     Common.SetProperties(hashResult, _hashResults[_inputValue.input]);
                 }
 
-                foreach (Dictionary<string,string> val in _hashResults.Values)
+                foreach (Dictionary<string, string> val in _hashResults.Values)
                 {
                     HashResultCore hashResultCore = new();
                     Common.SetProperties(hashResultCore, val);
@@ -158,13 +158,13 @@ namespace HashTool.ViewModel
             _dispatcher.Invoke(new Action(() =>
             {
                 _progressBarFile.Value = (e.ProgressPercentage - 1) % 1000 + 1;
-                _progressBarFiles.Value = Math.Floor(e.ProgressPercentage/1000.0);
+                _progressBarFiles.Value = Math.Floor(e.ProgressPercentage / 1000.0);
             }));
         }
         private void bgWorkerMain_DoWork_String(object? sender, DoWorkEventArgs e)
         {
-            using Task<Dictionary<string, string>> hashTask = Task.Run(() 
-                => Compute.HashString(_inputValue));
+            using Task<Dictionary<string, string>> hashTask = Task.Run(
+                () => Compute.HashString(_inputValue));
             BulidHashResult(hashTask.Result);
         }
         private void bgWorkerMain_DoWork_File(object? sender, DoWorkEventArgs e)
@@ -173,8 +173,8 @@ namespace HashTool.ViewModel
             {
                 _progressBarFile.Maximum = 1000.0;
             }));
-            using Task<Dictionary<string,string>> hashTask = Task.Run(() 
-                => Compute.HashFile(_resetEvent, _cancellationTokenSource.Token, _inputValue, _bgWorkerMain, 1000.0));
+            using Task<Dictionary<string, string>> hashTask = Task.Run(
+                () => Compute.HashFile(_resetEvent, _cancellationTokenSource.Token, _inputValue, _bgWorkerMain, 1000.0));
             BulidHashResult(hashTask.Result);
         }
         private void bgWorkerMain_DoWork_Folder(object? sender, DoWorkEventArgs e)

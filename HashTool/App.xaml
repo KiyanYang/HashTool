@@ -16,11 +16,11 @@
                 <ResourceDictionary Source="Resource/Style/Style/Style.xaml" />
                 <!-- Theme -->
                 <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
-                <!--ResourceDictionary Source="Resource/Style/Theme/BaseLight.xaml" /> -->
+                <!-- ResourceDictionary Source="Resource/Style/Theme/BaseLight.xaml" /> -->
                 <!-- Primary -->
-                <!--ResourceDictionary Source="Resource/Style/Primary/Primary.xaml" /> -->
+                <!-- ResourceDictionary Source="Resource/Style/Primary/Primary.xaml" /> -->
                 <!-- Language -->
-                <!--ResourceDictionary Source="Resource/Lang/Lang.zh-CN.xaml" /> -->
+                <!-- ResourceDictionary Source="Resource/Lang/Lang.zh-CN.xaml" /> -->
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

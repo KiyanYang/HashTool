@@ -3,9 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:hc="https://handyorg.github.io/handycontrol" xmlns:local="clr-namespace:HashTool.View"
-        xmlns:converter="clr-namespace:HashTool.Converter" mc:Ignorable="d" Title="Hash 结果" MinWidth="360" Width="440"
-        Height="228" MinHeight="120">
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:local="clr-namespace:HashTool.View"
+        xmlns:converter="clr-namespace:HashTool.Converter"
+        mc:Ignorable="d"
+        Title="Hash 结果"
+        MinWidth="360"
+        Width="440"
+        Height="228"
+        MinHeight="120">
     <Window.Resources>
         <converter:StringToFileSizeConverter x:Key="StringToFileSizeConverter" />
     </Window.Resources>
@@ -13,82 +19,95 @@
         <hc:SimpleStackPanel Margin="10,10,10,10">
             <hc:SimpleStackPanel.Resources>
                 <Style TargetType="{x:Type hc:SimplePanel}">
-                    <Setter Property="Margin" Value="0,4,0,4" />
+                    <Setter Property="Margin"
+                            Value="0,4,0,4" />
                 </Style>
                 <Style TargetType="{x:Type hc:SimpleText}">
-                    <Setter Property="Width" Value="60" />
-                    <Setter Property="HorizontalAlignment" Value="Left" />
-                    <Setter Property="VerticalAlignment" Value="Center" />
-                    <Setter Property="TextAlignment" Value="Center" />
+                    <Setter Property="Width"
+                            Value="60" />
+                    <Setter Property="HorizontalAlignment"
+                            Value="Left" />
+                    <Setter Property="VerticalAlignment"
+                            Value="Center" />
+                    <Setter Property="TextAlignment"
+                            Value="Center" />
                 </Style>
-                <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource TextBoxBaseStyle}">
-                    <Setter Property="Margin" Value="60,0,60,0" />
-                    <Setter Property="TextWrapping" Value="Wrap" />
-                    <Setter Property="IsReadOnly" Value="True" />
+                <Style TargetType="{x:Type TextBox}"
+                       BasedOn="{StaticResource TextBoxBaseStyle}">
+                    <Setter Property="Margin"
+                            Value="60,0,60,0" />
+                    <Setter Property="TextWrapping"
+                            Value="Wrap" />
+                    <Setter Property="IsReadOnly"
+                            Value="True" />
                 </Style>
-                <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonPrimary}">
-                    <Setter Property="Content" Value="复制" />
-                    <Setter Property="Width" Value="44" />
-                    <Setter Property="HorizontalAlignment" Value="Right" />
-                    <Setter Property="VerticalAlignment" Value="Center" />
-                    <EventSetter Event="Click" Handler="Button_Click" />
+                <Style TargetType="{x:Type Button}"
+                       BasedOn="{StaticResource ButtonPrimary}">
+                    <Setter Property="Content"
+                            Value="复制" />
+                    <Setter Property="Width"
+                            Value="44" />
+                    <Setter Property="HorizontalAlignment"
+                            Value="Right" />
+                    <Setter Property="VerticalAlignment"
+                            Value="Center" />
+                    <EventSetter Event="Click"
+                                 Handler="Button_Click" />
                 </Style>
             </hc:SimpleStackPanel.Resources>
             <hc:SimpleStackPanel x:Name="simplePanel"
-                    Visibility="{Binding InputMode, Converter={StaticResource String2VisibilityReConverter}, Mode=OneWay}">
-                <hc:SimpleText Text="正在计算中，请稍后" FontSize="16" HorizontalAlignment="Center" MinWidth="200" />
-                <hc:LoadingLine Style="{StaticResource LoadingLineLarge}" Margin="0,8,0,0" />
+                                 Visibility="{Binding InputMode, Converter={StaticResource String2VisibilityReConverter}, Mode=OneWay}">
+                <hc:SimpleText Text="正在计算中，请稍后"
+                               FontSize="16"
+                               HorizontalAlignment="Center"
+                               MinWidth="200" />
+                <hc:LoadingLine Style="{StaticResource LoadingLineLarge}"
+                                Margin="0,8,0,0" />
             </hc:SimpleStackPanel>
-            <hc:SimplePanel
-                    Visibility="{Binding InputMode, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
+            <hc:SimplePanel Visibility="{Binding InputMode, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
                 <hc:SimpleText Text="{Binding InputMode}" />
-                <TextBox Text="{Binding Input}" Margin="60,0,0,0"/>
+                <TextBox Text="{Binding Input}"
+                         Margin="60,0,0,0" />
             </hc:SimplePanel>
-            <hc:SimplePanel
-                    Visibility="{Binding FileSize, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
+            <hc:SimplePanel Visibility="{Binding FileSize, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
                 <hc:SimpleText Text="文件大小" />
-                <TextBox Text="{Binding FileSize, Converter={StaticResource StringToFileSizeConverter}}" Margin="60,0,0,0" />
+                <TextBox Text="{Binding FileSize, Converter={StaticResource StringToFileSizeConverter}}"
+                         Margin="60,0,0,0" />
             </hc:SimplePanel>
-            <hc:SimplePanel
-                    Visibility="{Binding LastWriteTime, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
+            <hc:SimplePanel Visibility="{Binding LastWriteTime, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
                 <hc:SimpleText Text="修改时间" />
-                <TextBox Text="{Binding LastWriteTime}" Margin="60,0,0,0" />
+                <TextBox Text="{Binding LastWriteTime}"
+                         Margin="60,0,0,0" />
             </hc:SimplePanel>
-            <hc:SimplePanel
-                    Visibility="{Binding MD5, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}" >
+            <hc:SimplePanel Visibility="{Binding MD5, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
                 <hc:SimpleText Text="MD5" />
                 <TextBox Text="{Binding MD5}" />
                 <Button Tag="{Binding MD5}" />
             </hc:SimplePanel>
-            <hc:SimplePanel
-                    Visibility="{Binding CRC32, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
+            <hc:SimplePanel Visibility="{Binding CRC32, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
                 <hc:SimpleText Text="CRC32" />
                 <TextBox Text="{Binding CRC32}" />
-                <Button Tag="{Binding CRC32}"/>
+                <Button Tag="{Binding CRC32}" />
             </hc:SimplePanel>
-            <hc:SimplePanel
-                    Visibility="{Binding SHA1, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
+            <hc:SimplePanel Visibility="{Binding SHA1, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
                 <hc:SimpleText Text="SHA1" />
                 <TextBox Text="{Binding SHA1}" />
-                <Button Tag="{Binding SHA1}"/>
+                <Button Tag="{Binding SHA1}" />
             </hc:SimplePanel>
-            <hc:SimplePanel
-                    Visibility="{Binding SHA256, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
+            <hc:SimplePanel Visibility="{Binding SHA256, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
                 <hc:SimpleText Text="SHA256" />
                 <TextBox Text="{Binding SHA256}" />
-                <Button Tag="{Binding SHA256}"/>
+                <Button Tag="{Binding SHA256}" />
             </hc:SimplePanel>
-            <hc:SimplePanel
-                    Visibility="{Binding SHA384, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
+            <hc:SimplePanel Visibility="{Binding SHA384, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
                 <hc:SimpleText Text="SHA384" />
                 <TextBox Text="{Binding SHA384}" />
-                <Button Tag="{Binding SHA384}"/>
+                <Button Tag="{Binding SHA384}" />
             </hc:SimplePanel>
-            <hc:SimplePanel
-                    Visibility="{Binding SHA512, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
+            <hc:SimplePanel Visibility="{Binding SHA512, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
                 <hc:SimpleText Text="SHA512" />
                 <TextBox Text="{Binding SHA512}" />
-                <Button Tag="{Binding SHA512}"/>
+                <Button Tag="{Binding SHA512}" />
             </hc:SimplePanel>
         </hc:SimpleStackPanel>
     </ScrollViewer>

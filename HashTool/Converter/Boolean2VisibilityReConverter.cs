@@ -1,22 +1,17 @@
 ﻿using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
-
-using HashTool.Helper;
 
 namespace HashTool.Converter
 {
-    internal class StringToFileSizeConverter : IValueConverter
+    internal class Boolean2VisibilityReConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            long val;
-            if (long.TryParse((string)value, out val))
-            {
-                return CommonHelper.FileSizeFormatter(val);
-            }
-            return string.Empty;
+            return value != null && !(bool)value ? Visibility.Visible : Visibility.Collapsed;
         }
+
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();

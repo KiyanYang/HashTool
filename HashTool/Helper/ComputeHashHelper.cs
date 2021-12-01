@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-using HashTool.ViewModel;
+using HashTool.Model;
 
-namespace HashTool.Model
+namespace HashTool.Helper
 {
-    internal class Compute
+    internal class ComputeHashHelper
     {
         private static string HashFormat(byte[] data)
         {
@@ -24,7 +25,6 @@ namespace HashTool.Model
 
             return sBuilder.ToString();
         }
-
         private static void DisposeHashAlgorithm(Dictionary<string, HashAlgorithm> hashAlgorithms)
         {
             foreach (HashAlgorithm hashAlgorithm in hashAlgorithms.Values)
@@ -32,131 +32,75 @@ namespace HashTool.Model
                 hashAlgorithm.Dispose();
             }
         }
-
-        private static Dictionary<string, HashAlgorithm> GetHashAlgorithmDict(Dictionary<string, bool?> isCheckedDict)
+        private static Dictionary<string, HashAlgorithm> GetHashAlgorithmDict(MainInputModel mainInput)
         {
             Dictionary<string, HashAlgorithm> hashAlgorithmDict = new();
-            foreach (KeyValuePair<string, bool?> kvp in isCheckedDict)
-            {
-                if (kvp.Value == true)
-                {
-                    if (kvp.Key == "CRC32")
-                    {
-                        hashAlgorithmDict.Add("CRC32", new CRC32());
-                    }
-                    else
-                    {
-                        HashAlgorithm? hashAlgorithm = HashAlgorithm.Create(kvp.Key);
-                        if (hashAlgorithm != null)
-                        {
-                            hashAlgorithmDict.Add(kvp.Key, hashAlgorithm);
-                        }
-                    }
-                }
-            }
+
+            if (mainInput.MD5 == true) hashAlgorithmDict.Add("MD5", MD5.Create());
+            if (mainInput.CRC32 == true) hashAlgorithmDict.Add("CRC32", new CRC32());
+            if (mainInput.SHA1 == true) hashAlgorithmDict.Add("SHA1", SHA1.Create());
+            if (mainInput.SHA256 == true) hashAlgorithmDict.Add("SHA256", SHA256.Create());
+            if (mainInput.SHA384 == true) hashAlgorithmDict.Add("SHA384", SHA384.Create());
+            if (mainInput.SHA512 == true) hashAlgorithmDict.Add("SHA512", SHA512.Create());
+
             return hashAlgorithmDict;
         }
-
-        public static Dictionary<string, string> HashString(InputValue inputValue)
+        public static HashResultModel HashString(MainInputModel mainInput, BackgroundWorker worker, double maximum)
         {
-            Dictionary<string, HashAlgorithm> hashAlgorithmDict = GetHashAlgorithmDict(inputValue.isCheckedDict);
-            Dictionary<string, string> hashValueDict = new();
-            byte[] hashVal;
+            Dictionary<string, HashAlgorithm> hashAlgorithmDict = GetHashAlgorithmDict(mainInput);
+            HashResultModel hashResult = new();
+            hashResult.InputMode = mainInput.Mode;
+            hashResult.Mode = "文本";
+            hashResult.Content = mainInput.Input;
+            hashResult.ComputeTime = DateTime.Now.ToString("yyyy/M/d HH:mm:ss.fff");
+            byte[] hashValue;
             foreach (string hashName in hashAlgorithmDict.Keys)
             {
-                hashVal = hashAlgorithmDict[hashName].ComputeHash(Encoding.UTF8.GetBytes(inputValue.input));
-                hashValueDict.Add(hashName, HashFormat(hashVal));
+                hashValue = hashAlgorithmDict[hashName].ComputeHash(Encoding.UTF8.GetBytes(mainInput.Input));
+                CommonHelper.SetProperty(hashResult, hashName, HashFormat(hashValue));
             }
-            hashValueDict.Add("IsCanceled", "No");
+            worker.ReportProgress((int)maximum);
             DisposeHashAlgorithm(hashAlgorithmDict);
-            return hashValueDict;
+            return hashResult;
         }
-
-        private static Dictionary<string, string> HashStream(ManualResetEvent resetEvent, CancellationToken token, FileInfo fileInfo, Dictionary<string, bool?> isCheckeds, BackgroundWorker bgWorker, double maximum, int offset)
+        private static HashResultModel HashStream(ManualResetEvent resetEvent, BackgroundWorker worker, DoWorkEventArgs e, FileInfo fileInfo, MainInputModel mainInput, double maximum, int offset)
         {
             #region 初始化文件流，哈希算法实例字典，返回初值
+
             using FileStream fileStream = fileInfo.Open(FileMode.Open, FileAccess.Read, FileShare.Read);
             fileStream.Position = 0;
-            Dictionary<string, HashAlgorithm> hashAlgorithms = GetHashAlgorithmDict(isCheckeds);
-            Dictionary<string, string> hashValueDict = new();
-            hashValueDict.Add("IsCanceled", "Yes");
+            Dictionary<string, HashAlgorithm> hashAlgorithms = GetHashAlgorithmDict(mainInput);
+            HashResultModel hashResult = new();
+            hashResult.InputMode = mainInput.Mode;
+            hashResult.Mode = "文件";
+            hashResult.Content = fileInfo.FullName;
+            hashResult.FileSize = CommonHelper.FileSizeFormatter(fileInfo.Length);
+            hashResult.LastWriteTime = fileInfo.LastWriteTime.ToString();
+            hashResult.ComputeTime = DateTime.Now.ToString("yyyy/M/d HH:mm:ss.fff");
+            Stopwatch stopWatch = Stopwatch.StartNew();
+
             #endregion
 
             #region 定义文件流读取参数及变量
-            //自定义缓冲区大小1024KB
-            int bufferSize = 1024 * 1024;
-            byte[] buffer = new byte[bufferSize];
-            //每次实际读取长度
-            int readLength;
-            #endregion
 
-            while ((readLength = fileStream.Read(buffer, 0, bufferSize)) > 0)
-            {
-                foreach (HashAlgorithm hashAlgorithm in hashAlgorithms.Values)
-                {
-                    hashAlgorithm.TransformBlock(buffer, 0, readLength, null, 0);
-                }
-
-                #region 取消 暂停 继续
-                if (token.IsCancellationRequested)
-                {
-                    return hashValueDict;
-                }
-                resetEvent.WaitOne();
-                #endregion
-
-                //设置进度条为 maximum 份, 并且对多文件流设置偏移量
-                bgWorker.ReportProgress((int)(fileStream.Position * maximum / fileStream.Length + maximum * offset));
-            }
-
-            //进行最后一次哈希计算, 并保存结果
-            foreach (KeyValuePair<string, HashAlgorithm> kvp in hashAlgorithms)
-            {
-                kvp.Value.TransformFinalBlock(buffer, 0, 0);
-                var hashValue = kvp.Value.Hash;
-                if (hashValue != null)
-                {
-                    hashValueDict.Add(kvp.Key, HashFormat(hashValue));
-                }
-            }
-            hashValueDict["IsCanceled"] = "No";
-            DisposeHashAlgorithm(hashAlgorithms);
-            return hashValueDict;
-        }
-
-        private static Dictionary<string, string> HashStreamParallel(ManualResetEvent resetEvent, CancellationToken token, FileInfo fileInfo, Dictionary<string, bool?> isCheckeds, BackgroundWorker bgWorker, double maximum, int offset)
-        {
-            #region 初始化文件流，哈希算法实例字典，返回初值
-            using FileStream fileStream = fileInfo.Open(FileMode.Open, FileAccess.Read, FileShare.Read);
-            fileStream.Position = 0;
-            Dictionary<string, HashAlgorithm> hashAlgorithms = GetHashAlgorithmDict(isCheckeds);
-            Dictionary<string, string> hashValueDict = new();
-            hashValueDict.Add("IsCanceled", "Yes");
-            #endregion
-
-            #region 定义文件流读取参数及变量
             // 自定义缓冲区大小 1024 KB
             int bufferSize = 1024 * 1024;
             byte[] buffer = new byte[bufferSize];
             // 每次实际读取长度，此初值仅为启动作用，真正的赋值在屏障内完成
             int readLength = bufferSize;
+
             #endregion
 
             #region 使用屏障完成多算法的并行计算
+
             using Barrier barrier = new Barrier(hashAlgorithms.Count, (b) =>
             {
                 readLength = fileStream.Read(buffer, 0, bufferSize);
 
-                #region 取消 暂停 继续
-                if (token.IsCancellationRequested)
-                {
-                    return;
-                }
                 resetEvent.WaitOne();
-                #endregion
 
                 // 设置进度条为 maximum 份, 并且对多文件流设置偏移量
-                bgWorker.ReportProgress((int)(fileStream.Position * maximum / fileStream.Length + maximum * offset));
+                worker.ReportProgress((int)(fileStream.Position * maximum / fileStream.Length + maximum * offset));
 
             });
             // 定义动作，先屏障同步并完成读取文件、报告进度等操作，再并行计算
@@ -164,16 +108,24 @@ namespace HashTool.Model
             {
                 while (readLength > 0)
                 {
+                    if (worker.CancellationPending == true)
+                    {
+                        e.Cancel = true;
+                        barrier.RemoveParticipant();
+                        break;
+                    }
                     barrier.SignalAndWait();
                     hashAlgorithm.TransformBlock(buffer, 0, readLength, null, 0);
+
                 }
             };
             // 开启并行动作
             Parallel.ForEach(hashAlgorithms.Values, action);
+
             #endregion
 
             // 判断是否进行最后一次哈希计算
-            if (!token.IsCancellationRequested)
+            if (!worker.CancellationPending)
             {
                 foreach (KeyValuePair<string, HashAlgorithm> kvp in hashAlgorithms)
                 {
@@ -181,42 +133,29 @@ namespace HashTool.Model
                     var hashValue = kvp.Value.Hash;
                     if (hashValue != null)
                     {
-                        hashValueDict.Add(kvp.Key, HashFormat(hashValue));
+                        CommonHelper.SetProperty(hashResult, kvp.Key, HashFormat(hashValue));
                     }
                 }
-                hashValueDict["IsCanceled"] = "No";
+                stopWatch.Stop();
+                hashResult.ComputeCost = $"{stopWatch.Elapsed.TotalSeconds:N3} 秒";
             }
 
             DisposeHashAlgorithm(hashAlgorithms);
-            return hashValueDict;
+            return hashResult;
         }
-
-        public static Dictionary<string, string> HashFile(ManualResetEvent resetEvent, CancellationToken token, InputValue inputValue, BackgroundWorker backgroundWorker, double maximum)
+        public static HashResultModel HashFile(ManualResetEvent resetEvent, BackgroundWorker worker, DoWorkEventArgs e, MainInputModel mainInput, double maximum)
         {
-            //return HashStream(resetEvent, token, new FileInfo(inputValue.input), inputValue.isCheckedDict, backgroundWorker, maximum, 0);
-            return HashStreamParallel(resetEvent, token, new FileInfo(inputValue.input), inputValue.isCheckedDict, backgroundWorker, maximum, 0);
+            return HashStream(resetEvent, worker, e, new FileInfo(mainInput.Input), mainInput, maximum, 0);
         }
-
-        public static Dictionary<string, string> HashFile(ManualResetEvent resetEvent, CancellationToken token, InputValue inputValue, BackgroundWorker backgroundWorker)
+        public static List<HashResultModel> HashFolder(ManualResetEvent resetEvent, BackgroundWorker worker, DoWorkEventArgs e, MainInputModel mainInput, double maximum)
         {
-            return HashFile(resetEvent, token, inputValue, backgroundWorker, 100.0);
-        }
-
-        public static Dictionary<string, Dictionary<string, string>> HashFolder(ManualResetEvent resetEvent, CancellationToken token, InputValue inputValue, BackgroundWorker backgroundWorker, double maximum)
-        {
-            FileInfo[] fileInfos = new DirectoryInfo(inputValue.input).GetFiles();
-            Dictionary<string, Dictionary<string, string>> fileHashValue = new Dictionary<string, Dictionary<string, string>>();
+            FileInfo[] fileInfos = new DirectoryInfo(mainInput.Input).GetFiles();
+            List<HashResultModel> hashResults = new();
             for (int i = 0; i < fileInfos.Length; i++)
             {
-                //fileHashValue.Add(fileInfos[i].FullName, HashStream(resetEvent, token, fileInfos[i], inputValue.isCheckedDict, backgroundWorker, maximum, i));
-                fileHashValue.Add(fileInfos[i].FullName, HashStreamParallel(resetEvent, token, fileInfos[i], inputValue.isCheckedDict, backgroundWorker, maximum, i));
+                hashResults.Add(HashStream(resetEvent, worker, e, fileInfos[i], mainInput, maximum, i));
             }
-            return fileHashValue;
-        }
-
-        public static Dictionary<string, Dictionary<string, string>> HashFolder(ManualResetEvent resetEvent, CancellationToken token, InputValue inputValue, BackgroundWorker backgroundWorker)
-        {
-            return HashFolder(resetEvent, token, inputValue, backgroundWorker, 100.0);
+            return hashResults;
         }
 
         private class CRC32 : HashAlgorithm

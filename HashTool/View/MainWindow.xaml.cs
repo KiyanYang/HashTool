@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
 using Microsoft.Win32;
-
-using HashTool.ViewModel;
 
 namespace HashTool.View
 {
@@ -14,23 +11,20 @@ namespace HashTool.View
     /// </summary>
     public partial class MainWindow : Window
     {
-        private HashAndProgress? _hashAndProgress;
-
         public MainWindow()
         {
             InitializeComponent();
         }
-
-        #region 输入行
         private void comboBoxInputMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Dispatcher.Invoke(() =>
+            ComboBox? comboBox = sender as ComboBox;
+            if (comboBox != null)
             {
-                if (sender is ComboBox comboBox)
+                Dispatcher.Invoke(() =>
                 {
                     if (simplePanelFiles != null)
                     {
-                        if (((ComboBoxItem)comboBox.SelectedItem).Content is "文件夹")
+                        if (comboBox.SelectedItem is "文件夹")
                         {
                             simplePanelFiles.Visibility = Visibility.Visible;
                         }
@@ -41,9 +35,10 @@ namespace HashTool.View
                         progressBarFile.Value = progressBarFile.Minimum;
                         progressBarFiles.Value = progressBarFiles.Minimum;
                     }
-                }
-            });
+                });
+            }
         }
+
         private void TextBoxInput_PreviewDragOver(object sender, DragEventArgs e)  //不能使用PreviewDragEnter, 否则在TextBox内无法捕获数据
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -71,6 +66,7 @@ namespace HashTool.View
                 HandyControl.Controls.MessageBox.Show(ex.Message);
             }
         }
+
         private void ButtonSelect_Click(object sender, RoutedEventArgs e)
         {
             if (comboBoxInputMode.Text == "文件夹" || comboBoxInputMode.Text == "文本")
@@ -87,9 +83,7 @@ namespace HashTool.View
                 textBoxInput.Text = dialog.FileName;  //获取文件路径
             }
         }
-        #endregion
 
-        #region 对比行
         private void TextBoxVerify_TextChanged(object sender, TextChangedEventArgs e)
         {
             string hash1 = textBoxVerify1.Text.Trim();
@@ -110,162 +104,6 @@ namespace HashTool.View
                 {
                     badgeVerify.Text = "不相同";
                     badgeVerify.SetResourceReference(StyleProperty, "BadgeDanger");
-                }
-            }
-        }
-        #endregion
-
-        #region 按钮行
-        private void ButtonSaveHistory_Click(object sender, RoutedEventArgs e)
-        {
-            if (HashResultAllHistory.allHistory.Count > 0)
-            {
-                SaveResult(HashResultAllHistory.allHistory);
-            }
-            else
-            {
-                HandyControl.Controls.MessageBox.Warning("暂无历史记录！");
-            }
-        }
-        private void ButtonSaveResult_Click(object sender, RoutedEventArgs e)
-        {
-            if (_hashAndProgress != null)
-            {
-                SaveResult(_hashAndProgress.GetFormatterHashResult());
-            }
-            else
-            {
-                HandyControl.Controls.MessageBox.Warning("暂无计算结果！");
-            }
-        }
-        private void ButtonStart_Click(object sender, RoutedEventArgs e)
-        {
-            if (progressBarFile.Value > progressBarFile.Minimum && progressBarFile.Value < progressBarFile.Maximum)
-            {
-                return;
-            }
-
-            InputValue inputValue = GetInputValue();
-
-            if (comboBoxInputMode.Text == "文件夹")
-            {
-                _hashAndProgress = new(Dispatcher, inputValue, progressBarFile, progressBarFiles);
-            }
-            else
-            {
-                _hashAndProgress = new(Dispatcher, inputValue, progressBarFile, progressBarFiles);
-            }
-        }
-        private void ButtonReset_Click(object sender, RoutedEventArgs e)
-        {
-            if (progressBarFile.Value > progressBarFile.Minimum && progressBarFile.Value < progressBarFile.Maximum)
-            {
-                switch ((string)buttonRest.Content)
-                {
-                    case "暂停":
-                        if (_hashAndProgress is not null)
-                        {
-                            _hashAndProgress.HashReset();
-                            buttonRest.Content = "继续";
-                            buttonRest.SetResourceReference(StyleProperty, "ButtonSuccess");
-                        }
-                        break;
-                    case "继续":
-                        if (_hashAndProgress is not null)
-                        {
-                            _hashAndProgress.HashSet();
-                            buttonRest.Content = "暂停";
-                            buttonRest.SetResourceReference(StyleProperty, "ButtonPrimary");
-                        }
-                        break;
-                }
-            }
-        }
-        private void ButtonCancel_Click(object sender, RoutedEventArgs e)
-        {
-            if (progressBarFile.Value > progressBarFile.Minimum && progressBarFile.Value < progressBarFile.Maximum)
-            {
-                if (_hashAndProgress != null)
-                {
-                    _hashAndProgress.HashCancel();
-                    _hashAndProgress = null;
-                }
-
-                progressBarFile.Value = progressBarFile.Minimum;
-                progressBarFiles.Value = progressBarFiles.Minimum;
-                buttonRest.Content = "暂停";
-                buttonRest.SetResourceReference(StyleProperty, "ButtonPrimary");
-                HandyControl.Controls.Growl.SuccessGlobal("已取消！");
-            }
-        }
-        private void ButtonViewResult_Click(object sender, RoutedEventArgs e)
-        {
-            if (_hashAndProgress != null)
-            {
-                if (_hashAndProgress.mode == "文件夹")
-                {
-                    FolderWindow folderWindow = new(_hashAndProgress);
-                    folderWindow.Show();
-                }
-                else
-                {
-                    StringAndFileResultWindow stringAndFileResultWindow = new(_hashAndProgress);
-                    stringAndFileResultWindow.Show();
-                }
-            }
-            else
-            {
-                HandyControl.Controls.MessageBox.Warning("暂无计算结果！");
-            }
-        }
-        #endregion
-
-        private InputValue GetInputValue()
-        {
-            InputValue inputValue = new();
-
-            Dispatcher.Invoke(() =>
-            {
-                inputValue.inputMode = comboBoxInputMode.Text;
-                if (inputValue.inputMode == "文本")
-                {
-                    inputValue.input = textBoxInput.Text;
-                }
-                else
-                {
-                    inputValue.input = textBoxInput.Text.Trim();
-                }
-                inputValue.isCheckedDict.Add("MD5", checkBoxMD5.IsChecked);
-                inputValue.isCheckedDict.Add("CRC32", checkBoxCRC32.IsChecked);
-                inputValue.isCheckedDict.Add("SHA1", checkBoxSHA1.IsChecked);
-                inputValue.isCheckedDict.Add("SHA256", checkBoxSHA256.IsChecked);
-                inputValue.isCheckedDict.Add("SHA384", checkBoxSHA384.IsChecked);
-                inputValue.isCheckedDict.Add("SHA512", checkBoxSHA512.IsChecked);
-            });
-            return inputValue;
-        }
-
-        private static void SaveResult(List<Dictionary<string, string>> result)
-        {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-
-            saveFileDialog.FileName = "Hash 结果";
-            saveFileDialog.Filter = "yaml 文件 (*.yaml)|*.yaml|json 文件 (*.json)|*.json|文本文件 (*.txt)|*.txt";
-            saveFileDialog.RestoreDirectory = true;
-
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                switch (saveFileDialog.FilterIndex)
-                {
-                    case 1:
-                        Serializer.Yaml(saveFileDialog.FileName, result);
-                        break;
-                    case 2:
-                        Serializer.Json(saveFileDialog.FileName, result);
-                        break;
-                    case 3:
-                        Serializer.Text(saveFileDialog.FileName, result);
-                        break;
                 }
             }
         }

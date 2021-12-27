@@ -1,0 +1,96 @@
+﻿<Window
+    x:Class="HashTool.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:local="clr-namespace:HashTool.Views"
+    xmlns:converter="clr-namespace:HashTool.Converters"
+    xmlns:viewModel="clr-namespace:HashTool.ViewModels"
+    mc:Ignorable="d"
+    Title="HashTool 哈希校验工具"
+    Height="300"
+    Width="620"
+    WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <converter:RelativeWidthConverter x:Key="RelativeWidthConverter" />
+        <converter:ProportionStringConverter x:Key="ProportionStringConverter" />
+    </Window.Resources>
+
+    <Window.DataContext>
+        <viewModel:MainWindowViewModel x:Name="ViewModel" />
+    </Window.DataContext>
+
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo
+            ProgressValue="{Binding TaskbarProgress.Value}"
+            ProgressState="Normal" />
+    </Window.TaskbarItemInfo>
+
+    <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="80" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="28" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ScrollViewer
+            Grid.Column="0"
+            Grid.Row="0"
+            Grid.RowSpan="2"
+            Margin="0,32,0,0">
+
+            <hc:SimpleStackPanel>
+
+                <hc:SimpleStackPanel.Resources>
+                    <Style
+                        TargetType="{x:Type Button}"
+                        BasedOn="{StaticResource ButtonDefault}">
+                        <Setter
+                            Property="BorderBrush"
+                            Value="Transparent" />
+                        <Setter
+                            Property="FontSize"
+                            Value="14" />
+                    </Style>
+                </hc:SimpleStackPanel.Resources>
+
+                <Button
+                    Content="主页"
+                    Command="{Binding ShowPageCommand}"
+                    CommandParameter="home" />
+                <Button
+                    Content="帮助"
+                    Command="{Binding ShowPageCommand}"
+                    CommandParameter="help" />
+                <Button
+                    Content="关于"
+                    Command="{Binding ShowPageCommand}"
+                    CommandParameter="about" />
+            </hc:SimpleStackPanel>
+        </ScrollViewer>
+
+        <TextBlock
+            Grid.Column="1"
+            Grid.Row="0"
+            Text="{Binding Page.Name}"
+            Margin="16,0,0,0"
+            VerticalAlignment="Bottom"
+            FontSize="16"
+            FontWeight="Bold" />
+        <Frame
+            Grid.Column="1"
+            Grid.Row="1"
+            Content="{Binding Page.Page}"
+            NavigationUIVisibility="Hidden"
+            BorderBrush="Transparent" />
+    </Grid>
+
+</Window>

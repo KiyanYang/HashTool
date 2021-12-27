@@ -1,0 +1,45 @@
+﻿<Page
+    x:Class="HashTool.Views.Pages.HelpPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:HashTool.Views.Pages"
+    mc:Ignorable="d"
+    d:DesignHeight="260"
+    d:DesignWidth="500"
+    Title="Help">
+
+    <Grid>
+        <FlowDocumentScrollViewer BorderBrush="Transparent">
+            <FlowDocument
+                IsOptimalParagraphEnabled="True"
+                IsHyphenationEnabled="True">
+                <Section
+                    FontFamily="Times New Roman, HarmonyOS Sans SC, 黑体, 微软雅黑"
+                    FontSize="15"
+                    LineHeight="20">
+                    <Paragraph>
+                        <Bold>如何通过“选择文件”按钮来自动获取文件夹地址？</Bold>
+                        <LineBreak />
+                        在“文件夹”模式下，通过“选择文件”按钮来选择文件夹内的任意文件，即可自动获取此文件夹的地址。
+                    </Paragraph>
+
+                    <Paragraph>
+                        <Bold>如何在“文本”模式下选择文件编码格式？</Bold>
+                        <LineBreak />
+                        暂时无法选择，之后可能会提供。
+                    </Paragraph>
+
+                    <Paragraph>
+                        <Bold>“关于”页面内的“更新”按钮和下方的“发行地址”有何区别？</Bold>
+                        <LineBreak />
+                        “更新”按钮提供“.zip”格式的下载链接，而“发行地址”提供的是此版本在
+                        GitHub 和 Gitee 上的发行地址，包括更新说明和多种格式的压缩包等。
+                    </Paragraph>
+
+                </Section>
+            </FlowDocument>
+        </FlowDocumentScrollViewer>
+    </Grid>
+</Page>

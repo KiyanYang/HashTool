@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 using HashTool.Helpers;
@@ -20,6 +16,11 @@ namespace HashTool.ViewModels
         public AboutViewModel()
         {
             update = new();
+            openSourceLicenses = new OpenSourceLicenseModel[]
+            {
+                GetOpenSourceLicense("HandyOrg - HandyControl", "https://github.com/HandyOrg/HandyControl", OpenSourceLicenseModel.MIT),
+                GetOpenSourceLicense("aaubry - YamlDotNet", "https://github.com/aaubry/YamlDotNet", OpenSourceLicenseModel.MIT)
+            };
 
             CheckUpdateCommand = new RelayCommand(CheckUpdate);
             OpenLinkCommand = new RelayCommand<string>(OpenLink);
@@ -27,6 +28,7 @@ namespace HashTool.ViewModels
         #region Fields
 
         private UpdateModel update;
+        private OpenSourceLicenseModel[] openSourceLicenses;
 
         #endregion
 
@@ -45,6 +47,12 @@ namespace HashTool.ViewModels
             get => update;
             set => SetProperty(ref update, value);
         }
+        public OpenSourceLicenseModel[] OpenSourceLicenses
+        {
+            get => openSourceLicenses;
+            set => SetProperty(ref openSourceLicenses, value);
+        }
+
         public ICommand CheckUpdateCommand { get; }
         public ICommand OpenLinkCommand { get; }
 
@@ -52,10 +60,21 @@ namespace HashTool.ViewModels
 
         #region Helper
 
+        private OpenSourceLicenseModel GetOpenSourceLicense(string name, string link, string license)
+        {
+            return new OpenSourceLicenseModel()
+            {
+                Name = name,
+                Link = link,
+                License = license
+            };
+        }
+
         private async void CheckUpdate()
         {
             await UpdateHelper.SetUpdate(Update);
         }
+
         private void OpenLink(string? link)
         {
             if (link == null)

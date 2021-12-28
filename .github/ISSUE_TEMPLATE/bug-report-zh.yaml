@@ -1,0 +1,80 @@
+name: Bug 报告 - 表单版
+description: 提交 Bug 以帮助我们提高应用体验
+title: "[Bug] 标题"
+labels:
+  - bug
+assignees:
+  - KiyanYang
+body:
+  - type: checkboxes
+    id: is-existing-issue
+    attributes:
+      label: 存在有关此问题的议题吗？
+      description: 请使用搜索功能来查看是否已经存在相关议题。
+      options:
+        - label: 我搜索了相关的议题，但是没有找到。
+          required: true
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Bug 描述
+      description: 简要描述你遇到的问题。
+    validations:
+      required: true
+  - type: checkboxes
+    id: can-reproduce-in-latest-version
+    attributes:
+      label: 可以在最新版本中复现吗？
+      description: 请将应用升级至最新版本，并检查否能在最新版本中复现。
+      options:
+        - label: 此问题可以在最新版本中复现。
+          required: true
+  - type: textarea
+    id: reproduce-steps
+    attributes:
+      label: 复现步骤
+      description: 准确且详细地描述复现的具体步骤。
+      value: |
+        1. 进入……页面
+        2. 点击……
+        3. 滚动到……
+        4. 出现……问题
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: 预期行为
+      description: 清晰且简洁地描述你希望看到什么样的结果。
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 截图
+      description: 如果静态截图无法合适的描述问题，可以使用 [ScreenToGif](https://github.com/NickeManarin/ScreenToGif) 来录制 Gif 动图。
+    validations:
+      required: false
+  - type: textarea
+    id: environment
+    attributes:
+      label: 环境
+      description: |
+        例如：
+          - **应用来源**: GitHub
+          - **应用版本**: v1.2.0
+          - **系统版本**: Windows 11 21H2 (22000)
+      value: |
+        - 应用来源：
+        - 应用版本：
+        - 系统版本：
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: remarks
+    attributes:
+      label: 备注
+      description: 添加其他你认为有必要的信息。
+    validations:
+      required: false

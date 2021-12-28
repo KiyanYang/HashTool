@@ -55,12 +55,6 @@ namespace HashTool.Helpers
             ("LastWriteTime", "文件修改时间"),
             ("ComputeTime", "计算开始时间"),
             ("ComputeCost", "计算用时"),
-            ("MD5", "MD5"),
-            ("CRC32", "CRC32"),
-            ("SHA1", "SHA1"),
-            ("SHA256", "SHA256"),
-            ("SHA384", "SHA384"),
-            ("SHA512", "SHA512"),
         };
 
         public static Dictionary<string, string> BuildHashResult(HashResultModel hashResult)
@@ -75,6 +69,11 @@ namespace HashTool.Helpers
                 {
                     newDict.Add(i.HumanReadableKey, tmp);
                 }
+            }
+
+            foreach (var i in hashResult.Items)
+            {
+                newDict.Add(i.Name, i.Value);
             }
 
             return newDict;

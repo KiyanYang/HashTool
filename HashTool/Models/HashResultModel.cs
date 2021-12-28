@@ -1,4 +1,6 @@
-﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+﻿using System.Collections.Generic;
+
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace HashTool.Models
 {
@@ -16,12 +18,7 @@ namespace HashTool.Models
 
         private string computeTime = string.Empty;
         private string computeCost = string.Empty;
-        private string md5 = string.Empty;
-        private string crc32 = string.Empty;
-        private string sha1 = string.Empty;
-        private string sha256 = string.Empty;
-        private string sha384 = string.Empty;
-        private string sha512 = string.Empty;
+        private List<HashResultItemModel>? items;
 
         public string InputMode
         {
@@ -58,35 +55,40 @@ namespace HashTool.Models
             get => computeCost;
             set => SetProperty(ref computeCost, value);
         }
-        public string MD5
+        public List<HashResultItemModel> Items
         {
-            get => md5;
-            set => SetProperty(ref md5, value);
+            get
+            {
+                if (items == null)
+                    items = new();
+                return items;
+            }
+            set => SetProperty(ref items, value);
         }
-        public string CRC32
+    }
+
+    public class HashResultItemModel : ObservableObject
+    {
+        public HashResultItemModel(string name, string value)
         {
-            get => crc32;
-            set => SetProperty(ref crc32, value);
+            this.name = name;
+            this.value = value;
         }
-        public string SHA1
+
+        private string name;
+        private string value;
+
+        public string Name
         {
-            get => sha1;
-            set => SetProperty(ref sha1, value);
+            get => name;
+            set => SetProperty(ref name, value);
         }
-        public string SHA256
+        public string Value
         {
-            get => sha256;
-            set => SetProperty(ref sha256, value);
+            get => value;
+            set => SetProperty(ref this.value, value);
         }
-        public string SHA384
-        {
-            get => sha384;
-            set => SetProperty(ref sha384, value);
-        }
-        public string SHA512
-        {
-            get => sha512;
-            set => SetProperty(ref sha512, value);
-        }
+
+        
     }
 }

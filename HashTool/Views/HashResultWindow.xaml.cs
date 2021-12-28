@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -20,17 +21,10 @@ namespace HashTool.Views
             DataContext = hashResultViewModel;
         }
 
-        private void Frame_LoadCompleted(object sender, System.Windows.Navigation.NavigationEventArgs e)
+        protected override void OnClosed(EventArgs e)
         {
-            var frame = sender as Frame;
-            if (frame != null)
-            {
-                var content = frame.Content as FrameworkElement;
-                if (content != null)
-                {
-                    content.DataContext = DataContext;
-                }
-            }
+            base.OnClosed(e);
+            DataContext = null;
         }
     }
 }

@@ -5,11 +5,16 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:HashTool.Views"
     xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:converter="clr-namespace:HashTool.Converters"
     x:Class="HashTool.Views.HashResultWindow"
     mc:Ignorable="d"
     Title="Hash 结果"
     Height="320"
     Width="600">
+
+    <Window.Resources>
+        <converter:HashResultItemConverter x:Key="HashResultItemConverter" />
+    </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -23,13 +28,47 @@
                 MinWidth="240" />
         </Grid.ColumnDefinitions>
 
-        <Frame
+        <Border
             Grid.Row="0"
             Grid.Column="0"
             Visibility="{Binding HashResultListPageVisibility}"
-            Content="{Binding HashResultListPage}"
             Margin="4,4,4,4"
-            LoadCompleted="Frame_LoadCompleted" />
+            ClipToBounds="True"
+            Style="{StaticResource BorderClip}">
+            <ListView
+                x:Name="listView"
+                ItemsSource="{Binding HashResults}">
+                <hc:Interaction.Triggers>
+                    <hc:EventTrigger EventName="SelectionChanged">
+                        <hc:EventToCommand
+                            Command="{Binding ShowSelectedCommand}"
+                            CommandParameter="{Binding SelectedIndex, ElementName=listView}" />
+                    </hc:EventTrigger>
+                </hc:Interaction.Triggers>
+                <ListView.Resources>
+                    <Style TargetType="{x:Type GridViewColumnHeader}">
+                        <Setter
+                            Property="Visibility"
+                            Value="Collapsed" />
+                    </Style>
+                </ListView.Resources>
+                <ListView.BorderBrush>
+                    <SolidColorBrush Color="{DynamicResource BackgroundColor}" />
+                </ListView.BorderBrush>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn>
+                            <GridViewColumn.DisplayMemberBinding>
+                                <converter:BindableBinding
+                                    Path="Content"
+                                    Converter="{StaticResource HashResultItemConverter}"
+                                    ConverterParameterBinding="{Binding Path=Mode}" />
+                            </GridViewColumn.DisplayMemberBinding>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Border>
 
         <GridSplitter
             Grid.Row="0"
@@ -40,12 +79,101 @@
             HorizontalAlignment="Center"
             ShowsPreview="False" />
 
-        <Frame
+        <ScrollViewer
             Grid.Row="0"
             Grid.Column="2"
-            Content="{Binding HashResultPage}"
-            Margin="4,4,4,4"
-            LoadCompleted="Frame_LoadCompleted" />
+            Margin="4">
+            <hc:SimpleStackPanel Margin="4,8,8,8">
+                <hc:SimpleStackPanel.Resources>
+                    <Style TargetType="{x:Type hc:SimplePanel}">
+                        <Setter
+                            Property="Margin"
+                            Value="0,4,0,4" />
+                    </Style>
+                    <Style TargetType="{x:Type hc:SimpleText}">
+                        <Setter
+                            Property="Width"
+                            Value="76" />
+                        <Setter
+                            Property="HorizontalAlignment"
+                            Value="Left" />
+                        <Setter
+                            Property="VerticalAlignment"
+                            Value="Center" />
+                        <Setter
+                            Property="TextAlignment"
+                            Value="Center" />
+                    </Style>
+                    <Style
+                        TargetType="{x:Type TextBox}"
+                        BasedOn="{StaticResource TextBoxBaseStyle}">
+                        <Setter
+                            Property="Margin"
+                            Value="80,0,0,0" />
+                        <Setter
+                            Property="TextWrapping"
+                            Value="Wrap" />
+                        <Setter
+                            Property="IsReadOnly"
+                            Value="True" />
+                    </Style>
+                </hc:SimpleStackPanel.Resources>
+                <hc:SimplePanel Visibility="{Binding HashResult.Mode, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
+                    <hc:SimpleText Text="{Binding HashResult.Mode}" />
+                    <TextBox
+                        Text="{Binding HashResult.Content}"
+                        MaxHeight="80"
+                        VerticalScrollBarVisibility="Auto" />
+                </hc:SimplePanel>
+                <hc:SimplePanel Visibility="{Binding HashResult.FileSize, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
+                    <hc:SimpleText Text="文件大小" />
+                    <TextBox Text="{Binding HashResult.FileSize}" />
+                </hc:SimplePanel>
+                <hc:SimplePanel Visibility="{Binding HashResult.LastWriteTime, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
+                    <hc:SimpleText Text="文件修改时间" />
+                    <TextBox Text="{Binding HashResult.LastWriteTime}" />
+                </hc:SimplePanel>
+                <hc:SimplePanel Visibility="{Binding HashResult.ComputeTime, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
+                    <hc:SimpleText Text="计算开始时间" />
+                    <TextBox Text="{Binding HashResult.ComputeTime}" />
+                </hc:SimplePanel>
+                <hc:SimplePanel Visibility="{Binding HashResult.ComputeCost, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
+                    <hc:SimpleText Text="计算用时" />
+                    <TextBox Text="{Binding HashResult.ComputeCost}" />
+                </hc:SimplePanel>
+
+                <ItemsControl
+                    x:Name="itemsHashResult"
+                    ItemsSource="{Binding HashResult.Items}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <hc:SimplePanel
+                                Margin="0,4,0,4"
+                                Visibility="{Binding Name, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
+                                <hc:SimpleText
+                                    Text="{Binding Name}"
+                                    Width="76"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    TextAlignment="Center" />
+                                <TextBox
+                                    Text="{Binding Value}"
+                                    Margin="80,0,52,0" />
+                                <Button
+                                    Content="复制"
+                                    Width="44"
+                                    HorizontalAlignment="Right"
+                                    Style="{StaticResource ButtonPrimary}"
+                                    Command="{Binding DataContext.CopyToClipboardCommand, ElementName=itemsHashResult}"
+                                    CommandParameter="{Binding Value}" />
+                            </hc:SimplePanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </hc:SimpleStackPanel>
+        </ScrollViewer>
+
     </Grid>
 
 </Window>

@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Input;
 
 using HashTool.Models;
-using HashTool.Views.Pages;
 
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
@@ -18,10 +17,8 @@ namespace HashTool.ViewModels
         {
             hashResult = hashResults[0];
             this.hashResults = hashResults;
-            hashResultPage = new();
             if (hashResults.Count > 1)
             {
-                hashResultListPage = new();
                 hashResultListPageColWidth = "*";
                 hashResultListPageVisibility = Visibility.Visible;
             }
@@ -32,14 +29,13 @@ namespace HashTool.ViewModels
             }
             ShowSelectedCommand = new RelayCommand<int>(ShowSelected);
             ViewInExplorerCommand = new RelayCommand<string>(ViewInExplorer);
+            CopyToClipboardCommand = new RelayCommand<string>(CopyToClipboard);
         }
 
         #region Fields
 
         private HashResultModel hashResult;
         private List<HashResultModel> hashResults;
-        private HashResultPage hashResultPage;
-        private HashResultListPage? hashResultListPage;
         private string? hashResultListPageColWidth;
         private Visibility hashResultListPageVisibility;
 
@@ -57,16 +53,6 @@ namespace HashTool.ViewModels
             get => hashResults;
             set => SetProperty(ref hashResults, value);
         }
-        public HashResultPage HashResultPage
-        {
-            get => hashResultPage;
-            set => SetProperty(ref hashResultPage, value);
-        }
-        public HashResultListPage? HashResultListPage
-        {
-            get => hashResultListPage;
-            set => SetProperty(ref hashResultListPage, value);
-        }
         public string? HashResultListPageColWidth
         {
             get => hashResultListPageColWidth;
@@ -79,18 +65,19 @@ namespace HashTool.ViewModels
         }
         public ICommand ShowSelectedCommand { get; }
         public ICommand ViewInExplorerCommand { get; }
+        public ICommand CopyToClipboardCommand { get; }
 
         #endregion
 
         #region Private Helpers
 
-        private void ShowSelected(int parameter)
+        private void ShowSelected(int index)
         {
-            if (parameter is int index)
+            if (index >= 0)
                 HashResult = HashResults[index];
         }
 
-        private static void ViewInExplorer(string? path)
+        private void ViewInExplorer(string? path)
         {
             if (path == null)
                 return;
@@ -100,6 +87,15 @@ namespace HashTool.ViewModels
             p.StartInfo.FileName = "explorer.exe";
             p.StartInfo.Arguments = $"/select, {fullPath}";
             p.Start();
+        }
+
+        private void CopyToClipboard(string? text)
+        {
+            if (text == null)
+                return;
+
+            Clipboard.SetText(text);
+            HandyControl.Controls.Growl.SuccessGlobal("已复制到剪贴板！");
         }
 
         #endregion

@@ -1,5 +1,4 @@
-﻿
-using Microsoft.Toolkit.Mvvm.ComponentModel;
+﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace HashTool.Models
 {

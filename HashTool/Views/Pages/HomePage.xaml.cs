@@ -22,9 +22,9 @@ namespace HashTool.Views.Pages
             DataContext = homeViewModel;
         }
 
-        private HomeViewModel homeViewModel;
+        private HomePageViewModel homeViewModel;
 
-        public HomeViewModel HomeViewModel { get => homeViewModel; }
+        public HomePageViewModel HomeViewModel { get => homeViewModel; }
 
         private void comboBoxInputMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

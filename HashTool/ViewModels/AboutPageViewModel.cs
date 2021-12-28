@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows.Input;
 
 using HashTool.Helpers;
@@ -11,15 +9,16 @@ using Microsoft.Toolkit.Mvvm.Input;
 
 namespace HashTool.ViewModels
 {
-    internal class AboutViewModel : ObservableObject
+    internal class AboutPageViewModel : ObservableObject
     {
-        public AboutViewModel()
+        public AboutPageViewModel()
         {
             update = new();
             openSourceLicenses = new OpenSourceLicenseModel[]
             {
                 GetOpenSourceLicense("HandyOrg - HandyControl", "https://github.com/HandyOrg/HandyControl", OpenSourceLicenseModel.MIT),
-                GetOpenSourceLicense("aaubry - YamlDotNet", "https://github.com/aaubry/YamlDotNet", OpenSourceLicenseModel.MIT)
+                GetOpenSourceLicense("Antoine Aubry - YamlDotNet", "https://github.com/aaubry/YamlDotNet", OpenSourceLicenseModel.MIT),
+                GetOpenSourceLicense("Microsoft.Toolkit - Microsoft.Toolkit.Mvvm", "https://github.com/CommunityToolkit/WindowsCommunityToolkit", OpenSourceLicenseModel.MIT)
             };
 
             CheckUpdateCommand = new RelayCommand(CheckUpdate);
@@ -72,6 +71,11 @@ namespace HashTool.ViewModels
 
         private async void CheckUpdate()
         {
+            //Update.HasUpdate = false;
+            //Update.Version = "1.2.0";
+            //Update.DownloadUrl = "";
+            //Update.GithubUrl = "";
+            //Update.GiteeUrl = "";
             await UpdateHelper.SetUpdate(Update);
         }
 

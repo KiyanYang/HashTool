@@ -16,9 +16,9 @@ using Microsoft.Win32;
 
 namespace HashTool.ViewModels
 {
-    public class HomeViewModel : ObservableObject
+    public class HomePageViewModel : ObservableObject
     {
-        public HomeViewModel()
+        public HomePageViewModel()
         {
             buttonStart = new("开始");
             buttonReset = new("暂停", false);

@@ -26,7 +26,7 @@ namespace HashTool.Views.Pages
         {
             InitializeComponent();
 
-            AboutViewModel aboutViewModel = new();
+            AboutPageViewModel aboutViewModel = new();
 
             DataContext = aboutViewModel;
         }

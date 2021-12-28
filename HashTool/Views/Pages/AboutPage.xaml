@@ -24,7 +24,7 @@
                 MaxWidth="360"
                 Width="*" />
             <ColumnDefinition
-                MaxWidth="400"
+                MaxWidth="480"
                 Width="*" />
         </Grid.ColumnDefinitions>
 

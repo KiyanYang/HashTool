@@ -68,7 +68,7 @@ namespace HashTool.Helpers
             hashResult.ComputeCost = $"{stopWatch.Elapsed.TotalSeconds:N3} 秒";
             return hashResult;
         }
-       
+
         private static HashResultModel HashStream(ManualResetEvent resetEvent, BackgroundWorker worker, DoWorkEventArgs e, FileInfo fileInfo, MainInputModel mainInput, double maximum, int offset)
         {
             #region 初始化文件流，哈希算法实例字典
@@ -93,7 +93,7 @@ namespace HashTool.Helpers
             int bufferSize = 1024 * 1024;
             byte[] buffer = new byte[bufferSize];
             // 每次实际读取长度，此初值仅为启动作用，真正的赋值在屏障内完成
-            int readLength = bufferSize;
+            int readLength = fileStream.Length > 0 ? bufferSize : 0;
 
             #endregion
 
@@ -106,8 +106,7 @@ namespace HashTool.Helpers
                 resetEvent.WaitOne();
 
                 // 设置进度条为 maximum 份, 并且对多文件流设置偏移量
-                worker.ReportProgress((int)(fileStream.Position * maximum / fileStream.Length + maximum * offset));
-
+                worker.ReportProgress((int)(maximum * ((double)fileStream.Position / fileStream.Length + offset)));
             });
             // 定义动作，先屏障同步并完成读取文件、报告进度等操作，再并行计算
             Action<HashAlgorithm> action = (hashAlgorithm) =>
@@ -144,6 +143,7 @@ namespace HashTool.Helpers
                 }
                 stopWatch.Stop();
                 hashResult.ComputeCost = $"{stopWatch.Elapsed.TotalSeconds:N3} 秒";
+                worker.ReportProgress((int)(maximum * (1 + offset)));
             }
 
             return hashResult;
@@ -166,7 +166,7 @@ namespace HashTool.Helpers
         }
     }
 
-    public class CRC : HashAlgorithm
+    internal class CRC : HashAlgorithm
     {
         #region CRC 算法参数模型
 

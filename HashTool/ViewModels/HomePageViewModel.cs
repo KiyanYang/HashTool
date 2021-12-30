@@ -47,7 +47,7 @@ namespace HashTool.ViewModels
         private ButtonModel buttonStart;
         private ButtonModel buttonReset;
         private ButtonModel buttonCancel;
-        private MainInputModel mainInput;
+        private HashInputModel mainInput;
         private ProgressBarModel progressBarSingle;
         private ProgressBarModel progressBarMulti;
         private ProgressBarModel taskbarProgress;
@@ -78,7 +78,7 @@ namespace HashTool.ViewModels
             get => buttonCancel;
             set => SetProperty(ref buttonCancel, value);
         }
-        public MainInputModel MainInput
+        public HashInputModel MainInput
         {
             get => mainInput;
             set => SetProperty(ref mainInput, value);
@@ -213,7 +213,7 @@ namespace HashTool.ViewModels
         private void bgWorker_DoWork(object? sender, DoWorkEventArgs e)
         {
             BackgroundWorker? worker = sender as BackgroundWorker;
-            MainInputModel? input = e.Argument as MainInputModel;
+            HashInputModel? input = e.Argument as HashInputModel;
             if (worker != null && input != null)
             {
                 switch (input.Mode)

@@ -12,7 +12,7 @@ using HashTool.Models;
 
 namespace HashTool.Helpers
 {
-    internal class ComputeHashHelper
+    public class ComputeHashHelper
     {
         private static readonly HashAlgorithm crc32 = new CRC("CRC-32", 32, 0x04C11DB7, 0xFFFFFFFF, 0xFFFFFFFF, true, true);
         private static readonly HashAlgorithm md5 = MD5.Create();
@@ -34,7 +34,7 @@ namespace HashTool.Helpers
             return sBuilder.ToString();
         }
 
-        private static void SetHashAlgorithmDict(MainInputModel mainInput)
+        private static void SetHashAlgorithmDict(HashInputModel mainInput)
         {
             hashAlgorithmDict.Clear();
 
@@ -46,30 +46,39 @@ namespace HashTool.Helpers
             if (mainInput.SHA512 == true) hashAlgorithmDict.Add("SHA512", sha512);
         }
 
-        public static HashResultModel HashString(MainInputModel mainInput, BackgroundWorker worker, double maximum)
+        public static HashResultModel HashString(HashInputModel hashInput)
         {
-            SetHashAlgorithmDict(mainInput);
-            HashResultModel hashResult = new();
-            hashResult.InputMode = mainInput.Mode;
-            hashResult.Mode = "文本";
-            hashResult.Content = mainInput.Input;
-            hashResult.ComputeTime = DateTime.Now.ToString("yyyy/M/d HH:mm:ss.fff");
+            return HashString(hashInput, null, null);
+        }
+
+        public static HashResultModel HashString(HashInputModel hashInput, BackgroundWorker? worker, double? maximum)
+        {
             Stopwatch stopWatch = Stopwatch.StartNew();
 
+            SetHashAlgorithmDict(hashInput);
+            HashResultModel hashResult = new();
+            hashResult.InputMode = hashInput.Mode;
+            hashResult.Mode = "文本";
+            hashResult.Content = hashInput.Input;
+            hashResult.ComputeTime = DateTime.Now.ToString("yyyy/M/d HH:mm:ss.fff");
+            
             byte[] hashValue;
             foreach (string hashName in hashAlgorithmDict.Keys)
             {
-                hashValue = hashAlgorithmDict[hashName].ComputeHash(Encoding.UTF8.GetBytes(mainInput.Input));
+                hashValue = hashAlgorithmDict[hashName].ComputeHash(Encoding.UTF8.GetBytes(hashInput.Input));
                 hashResult.Items.Add(new HashResultItemModel(hashName, HashFormat(hashValue)));
             }
-            worker.ReportProgress((int)maximum);
-
+            if (worker != null && maximum != null)
+            {
+                worker.ReportProgress((int)maximum);
+            }
+            
             stopWatch.Stop();
             hashResult.ComputeCost = $"{stopWatch.Elapsed.TotalSeconds:N3} 秒";
             return hashResult;
         }
 
-        private static HashResultModel HashStream(ManualResetEvent resetEvent, BackgroundWorker worker, DoWorkEventArgs e, FileInfo fileInfo, MainInputModel mainInput, double maximum, int offset)
+        private static HashResultModel HashStream(ManualResetEvent resetEvent, BackgroundWorker worker, DoWorkEventArgs e, FileInfo fileInfo, HashInputModel mainInput, double maximum, int offset)
         {
             #region 初始化文件流，哈希算法实例字典
 
@@ -149,12 +158,12 @@ namespace HashTool.Helpers
             return hashResult;
         }
 
-        public static HashResultModel HashFile(ManualResetEvent resetEvent, BackgroundWorker worker, DoWorkEventArgs e, MainInputModel mainInput, double maximum)
+        public static HashResultModel HashFile(ManualResetEvent resetEvent, BackgroundWorker worker, DoWorkEventArgs e, HashInputModel mainInput, double maximum)
         {
             return HashStream(resetEvent, worker, e, new FileInfo(mainInput.Input), mainInput, maximum, 0);
         }
 
-        public static List<HashResultModel> HashFolder(ManualResetEvent resetEvent, BackgroundWorker worker, DoWorkEventArgs e, MainInputModel mainInput, double maximum)
+        public static List<HashResultModel> HashFolder(ManualResetEvent resetEvent, BackgroundWorker worker, DoWorkEventArgs e, HashInputModel mainInput, double maximum)
         {
             FileInfo[] fileInfos = new DirectoryInfo(mainInput.Input).GetFiles();
             List<HashResultModel> hashResults = new();

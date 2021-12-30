@@ -4,7 +4,7 @@ using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace HashTool.Models
 {
-    public class MainInputModel : ObservableObject
+    public class HashInputModel : ObservableObject
     {
         private string mode = string.Empty;
         private string input = string.Empty;

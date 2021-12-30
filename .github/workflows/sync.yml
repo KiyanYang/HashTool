@@ -21,3 +21,4 @@ jobs:
           dst_token: ${{ secrets.GITEE_TOKEN }}
           # 可选, 配置后仅同步静态列表，不会再动态获取需同步列表（黑白名单依旧生效），如“repo1,repo2,repo3”。
           static_list: "HashTool"
+          force_update: true

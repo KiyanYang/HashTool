@@ -5,10 +5,10 @@ namespace HashTool.Models
     internal class UpdateModel : ObservableObject
     {
         private bool? hasUpdate;
-        private string? version = string.Empty;
-        private string? downloadUrl = string.Empty;
-        private string? githubUrl = string.Empty;
-        private string? giteeUrl = string.Empty;
+        private string? version;
+        private string? downloadUrl;
+        private string? githubUrl;
+        private string? giteeUrl;
 
         public bool? HasUpdate
         {

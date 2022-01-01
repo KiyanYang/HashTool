@@ -94,11 +94,8 @@
                 <TextBlock Text="{Binding AssemblyVersion}" />
                 <Button
                     Content="检查更新"
+                    IsEnabled="{Binding ButtonCheckUpdateIsEnabled}"
                     Command="{Binding CheckUpdateCommand}" />
-            </hc:SimpleStackPanel>
-
-            <hc:SimpleStackPanel Visibility="{Binding Update.HasUpdate, Converter={StaticResource Boolean2VisibilityReConverter}}">
-                <TextBlock Text="暂无新版本" />
             </hc:SimpleStackPanel>
 
             <hc:SimpleStackPanel Visibility="{Binding Update.HasUpdate, Converter={StaticResource Boolean2VisibilityConverter}}">
@@ -106,8 +103,7 @@
                 <TextBlock Text="{Binding Update.Version}" />
                 <Button
                     Content="更新"
-                    Command="{Binding OpenLinkCommand}"
-                    CommandParameter="{Binding Update.DownloadUrl}" />
+                    Command="{Binding UpdateCommand}" />
             </hc:SimpleStackPanel>
 
             <hc:SimpleStackPanel Visibility="{Binding Update.HasUpdate, Converter={StaticResource Boolean2VisibilityConverter}}">
@@ -121,6 +117,13 @@
                     Command="{Binding OpenLinkCommand}"
                     CommandParameter="{Binding Update.GiteeUrl}" />
             </hc:SimpleStackPanel>
+
+            <hc:SimplePanel Visibility="{Binding Update.HasUpdate, Converter={StaticResource Boolean2VisibilityReConverter}}">
+                <TextBlock
+                    Width="200"
+                    HorizontalAlignment="Center"
+                    Text="{Binding UpdateStatusText}" />
+            </hc:SimplePanel>
 
         </hc:SimpleStackPanel>
 

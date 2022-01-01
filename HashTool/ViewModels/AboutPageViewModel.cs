@@ -1,7 +1,13 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.Net.Http;
+using System.Reflection;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
+using System.Xml.Serialization;
 
-using HashTool.Helpers;
 using HashTool.Models;
 
 using Microsoft.Toolkit.Mvvm.ComponentModel;
@@ -20,14 +26,20 @@ namespace HashTool.ViewModels
                 GetOpenSourceLicense("Antoine Aubry - YamlDotNet", "https://github.com/aaubry/YamlDotNet", OpenSourceLicenseModel.MIT),
                 GetOpenSourceLicense("Microsoft.Toolkit - Microsoft.Toolkit.Mvvm", "https://github.com/CommunityToolkit/WindowsCommunityToolkit", OpenSourceLicenseModel.MIT)
             };
-
+            buttonCheckUpdateIsEnabled = true;
+            updateStatusText = string.Empty;
             CheckUpdateCommand = new RelayCommand(CheckUpdate);
+            UpdateCommand = new RelayCommand(OpenUpdater);
             OpenLinkCommand = new RelayCommand<string>(OpenLink);
         }
         #region Fields
 
+        private static LatestVersion? latestVersionInfo;
+        private static readonly HttpClient httpClient = new();
         private UpdateModel update;
         private OpenSourceLicenseModel[] openSourceLicenses;
+        private bool buttonCheckUpdateIsEnabled;
+        private string updateStatusText;
 
         #endregion
 
@@ -37,8 +49,8 @@ namespace HashTool.ViewModels
         {
             get
             {
-                var ver = UpdateHelper.GetAssemblyVersion();
-                return $"{ver.Major}.{ver.Minor}.{ver.Build}";
+                var ver = GetAssemblyVersion();
+                return $"v{ver.Major}.{ver.Minor}.{ver.Build}";
             }
         }
         public UpdateModel Update
@@ -51,8 +63,18 @@ namespace HashTool.ViewModels
             get => openSourceLicenses;
             set => SetProperty(ref openSourceLicenses, value);
         }
-
+        public bool ButtonCheckUpdateIsEnabled
+        {
+            get => buttonCheckUpdateIsEnabled;
+            set => SetProperty(ref buttonCheckUpdateIsEnabled, value);
+        }
+        public string UpdateStatusText
+        {
+            get => updateStatusText;
+            set => SetProperty(ref updateStatusText, value);
+        }
         public ICommand CheckUpdateCommand { get; }
+        public ICommand UpdateCommand { get; }
         public ICommand OpenLinkCommand { get; }
 
         #endregion
@@ -71,12 +93,88 @@ namespace HashTool.ViewModels
 
         private async void CheckUpdate()
         {
-            //Update.HasUpdate = false;
-            //Update.Version = "1.2.0";
-            //Update.DownloadUrl = "";
-            //Update.GithubUrl = "";
-            //Update.GiteeUrl = "";
-            await UpdateHelper.SetUpdate(Update);
+            ButtonCheckUpdateIsEnabled = false;
+            Update.HasUpdate = false;
+            UpdateStatusText = "检查更新中……";
+
+            if (await GetLatestVersion() && latestVersionInfo != null)
+            {
+                var assemblyVer = GetAssemblyVersion();
+                var ver = new Version(latestVersionInfo.Version);
+                if (ver > assemblyVer)
+                {
+                    Update.HasUpdate = true;
+                    Update.Version = latestVersionInfo.Tag;
+                    Update.DownloadUrl = latestVersionInfo.GiteeDownloadUrl;
+                    Update.GithubUrl = $"https://github.com/KiyanYang/HashTool/releases/tag/{update.Version}";
+                    Update.GiteeUrl = $"https://gitee.com/KiyanYang/HashTool/releases/{update.Version}";
+                }
+                else
+                {
+                    UpdateStatusText = "当前为最新版本！";
+                }
+            }
+            else
+            {
+                Update.HasUpdate = false;
+                UpdateStatusText = "检查更新失败！";
+            }
+            ButtonCheckUpdateIsEnabled = true;
+        }
+
+        private static async Task<bool> GetLatestVersion()
+        {
+            try
+            {
+                string latestVersionUrl = $"https://cdn.jsdelivr.net/gh/KiyanYang/HashTool@main/LatestVersion.xml";
+                var result = await httpClient.GetAsync(latestVersionUrl);
+                using var reader = result.Content.ReadAsStream();
+
+                var serializer = new XmlSerializer(typeof(LatestVersion));
+                latestVersionInfo = (LatestVersion?)serializer.Deserialize(reader);
+                return true;
+            }
+            catch (Exception)
+            {
+                // 之后的版本写入日志
+                return false;
+            }
+        }
+
+        private static Version GetAssemblyVersion()
+        {
+            Assembly assem = Assembly.GetExecutingAssembly();
+            AssemblyName assemName = assem.GetName();
+            var ver = assemName.Version;
+            if (ver != null)
+            {
+                return ver;
+            }
+            return new Version();
+        }
+
+        private void OpenUpdater()
+        {
+            var res = HandyControl.Controls.MessageBox.Show("是否关闭程序并开始更新", "是否关闭并更新", MessageBoxButton.OKCancel);
+            // 这里不要使用相等判断，以防止未点击按钮（直接右上关闭消息框）的情况
+            if (res != MessageBoxResult.OK)
+                return;
+
+            if (latestVersionInfo != null)
+            {
+                var process = new Process();
+                process.StartInfo.FileName = "powershell.exe";
+                var updaterPs1 = Path.GetFullPath(@".\updater.ps1");
+                var targetPath = Path.GetFullPath(@".\");
+                string str = $"-ExecutionPolicy Bypass -File {updaterPs1} -Url {update.DownloadUrl} -SHA256 {latestVersionInfo.SHA256_zip} -TargetPath {targetPath} -Force";
+                process.StartInfo.Arguments = str;
+                process.Start();
+                Environment.Exit(-1);
+            }
+            else
+            {
+                HandyControl.Controls.MessageBox.Show("更新出现错误，请手动更新");
+            }
         }
 
         private void OpenLink(string? link)
@@ -88,5 +186,15 @@ namespace HashTool.ViewModels
         }
 
         #endregion
+    }
+
+    public class LatestVersion
+    {
+        public string Tag = string.Empty;
+        public string Version = string.Empty;
+        public string SHA256_zip = string.Empty;
+        public string SHA256_7z = string.Empty;
+        public string GiteeDownloadUrl = string.Empty;
+        public string GithubDownloadUrl = string.Empty;
     }
 }

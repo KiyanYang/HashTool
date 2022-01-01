@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net6.0-windows7.0</TargetFramework>
+        <TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
         <Nullable>enable</Nullable>
         <UseWPF>true</UseWPF>
         <UseWindowsForms>False</UseWindowsForms>
         <ApplicationIcon>Resource\HashTool.ico</ApplicationIcon>
-        <AssemblyVersion>1.2.0.0</AssemblyVersion>
-        <FileVersion>1.2.0.0</FileVersion>
+        <AssemblyVersion>1.2.1.0</AssemblyVersion>
+        <FileVersion>1.2.1.0</FileVersion>
     </PropertyGroup>
     <ItemGroup>
         <Compile Remove="MainWindow.xaml.cs" />

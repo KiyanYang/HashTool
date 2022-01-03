@@ -60,8 +60,8 @@ namespace HashTool.Helpers
             hashResult.InputMode = hashInput.Mode;
             hashResult.Mode = "文本";
             hashResult.Content = hashInput.Input;
-            hashResult.ComputeTime = DateTime.Now.ToString("yyyy/M/d HH:mm:ss.fff");
-            
+            hashResult.ComputeTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
+
             byte[] hashValue;
             foreach (string hashName in hashAlgorithmDict.Keys)
             {
@@ -72,7 +72,7 @@ namespace HashTool.Helpers
             {
                 worker.ReportProgress((int)maximum);
             }
-            
+
             stopWatch.Stop();
             hashResult.ComputeCost = $"{stopWatch.Elapsed.TotalSeconds:N3} 秒";
             return hashResult;
@@ -90,8 +90,8 @@ namespace HashTool.Helpers
             hashResult.Mode = "文件";
             hashResult.Content = fileInfo.FullName;
             hashResult.FileSize = CommonHelper.FileSizeFormatter(fileInfo.Length);
-            hashResult.LastWriteTime = fileInfo.LastWriteTime.ToString();
-            hashResult.ComputeTime = DateTime.Now.ToString("yyyy/M/d HH:mm:ss.fff");
+            hashResult.LastWriteTime = fileInfo.LastWriteTime.ToString("yyyy/MM/dd HH:mm:ss");
+            hashResult.ComputeTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
             Stopwatch stopWatch = Stopwatch.StartNew();
 
             #endregion
@@ -372,6 +372,5 @@ namespace HashTool.Helpers
 
             return output;
         }
-
     }
 }

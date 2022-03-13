@@ -10,7 +10,7 @@
     xmlns:viewModel="clr-namespace:HashTool.ViewModels"
     mc:Ignorable="d"
     Title="HashTool 哈希校验工具"
-    Height="300"
+    Height="320"
     Width="640"
     MinWidth="560"
     WindowStartupLocation="CenterScreen">

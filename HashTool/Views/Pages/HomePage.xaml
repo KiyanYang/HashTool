@@ -8,7 +8,7 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:converter="clr-namespace:HashTool.Converters"
     mc:Ignorable="d"
-    d:DesignHeight="260"
+    d:DesignHeight="280"
     d:DesignWidth="500"
     Title="HomePage">
 
@@ -45,6 +45,9 @@
                     <Setter
                         Property="HorizontalAlignment"
                         Value="Center" />
+                    <Setter
+                        Property="Margin"
+                        Value="12,4,12,4" />
                 </Style>
                 <Style
                     TargetType="{x:Type Button}"
@@ -90,38 +93,31 @@
                     Width="84"
                     Margin="4,0,4,0" />
             </hc:SimplePanel>
-            <hc:SimpleStackPanel Margin="0,8,0,8">
-                <hc:SimplePanel Width="{Binding ActualWidth, ConverterParameter=0.15, Converter={StaticResource RelativeWidthConverter}, ElementName=simpleStackPanel, Mode=OneWay}">
-                    <CheckBox
-                        Content="MD5"
-                        IsChecked="{Binding MainInput.MD5, Mode=TwoWay}" />
-                </hc:SimplePanel>
-                <hc:SimplePanel Width="{Binding ActualWidth, ConverterParameter=0.16, Converter={StaticResource RelativeWidthConverter}, ElementName=simpleStackPanel, Mode=OneWay}">
-                    <CheckBox
-                        Content="CRC32"
-                        IsChecked="{Binding MainInput.CRC32, Mode=TwoWay}" />
-                </hc:SimplePanel>
-                <hc:SimplePanel Width="{Binding ActualWidth, ConverterParameter=0.16, Converter={StaticResource RelativeWidthConverter}, ElementName=simpleStackPanel, Mode=OneWay}">
-                    <CheckBox
-                        Content="SHA1"
-                        IsChecked="{Binding MainInput.SHA1, Mode=TwoWay}" />
-                </hc:SimplePanel>
-                <hc:SimplePanel Width="{Binding ActualWidth, ConverterParameter=0.17, Converter={StaticResource RelativeWidthConverter}, ElementName=simpleStackPanel, Mode=OneWay}">
-                    <CheckBox
-                        Content="SHA256"
-                        IsChecked="{Binding MainInput.SHA256, Mode=TwoWay}" />
-                </hc:SimplePanel>
-                <hc:SimplePanel Width="{Binding ActualWidth, ConverterParameter=0.17, Converter={StaticResource RelativeWidthConverter}, ElementName=simpleStackPanel, Mode=OneWay}">
-                    <CheckBox
-                        Content="SHA384"
-                        IsChecked="{Binding MainInput.SHA384, Mode=TwoWay}" />
-                </hc:SimplePanel>
-                <hc:SimplePanel Width="{Binding ActualWidth, ConverterParameter=0.17, Converter={StaticResource RelativeWidthConverter}, ElementName=simpleStackPanel, Mode=OneWay}">
-                    <CheckBox
-                        Content="SHA512"
-                        IsChecked="{Binding MainInput.SHA512, Mode=TwoWay}" />
-                </hc:SimplePanel>
-            </hc:SimpleStackPanel>
+            <WrapPanel
+                Margin="0,4,0,4"
+                HorizontalAlignment="Center">
+                <CheckBox
+                    Content="MD5"
+                    IsChecked="{Binding MainInput.MD5, Mode=TwoWay}" />
+                <CheckBox
+                    Content="CRC32"
+                    IsChecked="{Binding MainInput.CRC32, Mode=TwoWay}" />
+                <CheckBox
+                    Content="SHA1"
+                    IsChecked="{Binding MainInput.SHA1, Mode=TwoWay}" />
+                <CheckBox
+                    Content="SHA256"
+                    IsChecked="{Binding MainInput.SHA256, Mode=TwoWay}" />
+                <CheckBox
+                    Content="SHA384"
+                    IsChecked="{Binding MainInput.SHA384, Mode=TwoWay}" />
+                <CheckBox
+                    Content="SHA512"
+                    IsChecked="{Binding MainInput.SHA512, Mode=TwoWay}" />
+                <CheckBox
+                    Content="QuickXor"
+                    IsChecked="{Binding MainInput.QuickXor, Mode=TwoWay}" />
+            </WrapPanel>
             <hc:SimpleStackPanel
                 Margin="0,8,0,8"
                 HorizontalAlignment="Center">

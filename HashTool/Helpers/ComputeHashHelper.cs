@@ -20,9 +20,10 @@ namespace HashTool.Helpers
         private static readonly HashAlgorithm sha256 = SHA256.Create();
         private static readonly HashAlgorithm sha384 = SHA384.Create();
         private static readonly HashAlgorithm sha512 = SHA512.Create();
+        private static readonly HashAlgorithm quickXor = new QuickXor();
         private static Dictionary<string, HashAlgorithm> hashAlgorithmDict = new();
 
-        private static string HashFormat(byte[] data)
+        private static string HashFormatHex(byte[] data)
         {
             StringBuilder sBuilder = new();
 
@@ -32,6 +33,10 @@ namespace HashTool.Helpers
             }
 
             return sBuilder.ToString();
+        }
+        private static string HashFormatBase64(byte[] data)
+        {
+            return Convert.ToBase64String(data);
         }
 
         private static void SetHashAlgorithmDict(HashInputModel mainInput)
@@ -44,6 +49,20 @@ namespace HashTool.Helpers
             if (mainInput.SHA256 == true) hashAlgorithmDict.Add("SHA256", sha256);
             if (mainInput.SHA384 == true) hashAlgorithmDict.Add("SHA384", sha384);
             if (mainInput.SHA512 == true) hashAlgorithmDict.Add("SHA512", sha512);
+            if (mainInput.QuickXor == true) hashAlgorithmDict.Add("QuickXor", quickXor);
+        }
+        private static HashResultItemModel BuildHashResultItem(string name, byte[] data)
+        {
+            string hash;
+            if (name == "QuickXor")
+            {
+                hash = HashFormatBase64(data);
+            }
+            else
+            {
+                hash = HashFormatHex(data);
+            }
+            return new HashResultItemModel(name, hash);
         }
 
         public static HashResultModel HashString(HashInputModel hashInput)
@@ -66,7 +85,7 @@ namespace HashTool.Helpers
             foreach (string hashName in hashAlgorithmDict.Keys)
             {
                 hashValue = hashAlgorithmDict[hashName].ComputeHash(Encoding.UTF8.GetBytes(hashInput.Input));
-                hashResult.Items.Add(new HashResultItemModel(hashName, HashFormat(hashValue)));
+                hashResult.Items.Add(BuildHashResultItem(hashName, hashValue));
             }
             if (worker != null && maximum != null)
             {
@@ -147,7 +166,7 @@ namespace HashTool.Helpers
                     var hashValue = kvp.Value.Hash;
                     if (hashValue != null)
                     {
-                        hashResult.Items.Add(new HashResultItemModel(kvp.Key, HashFormat(hashValue)));
+                        hashResult.Items.Add(BuildHashResultItem(kvp.Key, hashValue));
                     }
                 }
                 stopWatch.Stop();
@@ -371,6 +390,122 @@ namespace HashTool.Helpers
             }
 
             return output;
+        }
+    }
+
+    internal class QuickXor : System.Security.Cryptography.HashAlgorithm
+    {
+        private const int BitsInLastCell = 32;
+        private const byte Shift = 11;
+        private const int Threshold = 600;
+        private const byte WidthInBits = 160;
+
+        private ulong[] _data;
+        private long _lengthSoFar;
+        private int _shiftSoFar;
+
+        public QuickXor()
+        {
+            this.Initialize();
+        }
+
+        protected override void HashCore(byte[] array, int ibStart, int cbSize)
+        {
+            unchecked
+            {
+                int currentShift = this._shiftSoFar;
+
+                // The bitvector where we'll start xoring
+                int vectorArrayIndex = currentShift / 64;
+
+                // The position within the bit vector at which we begin xoring
+                int vectorOffset = currentShift % 64;
+                int iterations = Math.Min(cbSize, WidthInBits);
+
+                for (int i = 0; i < iterations; i++)
+                {
+                    bool isLastCell = vectorArrayIndex == this._data.Length - 1;
+                    int bitsInVectorCell = isLastCell ? BitsInLastCell : 64;
+
+                    // There's at least 2 bitvectors before we reach the end of the array
+                    if (vectorOffset <= bitsInVectorCell - 8)
+                    {
+                        for (int j = ibStart + i; j < cbSize + ibStart; j += WidthInBits)
+                        {
+                            this._data[vectorArrayIndex] ^= (ulong)array[j] << vectorOffset;
+                        }
+                    }
+                    else
+                    {
+                        int index1 = vectorArrayIndex;
+                        int index2 = isLastCell ? 0 : (vectorArrayIndex + 1);
+                        byte low = (byte)(bitsInVectorCell - vectorOffset);
+
+                        byte xoredByte = 0;
+                        for (int j = ibStart + i; j < cbSize + ibStart; j += WidthInBits)
+                        {
+                            xoredByte ^= array[j];
+                        }
+                        this._data[index1] ^= (ulong)xoredByte << vectorOffset;
+                        this._data[index2] ^= (ulong)xoredByte >> low;
+                    }
+                    vectorOffset += Shift;
+                    while (vectorOffset >= bitsInVectorCell)
+                    {
+                        vectorArrayIndex = isLastCell ? 0 : vectorArrayIndex + 1;
+                        vectorOffset -= bitsInVectorCell;
+                    }
+                }
+
+                // Update the starting position in a circular shift pattern
+                this._shiftSoFar = (this._shiftSoFar + Shift * (cbSize % WidthInBits)) % WidthInBits;
+            }
+
+            this._lengthSoFar += cbSize;
+        }
+
+        protected override byte[] HashFinal()
+        {
+            // Create a byte array big enough to hold all our data
+            byte[] rgb = new byte[(WidthInBits - 1) / 8 + 1];
+
+            // Block copy all our bitvectors to this byte array
+            for (Int32 i = 0; i < this._data.Length - 1; i++)
+            {
+                Buffer.BlockCopy(
+                    BitConverter.GetBytes(this._data[i]), 0,
+                    rgb, i * 8,
+                    8);
+            }
+
+            Buffer.BlockCopy(
+                BitConverter.GetBytes(this._data[this._data.Length - 1]), 0,
+                rgb, (this._data.Length - 1) * 8,
+                rgb.Length - (this._data.Length - 1) * 8);
+
+            // XOR the file length with the least significant bits
+            // Note that GetBytes is architecture-dependent, so care should
+            // be taken with porting. The expected value is 8-bytes in length in little-endian format
+            var lengthBytes = BitConverter.GetBytes(this._lengthSoFar);
+            Debug.Assert(lengthBytes.Length == 8);
+            for (int i = 0; i < lengthBytes.Length; i++)
+            {
+                rgb[(WidthInBits / 8) - lengthBytes.Length + i] ^= lengthBytes[i];
+            }
+
+            return rgb;
+        }
+
+        public override sealed void Initialize()
+        {
+            this._data = new ulong[(WidthInBits - 1) / 64 + 1];
+            this._shiftSoFar = 0;
+            this._lengthSoFar = 0;
+        }
+
+        public override int HashSize
+        {
+            get => WidthInBits;
         }
     }
 }

@@ -14,6 +14,7 @@ namespace HashTool.Models
         private bool? sha256 = true;
         private bool? sha384 = false;
         private bool? sha512 = false;
+        private bool? quickXor = false;
 
         public static IReadOnlyList<string> ModeItem { get; } = new[]
         {
@@ -65,6 +66,11 @@ namespace HashTool.Models
         {
             get => sha512;
             set => SetProperty(ref sha512, value);
+        }
+        public bool? QuickXor
+        {
+            get => quickXor;
+            set => SetProperty(ref quickXor, value);
         }
     }
 }

@@ -46,18 +46,18 @@ namespace HashTool.Helpers
             return Helpers.DeepCopy<TIn, TOut>.Trans(obj);
         }
 
-        public static string GetFileSize(string fullName)
+        public static long GetFileSize(string fullName)
         {
             long size = 0;
             if (File.Exists(fullName))
             {
                 size = new FileInfo(fullName).Length;
             }
-            string fileSize = FileSizeFormatter(size);
-            return fileSize;
+            return size;
         }
 
         private static readonly string[] DataCapacityUnit = new string[] { "B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB" };
+
         public static string FileSizeFormatter(long size)
         {
             var index = (int)Math.Log(size, 1024.0);

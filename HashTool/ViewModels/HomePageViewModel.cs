@@ -28,14 +28,14 @@ namespace HashTool.ViewModels
 
             mainInput = new();
             var sAlgorithm = Properties.Settings.Default.SelectedHashAlgorithm;
-            mainInput.CheckBoxItems.Add(new CheckBoxModel("MD5",    sAlgorithm.Contains("MD5")));
-            mainInput.CheckBoxItems.Add(new CheckBoxModel("CRC32",  sAlgorithm.Contains("CRC32")));
-            mainInput.CheckBoxItems.Add(new CheckBoxModel("SHA1",   sAlgorithm.Contains("SHA1")));
+            mainInput.CheckBoxItems.Add(new CheckBoxModel("MD5", sAlgorithm.Contains("MD5")));
+            mainInput.CheckBoxItems.Add(new CheckBoxModel("CRC32", sAlgorithm.Contains("CRC32")));
+            mainInput.CheckBoxItems.Add(new CheckBoxModel("SHA1", sAlgorithm.Contains("SHA1")));
             mainInput.CheckBoxItems.Add(new CheckBoxModel("SHA256", sAlgorithm.Contains("SHA256")));
             mainInput.CheckBoxItems.Add(new CheckBoxModel("SHA384", sAlgorithm.Contains("SHA384")));
             mainInput.CheckBoxItems.Add(new CheckBoxModel("SHA512", sAlgorithm.Contains("SHA512")));
-            mainInput.CheckBoxItems.Add(new CheckBoxModel("QuickXor",   sAlgorithm.Contains("QuickXor")));
-            
+            mainInput.CheckBoxItems.Add(new CheckBoxModel("QuickXor", sAlgorithm.Contains("QuickXor")));
+
             #endregion
 
             progressBarSingle = new(minimum: 0, maximum: 1000);

@@ -19,11 +19,5 @@ namespace HashTool.Views
             HashResultViewModel hashResultViewModel = new(hashResultModels);
             DataContext = hashResultViewModel;
         }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            base.OnClosed(e);
-            DataContext = null;
-        }
     }
 }

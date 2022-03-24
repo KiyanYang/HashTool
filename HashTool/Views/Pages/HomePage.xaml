@@ -93,31 +93,28 @@
                     Width="84"
                     Margin="4,0,4,0" />
             </hc:SimplePanel>
-            <WrapPanel
-                Margin="0,4,0,4"
-                HorizontalAlignment="Center">
-                <CheckBox
-                    Content="MD5"
-                    IsChecked="{Binding MainInput.MD5, Mode=TwoWay}" />
-                <CheckBox
-                    Content="CRC32"
-                    IsChecked="{Binding MainInput.CRC32, Mode=TwoWay}" />
-                <CheckBox
-                    Content="SHA1"
-                    IsChecked="{Binding MainInput.SHA1, Mode=TwoWay}" />
-                <CheckBox
-                    Content="SHA256"
-                    IsChecked="{Binding MainInput.SHA256, Mode=TwoWay}" />
-                <CheckBox
-                    Content="SHA384"
-                    IsChecked="{Binding MainInput.SHA384, Mode=TwoWay}" />
-                <CheckBox
-                    Content="SHA512"
-                    IsChecked="{Binding MainInput.SHA512, Mode=TwoWay}" />
-                <CheckBox
-                    Content="QuickXor"
-                    IsChecked="{Binding MainInput.QuickXor, Mode=TwoWay}" />
-            </WrapPanel>
+
+            <ItemsControl
+                x:Name="checkBoxItems"
+                ItemsSource="{Binding MainInput.CheckBoxItems}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel
+                            Orientation="Horizontal"
+                            Margin="0,4,0,4"
+                            HorizontalAlignment="Center" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <CheckBox
+                            Content="{Binding Content}"
+                            IsChecked="{Binding IsChecked, Mode=TwoWay}"
+                            Command="{Binding DataContext.SetSelectedHashAlgorithmCommand, ElementName=checkBoxItems}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
             <hc:SimpleStackPanel
                 Margin="0,8,0,8"
                 HorizontalAlignment="Center">

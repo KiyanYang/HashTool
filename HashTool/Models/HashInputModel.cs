@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+using HashTool.Models.Controls;
+
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace HashTool.Models
@@ -8,13 +10,7 @@ namespace HashTool.Models
     {
         private string mode = string.Empty;
         private string input = string.Empty;
-        private bool? md5 = true;
-        private bool? crc32 = false;
-        private bool? sha1 = false;
-        private bool? sha256 = true;
-        private bool? sha384 = false;
-        private bool? sha512 = false;
-        private bool? quickXor = false;
+        private List<CheckBoxModel> checkBoxItems = new();
 
         public static IReadOnlyList<string> ModeItem { get; } = new[]
         {
@@ -37,40 +33,10 @@ namespace HashTool.Models
             get => input;
             set => SetProperty(ref input, value);
         }
-        public bool? MD5
+        public List<CheckBoxModel> CheckBoxItems
         {
-            get => md5;
-            set => SetProperty(ref md5, value);
-        }
-        public bool? CRC32
-        {
-            get => crc32;
-            set => SetProperty(ref crc32, value);
-        }
-        public bool? SHA1
-        {
-            get => sha1;
-            set => SetProperty(ref sha1, value);
-        }
-        public bool? SHA256
-        {
-            get => sha256;
-            set => SetProperty(ref sha256, value);
-        }
-        public bool? SHA384
-        {
-            get => sha384;
-            set => SetProperty(ref sha384, value);
-        }
-        public bool? SHA512
-        {
-            get => sha512;
-            set => SetProperty(ref sha512, value);
-        }
-        public bool? QuickXor
-        {
-            get => quickXor;
-            set => SetProperty(ref quickXor, value);
+            get => checkBoxItems;
+            set => SetProperty(ref checkBoxItems, value);
         }
     }
 }

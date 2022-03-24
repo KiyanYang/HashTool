@@ -126,7 +126,7 @@ namespace HashTool.ViewModels
         {
             try
             {
-                string latestVersionUrl = $"https://cdn.jsdelivr.net/gh/KiyanYang/HashTool@main/LatestVersion.xml";
+                string latestVersionUrl = Properties.Settings.Default.LatestVersionUrl;
                 var result = await httpClient.GetAsync(latestVersionUrl);
                 using var reader = result.Content.ReadAsStream();
 

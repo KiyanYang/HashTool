@@ -43,13 +43,18 @@ namespace HashTool.Helpers
         {
             hashAlgorithmDict.Clear();
 
-            if (mainInput.MD5 == true) hashAlgorithmDict.Add("MD5", md5);
-            if (mainInput.CRC32 == true) hashAlgorithmDict.Add("CRC32", crc32);
-            if (mainInput.SHA1 == true) hashAlgorithmDict.Add("SHA1", sha1);
-            if (mainInput.SHA256 == true) hashAlgorithmDict.Add("SHA256", sha256);
-            if (mainInput.SHA384 == true) hashAlgorithmDict.Add("SHA384", sha384);
-            if (mainInput.SHA512 == true) hashAlgorithmDict.Add("SHA512", sha512);
-            if (mainInput.QuickXor == true) hashAlgorithmDict.Add("QuickXor", quickXor);
+            foreach (var i in mainInput.CheckBoxItems)
+            {
+                if (i.IsChecked != true)
+                    continue;
+                if (i.Content == "MD5") hashAlgorithmDict.Add("MD5", md5);
+                if (i.Content == "CRC32") hashAlgorithmDict.Add("CRC32", crc32);
+                if (i.Content == "SHA1") hashAlgorithmDict.Add("SHA1", sha1);
+                if (i.Content == "SHA256") hashAlgorithmDict.Add("SHA256", sha256);
+                if (i.Content == "SHA384") hashAlgorithmDict.Add("SHA384", sha384);
+                if (i.Content == "SHA512") hashAlgorithmDict.Add("SHA512", sha512);
+                if (i.Content == "QuickXor") hashAlgorithmDict.Add("QuickXor", quickXor);
+            }
         }
         private static HashResultItemModel BuildHashResultItem(string name, byte[] data)
         {
@@ -103,7 +108,6 @@ namespace HashTool.Helpers
 
             using FileStream fileStream = fileInfo.Open(FileMode.Open, FileAccess.Read, FileShare.Read);
             fileStream.Position = 0;
-            SetHashAlgorithmDict(mainInput);
             HashResultModel hashResult = new();
             hashResult.InputMode = mainInput.Mode;
             hashResult.Mode = "文件";
@@ -179,11 +183,13 @@ namespace HashTool.Helpers
 
         public static HashResultModel HashFile(ManualResetEvent resetEvent, BackgroundWorker worker, DoWorkEventArgs e, HashInputModel mainInput, double maximum)
         {
+            SetHashAlgorithmDict(mainInput);
             return HashStream(resetEvent, worker, e, new FileInfo(mainInput.Input), mainInput, maximum, 0);
         }
 
         public static List<HashResultModel> HashFolder(ManualResetEvent resetEvent, BackgroundWorker worker, DoWorkEventArgs e, HashInputModel mainInput, double maximum)
         {
+            SetHashAlgorithmDict(mainInput);
             FileInfo[] fileInfos = new DirectoryInfo(mainInput.Input).GetFiles();
             List<HashResultModel> hashResults = new();
             for (int i = 0; i < fileInfos.Length; i++)
@@ -393,7 +399,7 @@ namespace HashTool.Helpers
         }
     }
 
-    internal class QuickXor : System.Security.Cryptography.HashAlgorithm
+    internal class QuickXor : HashAlgorithm
     {
         private const int BitsInLastCell = 32;
         private const byte Shift = 11;

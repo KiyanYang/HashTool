@@ -23,7 +23,21 @@ namespace HashTool.ViewModels
             buttonStart = new("开始");
             buttonReset = new("暂停", false);
             buttonCancel = new("取消", false);
+
+            #region 初始化界面输入
+
             mainInput = new();
+            var sAlgorithm = Properties.Settings.Default.SelectedHashAlgorithm;
+            mainInput.CheckBoxItems.Add(new CheckBoxModel("MD5",    sAlgorithm.Contains("MD5")));
+            mainInput.CheckBoxItems.Add(new CheckBoxModel("CRC32",  sAlgorithm.Contains("CRC32")));
+            mainInput.CheckBoxItems.Add(new CheckBoxModel("SHA1",   sAlgorithm.Contains("SHA1")));
+            mainInput.CheckBoxItems.Add(new CheckBoxModel("SHA256", sAlgorithm.Contains("SHA256")));
+            mainInput.CheckBoxItems.Add(new CheckBoxModel("SHA384", sAlgorithm.Contains("SHA384")));
+            mainInput.CheckBoxItems.Add(new CheckBoxModel("SHA512", sAlgorithm.Contains("SHA512")));
+            mainInput.CheckBoxItems.Add(new CheckBoxModel("QuickXor",   sAlgorithm.Contains("QuickXor")));
+            
+            #endregion
+
             progressBarSingle = new(minimum: 0, maximum: 1000);
             progressBarMulti = new(minimum: 0, maximum: 1);
             taskbarProgress = new(minimum: 0, maximum: 1);
@@ -38,6 +52,7 @@ namespace HashTool.ViewModels
             StartCommand = new RelayCommand(Start);
             ResetCommand = new RelayCommand(Reset);
             CancelCommand = new RelayCommand(Cancel);
+            SetSelectedHashAlgorithmCommand = new RelayCommand(SetSelectedHashAlgorithm);
 
             InitializeBackgroundWorker();
         }
@@ -112,6 +127,7 @@ namespace HashTool.ViewModels
         public ICommand StartCommand { get; }
         public ICommand ResetCommand { get; }
         public ICommand CancelCommand { get; }
+        public ICommand SetSelectedHashAlgorithmCommand { get; }
 
         #endregion
 
@@ -167,7 +183,7 @@ namespace HashTool.ViewModels
             {
                 resetEvent = new(true);
                 hashResults.Clear();
-                bgWorker.RunWorkerAsync(CommonHelper.DeepCopy(mainInput));
+                bgWorker.RunWorkerAsync(CommonHelper.DeepCopy(MainInput));
                 ButtonStart.IsEnabled = false;
                 ButtonReset.IsEnabled = true;
                 ButtonCancel.IsEnabled = true;
@@ -198,6 +214,17 @@ namespace HashTool.ViewModels
                 bgWorker.CancelAsync();
                 ButtonReset.Content = "暂停";
             }
+        }
+        private void SetSelectedHashAlgorithm()
+        {
+            var sAlgorithm = Properties.Settings.Default.SelectedHashAlgorithm;
+            sAlgorithm.Clear();
+            foreach (var i in MainInput.CheckBoxItems)
+            {
+                if (i.IsChecked == true)
+                    sAlgorithm.Add(i.Content);
+            }
+            Properties.Settings.Default.Save();
         }
 
         private void InitializeBackgroundWorker()

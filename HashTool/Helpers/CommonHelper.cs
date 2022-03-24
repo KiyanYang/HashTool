@@ -57,27 +57,12 @@ namespace HashTool.Helpers
             return fileSize;
         }
 
-        private static readonly (double Max, double Min, string Unit)[] fileSizeFormatter =
-        {
-            (Math.Pow(2.0, 10.0), Math.Pow(2.0, 0.0), "B"),
-            (Math.Pow(2.0, 20.0), Math.Pow(2.0, 10.0), "KB"),
-            (Math.Pow(2.0, 30.0), Math.Pow(2.0, 20.0), "MB"),
-            (Math.Pow(2.0, 40.0), Math.Pow(2.0, 30.0), "GB"),
-            (Math.Pow(2.0, 50.0), Math.Pow(2.0, 40.0), "TB"),
-            (Math.Pow(2.0, 60.0), Math.Pow(2.0, 50.0), "PB"),
-            (Math.Pow(2.0, 70.0), Math.Pow(2.0, 60.0), "EB"),
-        };
-
+        private static readonly string[] DataCapacityUnit = new string[] { "B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB" };
         public static string FileSizeFormatter(long size)
         {
-            foreach (var i in fileSizeFormatter)
-            {
-                if (size < i.Max)
-                {
-                    return $"{(size / i.Min):N2} {i.Unit}";
-                }
-            }
-            return $"{(size / fileSizeFormatter[^1].Min):N2} EB";
+            var index = (int)Math.Log(size, 1024.0);
+            var newSize = size / Math.Pow(1024.0, index);
+            return $"{newSize:F2} {DataCapacityUnit[index]}";
         }
     }
 }

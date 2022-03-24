@@ -35,7 +35,7 @@ function Start-SleepWithExit {
 if (!$Force) {
     $canUpdate = Read-Host "是否继续更新任务 [输入 Yes(Y) 继续，输入其他内容则退出]"
     if ($canUpdate -ne "Y" -and $canUpdate -ne "Yes") {
-        Start-SleepWithExit 3 "任务已终止"
+        Start-SleepWithExit 3 "任务已终止！"
     }
 }
 
@@ -55,7 +55,7 @@ if ($fileHash.Hash -eq $SHA256) {
 }
 else {
     Write-WithDate "哈希校验失败，SHA256 校验值不相等。"
-    Start-SleepWithExit 3 "任务未完成"
+    Start-SleepWithExit 3 "任务未完成！"
 }
 
 # 解压更新
@@ -69,4 +69,4 @@ Remove-Item -Path $path
 Write-WithDate "删除成功。"
 
 # 完成并退出
-Start-SleepWithExit 3 "任务已完成"
+Start-SleepWithExit 3 "任务已完成！"

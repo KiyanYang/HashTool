@@ -18,9 +18,9 @@ namespace HashTool.ViewModels
         {
             #region 初始化 HashResults
             this.hashResult = hashResults[0];
-            this.hashAllResults = hashResults;
+            this.hashAllResults = new(hashResults);
             this.hashResultItems = new();
-            foreach (var i in hashAllResults)
+            foreach (var i in hashResults)
             {
                 this.hashResultItems.Add(i);
             }

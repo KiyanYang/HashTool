@@ -57,8 +57,6 @@ namespace HashTool.ViewModels
         private List<HashResultModel> hashResults;
         private List<HashResultModel> hashResultHistory;
 
-        private HashResultWindow? hashResultWindow;
-
         #endregion
 
         #region Public Properties/Commands
@@ -123,7 +121,7 @@ namespace HashTool.ViewModels
         {
             if (results != null && results.Count > 0)
             {
-                hashResultWindow = new(results);
+                HashResultWindow hashResultWindow = new(results);
                 hashResultWindow.Show();
             }
             else

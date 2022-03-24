@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -15,29 +16,45 @@ namespace HashTool.ViewModels
     {
         public HashResultViewModel(List<HashResultModel> hashResults)
         {
-            hashResult = hashResults[0];
-            this.hashResults = hashResults;
-            if (hashResults.Count > 1)
+            #region 初始化 HashResults
+            this.hashResult = hashResults[0];
+            this.hashAllResults = hashResults;
+            this.hashResultItems = new();
+            foreach (var i in hashAllResults)
             {
-                hashResultListPageColWidth = "*";
-                hashResultListPageVisibility = Visibility.Visible;
+                this.hashResultItems.Add(i);
+            }
+            #endregion
+
+            #region 初始化 ListBox 参数
+            if (hashAllResults.Count > 1)
+            {
+                hashResultListBoxColWidth = "*";
+                hashResultListBoxVisibility = Visibility.Visible;
             }
             else
             {
-                hashResultListPageColWidth = "Auto";
-                hashResultListPageVisibility = Visibility.Collapsed;
+                hashResultListBoxColWidth = "Auto";
+                hashResultListBoxVisibility = Visibility.Collapsed;
             }
+            #endregion
+
+            #region 初始化 Command
             ShowSelectedCommand = new RelayCommand<int>(ShowSelected);
+            ChangeCaseCommand = new RelayCommand(ChangeCase);
             ViewInExplorerCommand = new RelayCommand<string>(ViewInExplorer);
             CopyToClipboardCommand = new RelayCommand<string>(CopyToClipboard);
+            #endregion
         }
 
         #region Fields
 
         private HashResultModel hashResult;
-        private List<HashResultModel> hashResults;
-        private string? hashResultListPageColWidth;
-        private Visibility hashResultListPageVisibility;
+        private ObservableCollection<HashResultModel> hashResultItems;
+        private List<HashResultModel> hashAllResults;
+        private string? hashResultListBoxColWidth;
+        private Visibility hashResultListBoxVisibility;
+        private bool? isLowercase = false;
 
         #endregion
 
@@ -48,22 +65,28 @@ namespace HashTool.ViewModels
             get => hashResult;
             set => SetProperty(ref hashResult, value);
         }
-        public List<HashResultModel> HashResults
+        public ObservableCollection<HashResultModel> HashResultItems
         {
-            get => hashResults;
-            set => SetProperty(ref hashResults, value);
+            get => hashResultItems;
+            set => SetProperty(ref hashResultItems, value);
         }
-        public string? HashResultListPageColWidth
+        public string? HashResultListBoxColWidth
         {
-            get => hashResultListPageColWidth;
-            set => SetProperty(ref hashResultListPageColWidth, value);
+            get => hashResultListBoxColWidth;
+            set => SetProperty(ref hashResultListBoxColWidth, value);
         }
-        public Visibility HashResultListPageVisibility
+        public Visibility HashResultListBoxVisibility
         {
-            get => hashResultListPageVisibility;
-            set => SetProperty(ref hashResultListPageVisibility, value);
+            get => hashResultListBoxVisibility;
+            set => SetProperty(ref hashResultListBoxVisibility, value);
+        }
+        public bool? IsLowercase
+        {
+            get => isLowercase;
+            set => SetProperty(ref isLowercase, value);
         }
         public ICommand ShowSelectedCommand { get; }
+        public ICommand ChangeCaseCommand { get; }
         public ICommand ViewInExplorerCommand { get; }
         public ICommand CopyToClipboardCommand { get; }
 
@@ -74,7 +97,24 @@ namespace HashTool.ViewModels
         private void ShowSelected(int index)
         {
             if (index >= 0)
-                HashResult = HashResults[index];
+            {
+                HashResult = hashAllResults[index];
+                ChangeCase();
+            }
+        }
+
+        private void ChangeCase()
+        {
+            if (IsLowercase == true)
+                foreach (var i in HashResult.Items)
+                {
+                    i.Value = i.Value.ToLower();
+                }
+            else
+                foreach (var i in HashResult.Items)
+                {
+                    i.Value = i.Value.ToUpper();
+                }
         }
 
         private void ViewInExplorer(string? path)

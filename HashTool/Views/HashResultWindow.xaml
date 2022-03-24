@@ -9,8 +9,8 @@
     x:Class="HashTool.Views.HashResultWindow"
     mc:Ignorable="d"
     Title="Hash 结果"
-    Height="320"
-    Width="600">
+    Height="400"
+    Width="800">
 
     <Window.Resources>
         <converter:HashResultItemConverter x:Key="HashResultItemConverter" />
@@ -18,6 +18,7 @@
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="32" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -28,62 +29,57 @@
                 MinWidth="240" />
         </Grid.ColumnDefinitions>
 
-        <Border
+        <ListBox
+            x:Name="lboxHashResultItems"
             Grid.Row="0"
             Grid.Column="0"
-            Visibility="{Binding HashResultListPageVisibility}"
+            Grid.RowSpan="2"
             Margin="4,4,4,4"
-            ClipToBounds="True"
-            Style="{StaticResource BorderClip}">
-            <ListView
-                x:Name="listView"
-                ItemsSource="{Binding HashResults}">
-                <hc:Interaction.Triggers>
-                    <hc:EventTrigger EventName="SelectionChanged">
-                        <hc:EventToCommand
-                            Command="{Binding ShowSelectedCommand}"
-                            CommandParameter="{Binding SelectedIndex, ElementName=listView}" />
-                    </hc:EventTrigger>
-                </hc:Interaction.Triggers>
-                <ListView.Resources>
-                    <Style TargetType="{x:Type GridViewColumnHeader}">
-                        <Setter
-                            Property="Visibility"
-                            Value="Collapsed" />
-                    </Style>
-                </ListView.Resources>
-                <ListView.BorderBrush>
-                    <SolidColorBrush Color="{DynamicResource BackgroundColor}" />
-                </ListView.BorderBrush>
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn>
-                            <GridViewColumn.DisplayMemberBinding>
-                                <converter:BindableBinding
-                                    Path="Content"
-                                    Converter="{StaticResource HashResultItemConverter}"
-                                    ConverterParameterBinding="{Binding Path=Mode}" />
-                            </GridViewColumn.DisplayMemberBinding>
-                        </GridViewColumn>
-                    </GridView>
-                </ListView.View>
-            </ListView>
-        </Border>
+            Visibility="{Binding HashResultListPageVisibility}"
+            ItemsSource="{Binding HashResultItems}"
+            DisplayMemberPath="Content"
+            Background="Transparent"
+            BorderBrush="Transparent"
+            ScrollViewer.HorizontalScrollBarVisibility="Auto"
+            ScrollViewer.CanContentScroll="True"
+            VirtualizingPanel.IsVirtualizing="True"
+            VirtualizingPanel.ScrollUnit="Item"
+            VirtualizingPanel.VirtualizationMode="Recycling">
+            <hc:Interaction.Triggers>
+                <hc:EventTrigger EventName="SelectionChanged">
+                    <hc:EventToCommand
+                        Command="{Binding ShowSelectedCommand}"
+                        CommandParameter="{Binding SelectedIndex, ElementName=lboxHashResultItems}" />
+                </hc:EventTrigger>
+            </hc:Interaction.Triggers>
+        </ListBox>
 
         <GridSplitter
             Grid.Row="0"
             Grid.Column="1"
+            Grid.RowSpan="2"
             Visibility="{Binding HashResultListPageVisibility}"
-            Margin="-3,8,-3,8"
-            Width="2"
+            Margin="2,16,2,16"
+            Width="4"
             HorizontalAlignment="Center"
             ShowsPreview="False" />
 
-        <ScrollViewer
+        <hc:SimpleStackPanel
             Grid.Row="0"
             Grid.Column="2"
-            Margin="4">
-            <hc:SimpleStackPanel Margin="4,8,8,8">
+            Margin="16,0,16,0"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
+            <CheckBox
+                Content="结果小写"
+                IsChecked="{Binding IsLowercase, Mode=TwoWay}"
+                Command="{Binding ChangeCaseCommand}" />
+        </hc:SimpleStackPanel>
+
+        <ScrollViewer
+            Grid.Row="1"
+            Grid.Column="2">
+            <hc:SimpleStackPanel Margin="4,0,8,8">
                 <hc:SimpleStackPanel.Resources>
                     <Style TargetType="{x:Type hc:SimplePanel}">
                         <Setter
@@ -141,15 +137,12 @@
                     <hc:SimpleText Text="计算用时" />
                     <TextBox Text="{Binding HashResult.ComputeCost}" />
                 </hc:SimplePanel>
-
                 <ItemsControl
                     x:Name="itemsHashResult"
                     ItemsSource="{Binding HashResult.Items}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <hc:SimplePanel
-                                Margin="0,4,0,4"
-                                Visibility="{Binding Name, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
+                            <hc:SimplePanel Margin="0,4,0,4">
                                 <hc:SimpleText
                                     Text="{Binding Name}"
                                     Width="76"
@@ -170,7 +163,6 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-
             </hc:SimpleStackPanel>
         </ScrollViewer>
 

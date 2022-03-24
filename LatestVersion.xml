@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LatestVersion>
-    <Tag>v1.2.1</Tag>
-    <Version>1.2.1.0</Version>
-    <SHA256_7z>ACF7798D1E688CD7A1E141428CC0F90B24723BC8017614445B379AFC9D4B918E</SHA256_7z>
-    <SHA256_zip>8056CAB36A6D6685DCDB6E81554185802AD90CB22D0161C937AF44132123AEB0</SHA256_zip>
-    <GiteeDownloadUrl>https://gitee.com/KiyanYang/HashTool/attach_files/932231/download/HashTool_v1.2.1.zip</GiteeDownloadUrl>
-    <GithubDownloadUrl>https://github.com/KiyanYang/HashTool/releases/download/v1.2.1/HashTool_v1.2.1.zip</GithubDownloadUrl>
+<LatestVersion version="1.0">
+    <Tag>v1.2.2</Tag>
+    <Version>1.2.2.0</Version>
+    <SHA256_7z>67621329F08DAFF0E8DA1894256B8140D2EF45B9D888E29BFFE8CB7254850422</SHA256_7z>
+    <SHA256_zip>07554084BA3BEF9CFDCD9DE3858BDD9526912BEB5831DD794855ED796B0776C5</SHA256_zip>
+    <GiteeDownloadUrl>https://gitee.com/KiyanYang/HashTool/attach_files/1005677/download/HashTool_v1.2.2.zip</GiteeDownloadUrl>
+    <GithubDownloadUrl>https://github.com/KiyanYang/HashTool/releases/download/v1.2.2/HashTool_v1.2.2.zip</GithubDownloadUrl>
 </LatestVersion>

@@ -21,7 +21,7 @@ namespace HashTool.Helpers
         private static readonly HashAlgorithm sha384 = SHA384.Create();
         private static readonly HashAlgorithm sha512 = SHA512.Create();
         private static readonly HashAlgorithm quickXor = new QuickXor();
-        private static Dictionary<string, HashAlgorithm> hashAlgorithmDict = new();
+        private static readonly Dictionary<string, HashAlgorithm> hashAlgorithmDict = new();
 
         private static string HashFormatHex(byte[] data)
         {
@@ -39,34 +39,35 @@ namespace HashTool.Helpers
             return Convert.ToBase64String(data);
         }
 
-        private static void SetHashAlgorithmDict(HashInputModel mainInput)
+        private static void SetHashAlgorithmDict(HashInputModel hashInput)
         {
             hashAlgorithmDict.Clear();
-
-            foreach (var i in mainInput.CheckBoxItems)
+            HashAlgorithm algorithm;
+            foreach (var i in hashInput.CheckBoxItems)
             {
                 if (i.IsChecked != true)
                     continue;
-                if (i.Content == "MD5") hashAlgorithmDict.Add("MD5", md5);
-                if (i.Content == "CRC32") hashAlgorithmDict.Add("CRC32", crc32);
-                if (i.Content == "SHA1") hashAlgorithmDict.Add("SHA1", sha1);
-                if (i.Content == "SHA256") hashAlgorithmDict.Add("SHA256", sha256);
-                if (i.Content == "SHA384") hashAlgorithmDict.Add("SHA384", sha384);
-                if (i.Content == "SHA512") hashAlgorithmDict.Add("SHA512", sha512);
-                if (i.Content == "QuickXor") hashAlgorithmDict.Add("QuickXor", quickXor);
+                algorithm = i.Content switch
+                {
+                    "MD5" => md5,
+                    "CRC32" => crc32,
+                    "SHA1" => sha1,
+                    "SHA256" => sha256,
+                    "SHA384" => sha384,
+                    "SHA512" => sha512,
+                    "QuickXor" => quickXor,
+                    _ => throw new ArgumentOutOfRangeException(),
+                };
+                hashAlgorithmDict.Add(i.Content, algorithm);
             }
         }
         private static HashResultItemModel BuildHashResultItem(string name, byte[] data)
         {
-            string hash;
-            if (name == "QuickXor")
+            string hash = name switch
             {
-                hash = HashFormatBase64(data);
-            }
-            else
-            {
-                hash = HashFormatHex(data);
-            }
+                "QuickXor" => HashFormatBase64(data),
+                _ => HashFormatHex(data),
+            };
             return new HashResultItemModel(name, hash);
         }
 
@@ -82,7 +83,7 @@ namespace HashTool.Helpers
             SetHashAlgorithmDict(hashInput);
             HashResultModel hashResult = new();
             hashResult.InputMode = hashInput.Mode;
-            hashResult.Mode = "文本";
+            hashResult.Mode = "字符串_UTF-8";
             hashResult.Content = hashInput.Input;
             hashResult.ComputeTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
 
@@ -110,7 +111,7 @@ namespace HashTool.Helpers
             fileStream.Position = 0;
             HashResultModel hashResult = new();
             hashResult.InputMode = mainInput.Mode;
-            hashResult.Mode = "文件";
+            hashResult.Mode = "文件流";
             hashResult.Content = fileInfo.FullName;
             hashResult.FileSize = CommonHelper.FileSizeFormatter(fileInfo.Length);
             hashResult.LastWriteTime = fileInfo.LastWriteTime.ToString("yyyy/MM/dd HH:mm:ss");
@@ -141,7 +142,7 @@ namespace HashTool.Helpers
                 worker.ReportProgress((int)(maximum * ((double)fileStream.Position / fileStream.Length + offset)));
             });
             // 定义动作，先屏障同步并完成读取文件、报告进度等操作，再并行计算
-            Action<HashAlgorithm> action = (hashAlgorithm) =>
+            Action<HashAlgorithm> action = hashAlgorithm =>
             {
                 while (readLength > 0)
                 {
@@ -153,7 +154,6 @@ namespace HashTool.Helpers
                     }
                     barrier.SignalAndWait();
                     hashAlgorithm.TransformBlock(buffer, 0, readLength, null, 0);
-
                 }
             };
             // 开启并行动作
@@ -170,7 +170,8 @@ namespace HashTool.Helpers
                     var hashValue = kvp.Value.Hash;
                     if (hashValue != null)
                     {
-                        hashResult.Items.Add(BuildHashResultItem(kvp.Key, hashValue));
+                        var s = BuildHashResultItem(kvp.Key, hashValue);
+                        hashResult.Items.Add(s);
                     }
                 }
                 stopWatch.Stop();
@@ -194,6 +195,12 @@ namespace HashTool.Helpers
             List<HashResultModel> hashResults = new();
             for (int i = 0; i < fileInfos.Length; i++)
             {
+                // 判断任务是否取消，若取消则不继续进行后续文件的计算
+                if (worker.CancellationPending == true)
+                {
+                    e.Cancel = true;
+                    break;
+                }
                 hashResults.Add(HashStream(resetEvent, worker, e, fileInfos[i], mainInput, maximum, i));
             }
             return hashResults;

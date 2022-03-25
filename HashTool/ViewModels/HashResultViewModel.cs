@@ -41,7 +41,6 @@ namespace HashTool.ViewModels
 
             #region 初始化 Command
             ShowSelectedCommand = new RelayCommand<int>(ShowSelected);
-            ChangeCaseCommand = new RelayCommand(ChangeCase);
             ViewInExplorerCommand = new RelayCommand<string>(ViewInExplorer);
             CopyToClipboardCommand = new RelayCommand<string>(CopyToClipboard);
             #endregion
@@ -54,7 +53,7 @@ namespace HashTool.ViewModels
         private List<HashResultModel> hashAllResults;
         private string? hashResultListBoxColWidth;
         private Visibility hashResultListBoxVisibility;
-        private bool? isLowercase = false;
+        private bool isLowerCase = Properties.Settings.Default.IsLowerCase;
 
         #endregion
 
@@ -80,13 +79,26 @@ namespace HashTool.ViewModels
             get => hashResultListBoxVisibility;
             set => SetProperty(ref hashResultListBoxVisibility, value);
         }
-        public bool? IsLowercase
+        public bool IsLowerCase
         {
-            get => isLowercase;
-            set => SetProperty(ref isLowercase, value);
+            get => isLowerCase;
+            set
+            {
+                SetProperty(ref isLowerCase, value);
+                Properties.Settings.Default.IsLowerCase = value;
+                Properties.Settings.Default.Save();
+
+                // 刷新界面内容
+                string str;
+                foreach (var i in HashResult.Items)
+                {
+                    str = i.Value;
+                    i.Value = string.Empty;
+                    i.Value = str;
+                }
+            }
         }
         public ICommand ShowSelectedCommand { get; }
-        public ICommand ChangeCaseCommand { get; }
         public ICommand ViewInExplorerCommand { get; }
         public ICommand CopyToClipboardCommand { get; }
 
@@ -99,22 +111,7 @@ namespace HashTool.ViewModels
             if (index >= 0)
             {
                 HashResult = hashAllResults[index];
-                ChangeCase();
             }
-        }
-
-        private void ChangeCase()
-        {
-            if (IsLowercase == true)
-                foreach (var i in HashResult.Items)
-                {
-                    i.Value = i.Value.ToLower();
-                }
-            else
-                foreach (var i in HashResult.Items)
-                {
-                    i.Value = i.Value.ToUpper();
-                }
         }
 
         private void ViewInExplorer(string? path)

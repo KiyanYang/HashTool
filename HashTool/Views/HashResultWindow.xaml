@@ -5,7 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:HashTool.Views"
     xmlns:hc="https://handyorg.github.io/handycontrol"
-    xmlns:converter="clr-namespace:HashTool.Converters"
+    xmlns:converters="clr-namespace:HashTool.Converters"
     x:Class="HashTool.Views.HashResultWindow"
     mc:Ignorable="d"
     Title="Hash 结果"
@@ -13,7 +13,7 @@
     Width="800">
 
     <Window.Resources>
-        <converter:HashResultItemConverter x:Key="HashResultItemConverter" />
+        <converters:LowerCaseConverter x:Key="LowerCaseConverter" />
     </Window.Resources>
 
     <Grid>
@@ -72,8 +72,7 @@
             Orientation="Horizontal">
             <CheckBox
                 Content="结果小写"
-                IsChecked="{Binding IsLowercase, Mode=TwoWay}"
-                Command="{Binding ChangeCaseCommand}" />
+                IsChecked="{Binding IsLowerCase, Mode=TwoWay}" />
         </hc:SimpleStackPanel>
 
         <ScrollViewer
@@ -150,15 +149,22 @@
                                     VerticalAlignment="Center"
                                     TextAlignment="Center" />
                                 <TextBox
-                                    Text="{Binding Value}"
-                                    Margin="80,0,52,0" />
+                                    x:Name="hashResultText"
+                                    Margin="80,0,52,0">
+                                    <TextBox.Text>
+                                        <converters:BindableBinding
+                                            Path="Value"
+                                            Converter="{StaticResource LowerCaseConverter}"
+                                            ConverterParameterBinding="{Binding Name}" />
+                                    </TextBox.Text>
+                                </TextBox>
                                 <Button
                                     Content="复制"
                                     Width="44"
                                     HorizontalAlignment="Right"
                                     Style="{StaticResource ButtonPrimary}"
                                     Command="{Binding DataContext.CopyToClipboardCommand, ElementName=itemsHashResult}"
-                                    CommandParameter="{Binding Value}" />
+                                    CommandParameter="{Binding Text, ElementName=hashResultText}" />
                             </hc:SimplePanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

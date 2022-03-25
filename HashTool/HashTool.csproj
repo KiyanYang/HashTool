@@ -9,6 +9,7 @@
         <ApplicationIcon>Resource\HashTool.ico</ApplicationIcon>
         <AssemblyVersion>1.2.2.0</AssemblyVersion>
         <FileVersion>1.2.2.0</FileVersion>
+        <Configurations>Debug;Release</Configurations>
     </PropertyGroup>
     <ItemGroup>
         <Compile Remove="MainWindow.xaml.cs" />

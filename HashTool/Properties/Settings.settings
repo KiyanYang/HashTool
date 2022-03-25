@@ -12,5 +12,8 @@
     <Setting Name="LatestVersionUrl" Type="(Web Service URL)" Scope="Application">
       <Value Profile="(Default)">https://gitee.com/KiyanYang/HashTool/raw/main/LatestVersion.xml</Value>
     </Setting>
+    <Setting Name="IsLowerCase" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

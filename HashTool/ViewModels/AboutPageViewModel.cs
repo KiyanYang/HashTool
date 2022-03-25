@@ -145,12 +145,7 @@ namespace HashTool.ViewModels
         {
             Assembly assem = Assembly.GetExecutingAssembly();
             AssemblyName assemName = assem.GetName();
-            var ver = assemName.Version;
-            if (ver != null)
-            {
-                return ver;
-            }
-            return new Version();
+            return assemName.Version ?? new Version();
         }
 
         private void OpenUpdater()

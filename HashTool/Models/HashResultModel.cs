@@ -57,12 +57,7 @@ namespace HashTool.Models
         }
         public List<HashResultItemModel> Items
         {
-            get
-            {
-                if (items == null)
-                    items = new();
-                return items;
-            }
+            get => items ??= new();
             set => SetProperty(ref items, value);
         }
     }
@@ -88,7 +83,5 @@ namespace HashTool.Models
             get => value;
             set => SetProperty(ref this.value, value);
         }
-
-        
     }
 }

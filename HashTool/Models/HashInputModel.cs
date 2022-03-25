@@ -8,9 +8,9 @@ namespace HashTool.Models
 {
     public class HashInputModel : ObservableObject
     {
-        private string mode = string.Empty;
+        private string? mode;
         private string input = string.Empty;
-        private List<CheckBoxModel> checkBoxItems = new();
+        private List<CheckBoxModel>? checkBoxItems;
 
         public static IReadOnlyList<string> ModeItem { get; } = new[]
         {
@@ -20,12 +20,7 @@ namespace HashTool.Models
         };
         public string Mode
         {
-            get
-            {
-                if (mode == string.Empty)
-                    mode = ModeItem[0];
-                return mode;
-            }
+            get => mode ??= ModeItem[0];
             set => SetProperty(ref mode, value);
         }
         public string Input
@@ -35,7 +30,7 @@ namespace HashTool.Models
         }
         public List<CheckBoxModel> CheckBoxItems
         {
-            get => checkBoxItems;
+            get => checkBoxItems ??= new();
             set => SetProperty(ref checkBoxItems, value);
         }
     }

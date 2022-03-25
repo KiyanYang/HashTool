@@ -22,86 +22,44 @@ namespace HashTool.Converters
 
         public PropertyPath Path
         {
-            get
-            {
-                return binding.Path;
-            }
-            set
-            {
-                binding.Path = value;
-            }
+            get => binding.Path;
+            set => binding.Path = value;
         }
 
         public object Source
         {
-            get
-            {
-                return binding.Source;
-            }
-            set
-            {
-                binding.Source = value;
-            }
+            get => binding.Source;
+            set => binding.Source = value;
         }
 
         public RelativeSource RelativeSource
         {
-            get
-            {
-                return binding.RelativeSource;
-            }
-            set
-            {
-                binding.RelativeSource = value;
-            }
+            get => binding.RelativeSource;
+            set => binding.RelativeSource = value;
         }
 
         public string ElementName
         {
-            get
-            {
-                return binding.ElementName;
-            }
-            set
-            {
-                binding.ElementName = value;
-            }
+            get => binding.ElementName;
+            set => binding.ElementName = value;
         }
 
         public string XPath
         {
-            get
-            {
-                return binding.XPath;
-            }
-            set
-            {
-                binding.XPath = value;
-            }
+            get => binding.XPath;
+            set => binding.XPath = value;
         }
 
         public BindingMode Mode
         {
-            get
-            {
-                return binding.Mode;
-            }
-            set
-            {
-                binding.Mode = value;
-            }
+            get => binding.Mode;
+            set => binding.Mode = value;
         }
 
         public CultureInfo ConverterCulture
         {
-            get
-            {
-                return binding.ConverterCulture;
-            }
-            set
-            {
-                binding.ConverterCulture = value;
-            }
+            get => binding.ConverterCulture;
+            set => binding.ConverterCulture = value;
         }
 
         public object? ConverterParameter
@@ -114,14 +72,8 @@ namespace HashTool.Converters
 
         public Binding? ConverterParameterBinding
         {
-            get
-            {
-                return _converterParameterBinding;
-            }
-            set
-            {
-                _converterParameterBinding = value;
-            }
+            get => _converterParameterBinding;
+            set => _converterParameterBinding = value;
         }
 
         public IValueConverter? Converter
@@ -134,14 +86,8 @@ namespace HashTool.Converters
 
         public Binding? ConverterBinding
         {
-            get
-            {
-                return _converterBinding;
-            }
-            set
-            {
-                _converterBinding = value;
-            }
+            get => _converterBinding;
+            set => _converterBinding = value;
         }
 
         public string? StringFormat
@@ -154,14 +100,8 @@ namespace HashTool.Converters
 
         public Binding? StringFormatBinding
         {
-            get
-            {
-                return _stringFormatBinding;
-            }
-            set
-            {
-                _stringFormatBinding = value;
-            }
+            get => _stringFormatBinding;
+            set => _stringFormatBinding = value;
         }
 
 

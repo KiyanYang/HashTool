@@ -56,7 +56,7 @@ namespace HashTool.Helpers
             return size;
         }
 
-        private static readonly string[] DataCapacityUnit = new string[] { "B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB" };
+        private static readonly string[] DataCapacityUnit = new[] { "B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB" };
 
         public static string FileSizeFormatter(long size)
         {

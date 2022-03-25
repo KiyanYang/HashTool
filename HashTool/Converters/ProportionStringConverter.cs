@@ -8,14 +8,7 @@ namespace HashTool.Converters
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (values.Length == 2)
-            {
-                return $"{values[0]} / {values[1]}";
-            }
-            else
-            {
-                return string.Empty;
-            }
+            return (values.Length == 2) ? $"{values[0]} / {values[1]}" : string.Empty;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

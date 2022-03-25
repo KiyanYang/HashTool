@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using System.Xml;
+using System.Xml.Serialization;
 
 using HashTool.Models;
 
@@ -45,38 +48,44 @@ namespace HashTool.Helpers
             File.WriteAllTextAsync(path, stringBulider.ToString());
         }
 
-        private static readonly (string Key, string HumanReadableKey)[] hashResultFormatter =
+        public static void Xml(string path, List<Dictionary<string, string>> list)
         {
-            // 下面的顺序即为储存时的顺序
-            ("InputMode", "输入模式"),
-            ("Mode", "计算模式"),
-            ("Content", "计算内容"),
-            ("FileSize", "文件大小"),
-            ("LastWriteTime", "文件修改时间"),
-            ("ComputeTime", "计算开始时间"),
-            ("ComputeCost", "计算用时"),
-        };
+            XmlWriterSettings settings = new();
+            settings.Indent = true;
+            settings.IndentChars = "    ";
+
+            using var writer = XmlWriter.Create(path, settings);
+            var xmlResult = new HashResultRoot()
+            {
+                HashResultItems = list.Select(dict => new HashResultItem()
+                {
+                    Items = dict.Select(kv => new Item() { id = kv.Key, value = kv.Value }).ToArray()
+                }).ToArray()
+            };
+
+            XmlSerializer serializer = new(typeof(HashResultRoot));
+            serializer.Serialize(writer, xmlResult);
+        }
 
         public static Dictionary<string, string> BuildHashResult(HashResultModel hashResult)
         {
-            string? tmp;
-            Dictionary<string, string> newDict = new();
-
-            foreach (var i in hashResultFormatter)
-            {
-                CommonHelper.GetProperty(hashResult, i.Key, out tmp);
-                if (tmp != null)
-                {
-                    newDict.Add(i.HumanReadableKey, tmp);
-                }
-            }
-
+            Dictionary<string, string> dict = new();
+            
+            // 下面的顺序即为储存时的顺序
+            dict.Add("输入模式", hashResult.InputMode);
+            dict.Add("计算模式", hashResult.Mode);
+            dict.Add("计算内容", hashResult.Content);
+            dict.Add("文件大小", hashResult.FileSize);
+            dict.Add("文件修改时间", hashResult.LastWriteTime);
+            dict.Add("计算开始时间", hashResult.ComputeTime);
+            dict.Add("计算用时", hashResult.ComputeCost);
+            
             foreach (var i in hashResult.Items)
             {
-                newDict.Add(i.Name, i.Value);
+                dict.Add(i.Name, i.Value);
             }
 
-            return newDict;
+            return dict;
         }
 
         public static List<Dictionary<string, string>> BuildHashResult(List<HashResultModel> hashResults)
@@ -91,4 +100,29 @@ namespace HashTool.Helpers
             return list;
         }
     }
+
+    #region XmlSerializer Helper
+
+    [XmlRoot("HashTool")]
+    public class HashResultRoot
+    {
+        [XmlElement("HashResult")]
+        public HashResultItem[]? HashResultItems;
+    }
+
+    public class HashResultItem
+    {
+        [XmlElement("Item")]
+        public Item[]? Items;
+    }
+
+    public class Item
+    {
+        [XmlAttribute]
+        public string? id;
+        [XmlText]
+        public string? value;
+    }
+
+    #endregion  XmlSerializer Helper
 }

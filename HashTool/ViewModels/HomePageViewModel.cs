@@ -151,8 +151,8 @@ namespace HashTool.ViewModels
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
 
-                saveFileDialog.FileName = "Hash 结果";
-                saveFileDialog.Filter = "yaml 文件 (*.yaml)|*.yaml|json 文件 (*.json)|*.json|文本文件 (*.txt)|*.txt";
+                saveFileDialog.FileName = "HashTool 结果_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+                saveFileDialog.Filter = "YAML (*.yaml)|*.yaml|JSON (*.json)|*.json|纯文本 (*.txt)|*.txt|XML (*.xml)|*.xml";
                 saveFileDialog.RestoreDirectory = true;
 
                 if (saveFileDialog.ShowDialog() == true)
@@ -168,6 +168,9 @@ namespace HashTool.ViewModels
                             break;
                         case 3:
                             SerializerHelper.Text(saveFileDialog.FileName, res);
+                            break;
+                        case 4:
+                            SerializerHelper.Xml(saveFileDialog.FileName, res);
                             break;
                     }
                 }
@@ -226,6 +229,8 @@ namespace HashTool.ViewModels
             }
             Properties.Settings.Default.Save();
         }
+
+        #region BackgroundWorker
 
         private void InitializeBackgroundWorker()
         {
@@ -322,6 +327,8 @@ namespace HashTool.ViewModels
             progressBarMulti.Value = Math.Floor(e.ProgressPercentage / 1000.0);
             taskbarProgress.Value = e.ProgressPercentage / 1000.0 / taskbarProgress.Maximum;
         }
+
+        #endregion BackgroundWorker
 
         #endregion
     }

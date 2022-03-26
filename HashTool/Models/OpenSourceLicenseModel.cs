@@ -8,21 +8,28 @@ namespace HashTool.Models
         public const string MIT = "MIT License";
         public const string Apache = "Apache License 2.0";
 
-        private string? name;
-        private string? link;
-        private string? license;
+        public OpenSourceLicenseModel(string name, string link, string license)
+        {
+            this.name = name;
+            this.link = link;
+            this.license = license;
+        }
 
-        public string? Name
+        private string name;
+        private string link;
+        private string license;
+
+        public string Name
         {
             get => name;
             set => SetProperty(ref name, value);
         }
-        public string? Link
+        public string Link
         {
             get => link;
             set => SetProperty(ref link, value);
         }
-        public string? License
+        public string License
         {
             get => license;
             set => SetProperty(ref license, value);

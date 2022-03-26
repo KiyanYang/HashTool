@@ -22,9 +22,9 @@ namespace HashTool.ViewModels
             update = new();
             openSourceLicenses = new OpenSourceLicenseModel[]
             {
-                GetOpenSourceLicense("HandyOrg - HandyControl", "https://github.com/HandyOrg/HandyControl", OpenSourceLicenseModel.MIT),
-                GetOpenSourceLicense("Antoine Aubry - YamlDotNet", "https://github.com/aaubry/YamlDotNet", OpenSourceLicenseModel.MIT),
-                GetOpenSourceLicense("Microsoft.Toolkit - Microsoft.Toolkit.Mvvm", "https://github.com/CommunityToolkit/WindowsCommunityToolkit", OpenSourceLicenseModel.MIT)
+                new OpenSourceLicenseModel("HandyOrg - HandyControl", "https://github.com/HandyOrg/HandyControl", OpenSourceLicenseModel.MIT),
+                new OpenSourceLicenseModel("Antoine Aubry - YamlDotNet", "https://github.com/aaubry/YamlDotNet", OpenSourceLicenseModel.MIT),
+                new OpenSourceLicenseModel("Microsoft.Toolkit - Microsoft.Toolkit.Mvvm", "https://github.com/CommunityToolkit/WindowsCommunityToolkit", OpenSourceLicenseModel.MIT)
             };
             buttonCheckUpdateIsEnabled = true;
             updateStatusText = string.Empty;
@@ -45,7 +45,7 @@ namespace HashTool.ViewModels
 
         #region Public Properties/Commands
 
-        public string? AssemblyVersion
+        public string AssemblyVersion
         {
             get
             {
@@ -80,16 +80,6 @@ namespace HashTool.ViewModels
         #endregion
 
         #region Helper
-
-        private OpenSourceLicenseModel GetOpenSourceLicense(string name, string link, string license)
-        {
-            return new OpenSourceLicenseModel()
-            {
-                Name = name,
-                Link = link,
-                License = license
-            };
-        }
 
         private async void CheckUpdate()
         {

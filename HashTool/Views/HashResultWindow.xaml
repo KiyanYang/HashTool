@@ -143,7 +143,7 @@
                         <DataTemplate>
                             <hc:SimplePanel Margin="0,4,0,4">
                                 <hc:SimpleText
-                                    Text="{Binding Name}"
+                                    Text="{Binding Id}"
                                     Width="76"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
@@ -155,7 +155,7 @@
                                         <converters:BindableBinding
                                             Path="Value"
                                             Converter="{StaticResource LowerCaseConverter}"
-                                            ConverterParameterBinding="{Binding Name}" />
+                                            ConverterParameterBinding="{Binding Id}" />
                                     </TextBox.Text>
                                 </TextBox>
                                 <Button

@@ -8,6 +8,7 @@ using System.Windows.Input;
 using HashTool.Helpers;
 using HashTool.Models;
 using HashTool.Models.Controls;
+using HashTool.Models.Enums;
 using HashTool.Views;
 
 using Microsoft.Toolkit.Mvvm.ComponentModel;
@@ -27,14 +28,11 @@ namespace HashTool.ViewModels
             #region 初始化界面输入
 
             mainInput = new();
-            var sAlgorithm = Properties.Settings.Default.SelectedHashAlgorithm;
-            mainInput.CheckBoxItems.Add(new CheckBoxModel("MD5", sAlgorithm.Contains("MD5")));
-            mainInput.CheckBoxItems.Add(new CheckBoxModel("CRC32", sAlgorithm.Contains("CRC32")));
-            mainInput.CheckBoxItems.Add(new CheckBoxModel("SHA1", sAlgorithm.Contains("SHA1")));
-            mainInput.CheckBoxItems.Add(new CheckBoxModel("SHA256", sAlgorithm.Contains("SHA256")));
-            mainInput.CheckBoxItems.Add(new CheckBoxModel("SHA384", sAlgorithm.Contains("SHA384")));
-            mainInput.CheckBoxItems.Add(new CheckBoxModel("SHA512", sAlgorithm.Contains("SHA512")));
-            mainInput.CheckBoxItems.Add(new CheckBoxModel("QuickXor", sAlgorithm.Contains("QuickXor")));
+            var sAlgorithm = PropertiesHelper.Settings.SelectedHashAlgorithm;
+            foreach (var a in Enum.GetValues<AlgorithmEnum>()[1..])
+            {
+                mainInput.CheckBoxItems.Add(new(a, sAlgorithm.HasFlag(a)));
+            }
 
             #endregion
 
@@ -220,14 +218,13 @@ namespace HashTool.ViewModels
         }
         private void SetSelectedHashAlgorithm()
         {
-            var sAlgorithm = Properties.Settings.Default.SelectedHashAlgorithm;
-            sAlgorithm.Clear();
+            var sAlgorithm = AlgorithmEnum.Null;
             foreach (var i in MainInput.CheckBoxItems)
             {
                 if (i.IsChecked == true)
-                    sAlgorithm.Add(i.Content);
+                    sAlgorithm |= i.EnumContent;
             }
-            Properties.Settings.Default.Save();
+            PropertiesHelper.Settings.SelectedHashAlgorithm = sAlgorithm;
         }
 
         #region BackgroundWorker
@@ -242,9 +239,7 @@ namespace HashTool.ViewModels
         }
         private void bgWorker_DoWork(object? sender, DoWorkEventArgs e)
         {
-            BackgroundWorker? worker = sender as BackgroundWorker;
-            HashInputModel? input = e.Argument as HashInputModel;
-            if (worker != null && input != null)
+            if (sender is BackgroundWorker worker && e.Argument is HashInputModel input)
             {
                 switch (input.Mode)
                 {
@@ -281,7 +276,6 @@ namespace HashTool.ViewModels
                                 HandyControl.Controls.MessageBox.Error("文件夹内无文件。");
                                 return;
                             }
-
                         }
                         else
                         {

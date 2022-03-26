@@ -2,16 +2,19 @@
 using System.Globalization;
 using System.Windows.Data;
 
+using HashTool.Helpers;
+using HashTool.Models.Enums;
+
 namespace HashTool.Converters
 {
     internal class LowerCaseConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (Properties.Settings.Default.IsLowerCase
+            if (PropertiesHelper.Settings.IsLowerCase
                 && value is string val
-                && parameter is string arg
-                && arg != "QuickXor")
+                && parameter is AlgorithmEnum arg
+                && arg != AlgorithmEnum.QuickXor)
                 return val.ToLower();
             return value;
         }

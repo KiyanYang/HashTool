@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using HashTool.Models.Controls;
+using HashTool.Models.Enums;
 
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 
@@ -10,7 +11,7 @@ namespace HashTool.Models
     {
         private string? mode;
         private string input = string.Empty;
-        private List<CheckBoxModel>? checkBoxItems;
+        private List<CheckBoxEnumModel<AlgorithmEnum>>? checkBoxItems;
 
         public static IReadOnlyList<string> ModeItem { get; } = new[]
         {
@@ -28,7 +29,7 @@ namespace HashTool.Models
             get => input;
             set => SetProperty(ref input, value);
         }
-        public List<CheckBoxModel> CheckBoxItems
+        public List<CheckBoxEnumModel<AlgorithmEnum>> CheckBoxItems
         {
             get => checkBoxItems ??= new();
             set => SetProperty(ref checkBoxItems, value);

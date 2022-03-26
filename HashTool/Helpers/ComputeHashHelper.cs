@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using HashTool.Models;
+using HashTool.Models.Enums;
 
 namespace HashTool.Helpers
 {
@@ -21,7 +22,7 @@ namespace HashTool.Helpers
         private static readonly HashAlgorithm sha384 = SHA384.Create();
         private static readonly HashAlgorithm sha512 = SHA512.Create();
         private static readonly HashAlgorithm quickXor = new QuickXor();
-        private static readonly Dictionary<string, HashAlgorithm> hashAlgorithmDict = new();
+        private static readonly Dictionary<AlgorithmEnum, HashAlgorithm> hashAlgorithmDict = new();
 
         private static string HashFormatHex(byte[] data)
         {
@@ -47,34 +48,31 @@ namespace HashTool.Helpers
             {
                 if (i.IsChecked != true)
                     continue;
-                algorithm = i.Content switch
+                algorithm = i.EnumContent switch
                 {
-                    "MD5" => md5,
-                    "CRC32" => crc32,
-                    "SHA1" => sha1,
-                    "SHA256" => sha256,
-                    "SHA384" => sha384,
-                    "SHA512" => sha512,
-                    "QuickXor" => quickXor,
+                    AlgorithmEnum.MD5 => md5,
+                    AlgorithmEnum.CRC32 => crc32,
+                    AlgorithmEnum.SHA1 => sha1,
+                    AlgorithmEnum.SHA256 => sha256,
+                    AlgorithmEnum.SHA384 => sha384,
+                    AlgorithmEnum.SHA512 => sha512,
+                    AlgorithmEnum.QuickXor => quickXor,
                     _ => throw new ArgumentOutOfRangeException(),
                 };
-                hashAlgorithmDict.Add(i.Content, algorithm);
+                hashAlgorithmDict.Add(i.EnumContent, algorithm);
             }
         }
-        private static HashResultItemModel BuildHashResultItem(string name, byte[] data)
+        private static HashResultItemModel BuildHashResultItem(AlgorithmEnum id, byte[] data)
         {
-            string hash = name switch
+            string hash = id switch
             {
-                "QuickXor" => HashFormatBase64(data),
+                AlgorithmEnum.QuickXor => HashFormatBase64(data),
                 _ => HashFormatHex(data),
             };
-            return new HashResultItemModel(name, hash);
+            return new HashResultItemModel(id, hash);
         }
 
-        public static HashResultModel HashString(HashInputModel hashInput)
-        {
-            return HashString(hashInput, null, null);
-        }
+        public static HashResultModel HashString(HashInputModel hashInput) => HashString(hashInput, null, null);
 
         public static HashResultModel HashString(HashInputModel hashInput, BackgroundWorker? worker, double? maximum)
         {
@@ -88,10 +86,10 @@ namespace HashTool.Helpers
             hashResult.ComputeTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
 
             byte[] hashValue;
-            foreach (string hashName in hashAlgorithmDict.Keys)
+            foreach (var hashId in hashAlgorithmDict.Keys)
             {
-                hashValue = hashAlgorithmDict[hashName].ComputeHash(Encoding.UTF8.GetBytes(hashInput.Input));
-                hashResult.Items.Add(BuildHashResultItem(hashName, hashValue));
+                hashValue = hashAlgorithmDict[hashId].ComputeHash(Encoding.UTF8.GetBytes(hashInput.Input));
+                hashResult.Items.Add(BuildHashResultItem(hashId, hashValue));
             }
             if (worker != null && maximum != null)
             {
@@ -164,7 +162,7 @@ namespace HashTool.Helpers
             // 判断是否进行最后一次哈希计算
             if (!worker.CancellationPending)
             {
-                foreach (KeyValuePair<string, HashAlgorithm> kvp in hashAlgorithmDict)
+                foreach (var kvp in hashAlgorithmDict)
                 {
                     kvp.Value.TransformFinalBlock(buffer, 0, 0);
                     var hashValue = kvp.Value.Hash;

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+using HashTool.Models.Enums;
+
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace HashTool.Models
@@ -64,24 +66,34 @@ namespace HashTool.Models
 
     public class HashResultItemModel : ObservableObject
     {
-        public HashResultItemModel(string name, string value)
+        public HashResultItemModel(AlgorithmEnum id, string value)
         {
-            this.name = name;
+            this.id = id;
             this.value = value;
         }
 
-        private string name;
+        private AlgorithmEnum id;
         private string value;
 
-        public string Name
+        public AlgorithmEnum Id
         {
-            get => name;
-            set => SetProperty(ref name, value);
+            get => id;
+            set => SetProperty(ref id, value);
         }
         public string Value
         {
             get => value;
             set => SetProperty(ref this.value, value);
+        }
+
+        /// <summary>
+        /// 在不更新值的情况下, 刷新内容。
+        /// </summary>
+        /// <param name="propertyName">属性名称</param>
+        public void ChangeProperty(string? propertyName = null)
+        {
+            base.OnPropertyChanging(propertyName);
+            base.OnPropertyChanged(propertyName);
         }
     }
 }

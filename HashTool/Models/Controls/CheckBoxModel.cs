@@ -1,4 +1,6 @@
-﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+﻿using System;
+
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace HashTool.Models.Controls
 {
@@ -22,6 +24,26 @@ namespace HashTool.Models.Controls
         {
             get => isChecked;
             set => SetProperty(ref isChecked, value);
+        }
+    }
+
+    public class CheckBoxEnumModel<T> : CheckBoxModel where T : Enum
+    {
+        public CheckBoxEnumModel(T enumObj, bool isEnabled = true) : base(enumObj.ToString(), isEnabled)
+        {
+            enumContent = enumObj;
+        }
+
+        private T enumContent;
+
+        public T EnumContent
+        {
+            get => enumContent;
+            set
+            {
+                SetProperty(ref enumContent, value);
+                Content = value.ToString();
+            }
         }
     }
 }

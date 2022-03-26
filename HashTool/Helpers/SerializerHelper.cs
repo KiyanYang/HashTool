@@ -70,7 +70,7 @@ namespace HashTool.Helpers
         public static Dictionary<string, string> BuildHashResult(HashResultModel hashResult)
         {
             Dictionary<string, string> dict = new();
-            
+
             // 下面的顺序即为储存时的顺序
             dict.Add("输入模式", hashResult.InputMode);
             dict.Add("计算模式", hashResult.Mode);
@@ -79,11 +79,8 @@ namespace HashTool.Helpers
             dict.Add("文件修改时间", hashResult.LastWriteTime);
             dict.Add("计算开始时间", hashResult.ComputeTime);
             dict.Add("计算用时", hashResult.ComputeCost);
-            
-            foreach (var i in hashResult.Items)
-            {
-                dict.Add(i.Name, i.Value);
-            }
+
+            hashResult.Items.ForEach(i => dict.Add(i.Id.ToString(), i.Value));
 
             return dict;
         }
@@ -92,10 +89,7 @@ namespace HashTool.Helpers
         {
             List<Dictionary<string, string>> list = new();
 
-            foreach (var i in hashResults)
-            {
-                list.Add(BuildHashResult(i));
-            }
+            hashResults.ForEach(i => list.Add(BuildHashResult(i)));
 
             return list;
         }
@@ -106,7 +100,7 @@ namespace HashTool.Helpers
     [XmlRoot("HashTool")]
     public class HashResultRoot
     {
-        [XmlElement("HashResult")]
+        [XmlElement("Result")]
         public HashResultItem[]? HashResultItems;
     }
 

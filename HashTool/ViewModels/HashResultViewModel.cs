@@ -5,6 +5,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 
+using HashTool.Helpers;
 using HashTool.Models;
 
 using Microsoft.Toolkit.Mvvm.ComponentModel;
@@ -20,10 +21,7 @@ namespace HashTool.ViewModels
             this.hashResult = hashResults[0];
             this.hashAllResults = new(hashResults);
             this.hashResultItems = new();
-            foreach (var i in hashResults)
-            {
-                this.hashResultItems.Add(i);
-            }
+            hashResults.ForEach(i => this.hashResultItems.Add(i));
             #endregion
 
             #region 初始化 ListBox 参数
@@ -53,7 +51,7 @@ namespace HashTool.ViewModels
         private List<HashResultModel> hashAllResults;
         private string? hashResultListBoxColWidth;
         private Visibility hashResultListBoxVisibility;
-        private bool isLowerCase = Properties.Settings.Default.IsLowerCase;
+        private bool? isLowerCase;
 
         #endregion
 
@@ -81,21 +79,14 @@ namespace HashTool.ViewModels
         }
         public bool IsLowerCase
         {
-            get => isLowerCase;
+            get => isLowerCase ??= PropertiesHelper.Settings.IsLowerCase;
             set
             {
                 SetProperty(ref isLowerCase, value);
-                Properties.Settings.Default.IsLowerCase = value;
-                Properties.Settings.Default.Save();
+                PropertiesHelper.Settings.IsLowerCase = value;
 
                 // 刷新界面内容
-                string str;
-                foreach (var i in HashResult.Items)
-                {
-                    str = i.Value;
-                    i.Value = string.Empty;
-                    i.Value = str;
-                }
+                HashResult.Items.ForEach(i => i.ChangeProperty("Value"));
             }
         }
         public ICommand ShowSelectedCommand { get; }

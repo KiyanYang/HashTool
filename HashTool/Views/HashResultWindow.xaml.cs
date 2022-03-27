@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows;
 
 using HashTool.Models;
@@ -19,5 +18,6 @@ namespace HashTool.Views
             HashResultViewModel hashResultViewModel = new(hashResultModels);
             DataContext = hashResultViewModel;
         }
+
     }
 }

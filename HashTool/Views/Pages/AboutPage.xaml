@@ -14,7 +14,8 @@
     Title="关于">
 
     <Page.Resources>
-        <converter:Boolean2VisibilityReConverter x:Key="Boolean2VisibilityReConverter" />
+        <converter:Boolean2VisibilityReConverter
+            x:Key="Boolean2VisibilityReConverter" />
     </Page.Resources>
 
     <Grid>
@@ -29,7 +30,8 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
+            <RowDefinition
+                Height="*" />
         </Grid.RowDefinitions>
 
         <hc:SimpleStackPanel
@@ -38,7 +40,9 @@
             Orientation="Vertical">
 
             <hc:SimpleStackPanel.Resources>
-                <Style TargetType="hc:SimpleStackPanel">
+                <!-- hc.SimpleStackPanel: Orientation, Margin -->
+                <Style
+                    TargetType="hc:SimpleStackPanel">
                     <Setter
                         Property="Orientation"
                         Value="Horizontal" />
@@ -47,6 +51,7 @@
                         Value="0,4,0,4" />
                 </Style>
 
+                <!-- Button: Width, Margin -->
                 <Style
                     TargetType="Button"
                     BasedOn="{StaticResource ButtonDefault}">
@@ -58,7 +63,9 @@
                         Value="4,0,4,0" />
                 </Style>
 
-                <Style TargetType="TextBlock">
+                <!-- TextBlock: Width, Margin, VerticalAlignment, TextAlignment -->
+                <Style
+                    TargetType="TextBlock">
                     <Setter
                         Property="Width"
                         Value="76" />
@@ -74,8 +81,10 @@
                 </Style>
             </hc:SimpleStackPanel.Resources>
 
+            <!-- TextBlock 项目地址; Button 打开项目地址 -->
             <hc:SimpleStackPanel>
-                <TextBlock Text="项目地址" />
+                <TextBlock
+                    Text="项目地址" />
                 <Button
                     BorderBrush="Transparent"
                     Content="GitHub"
@@ -89,25 +98,35 @@
                     CommandParameter="https://gitee.com/KiyanYang/HashTool" />
             </hc:SimpleStackPanel>
 
+            <!-- TextBlock 当前版本, 版本号; Button 检查更新 -->
             <hc:SimpleStackPanel>
-                <TextBlock Text="当前版本" />
-                <TextBlock Text="{Binding AssemblyVersion}" />
+                <TextBlock
+                    Text="当前版本" />
+                <TextBlock
+                    Text="{Binding AssemblyVersion}" />
                 <Button
                     Content="检查更新"
                     IsEnabled="{Binding ButtonCheckUpdateIsEnabled}"
                     Command="{Binding CheckUpdateCommand}" />
             </hc:SimpleStackPanel>
 
-            <hc:SimpleStackPanel Visibility="{Binding Update.HasUpdate, Converter={StaticResource Boolean2VisibilityConverter}}">
-                <TextBlock Text="新版本" />
-                <TextBlock Text="{Binding Update.Version}" />
+            <!-- TextBlock 新版本, 版本号; Button 更新 -->
+            <hc:SimpleStackPanel
+                Visibility="{Binding Update.HasUpdate, Converter={StaticResource Boolean2VisibilityConverter}}">
+                <TextBlock
+                    Text="新版本" />
+                <TextBlock
+                    Text="{Binding Update.Version}" />
                 <Button
                     Content="更新"
                     Command="{Binding UpdateCommand}" />
             </hc:SimpleStackPanel>
 
-            <hc:SimpleStackPanel Visibility="{Binding Update.HasUpdate, Converter={StaticResource Boolean2VisibilityConverter}}">
-                <TextBlock Text="发行地址" />
+            <!-- TextBlock 发行地址; Button 打开发行地址 -->
+            <hc:SimpleStackPanel
+                Visibility="{Binding Update.HasUpdate, Converter={StaticResource Boolean2VisibilityConverter}}">
+                <TextBlock
+                    Text="发行地址" />
                 <Button
                     Content="GitHub"
                     Command="{Binding OpenLinkCommand}"
@@ -118,7 +137,9 @@
                     CommandParameter="{Binding Update.GiteeUrl}" />
             </hc:SimpleStackPanel>
 
-            <hc:SimplePanel Visibility="{Binding Update.HasUpdate, Converter={StaticResource Boolean2VisibilityReConverter}}">
+            <!-- TextBlock 说明（无更新/!检测失败/!新版本信息） -->
+            <hc:SimplePanel
+                Visibility="{Binding Update.HasUpdate, Converter={StaticResource Boolean2VisibilityReConverter}}">
                 <TextBlock
                     Width="200"
                     HorizontalAlignment="Center"

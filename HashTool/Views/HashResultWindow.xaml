@@ -79,12 +79,16 @@
             Grid.Row="1"
             Grid.Column="2">
             <hc:SimpleStackPanel Margin="4,0,8,8">
+
                 <hc:SimpleStackPanel.Resources>
+                    <!-- hc.SimplePanel: Margin -->
                     <Style TargetType="{x:Type hc:SimplePanel}">
                         <Setter
                             Property="Margin"
                             Value="0,4,0,4" />
                     </Style>
+
+                    <!-- hc.SimpleText: Width, HorizontalAlignment, VerticalAlignment, TextAlignment -->
                     <Style TargetType="{x:Type hc:SimpleText}">
                         <Setter
                             Property="Width"
@@ -99,6 +103,8 @@
                             Property="TextAlignment"
                             Value="Center" />
                     </Style>
+
+                    <!-- TextBox: Margin, TextWrapping, IsReadOnly -->
                     <Style
                         TargetType="{x:Type TextBox}"
                         BasedOn="{StaticResource TextBoxBaseStyle}">
@@ -113,6 +119,8 @@
                             Value="True" />
                     </Style>
                 </hc:SimpleStackPanel.Resources>
+
+                <!-- hc.SimpleText 计算模式; TextBox 计算内容 -->
                 <hc:SimplePanel Visibility="{Binding HashResult.Mode, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
                     <hc:SimpleText Text="{Binding HashResult.Mode}" />
                     <TextBox
@@ -120,22 +128,32 @@
                         MaxHeight="80"
                         VerticalScrollBarVisibility="Auto" />
                 </hc:SimplePanel>
+
+                <!-- hc.SimpleText 文件大小; TextBox 格式化后的大小 -->
                 <hc:SimplePanel Visibility="{Binding HashResult.FileSize, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
                     <hc:SimpleText Text="文件大小" />
                     <TextBox Text="{Binding HashResult.FileSize}" />
                 </hc:SimplePanel>
+
+                <!-- hc.SimpleText 文件修改时间; TextBox 文件修改时间 -->
                 <hc:SimplePanel Visibility="{Binding HashResult.LastWriteTime, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
                     <hc:SimpleText Text="文件修改时间" />
                     <TextBox Text="{Binding HashResult.LastWriteTime}" />
                 </hc:SimplePanel>
+
+                <!-- hc.SimpleText 计算开始时间; TextBox 计算开始时间 -->
                 <hc:SimplePanel Visibility="{Binding HashResult.ComputeTime, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
                     <hc:SimpleText Text="计算开始时间" />
                     <TextBox Text="{Binding HashResult.ComputeTime}" />
                 </hc:SimplePanel>
+
+                <!-- hc.SimpleText 计算用时; TextBox 计算用时 -->
                 <hc:SimplePanel Visibility="{Binding HashResult.ComputeCost, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
                     <hc:SimpleText Text="计算用时" />
                     <TextBox Text="{Binding HashResult.ComputeCost}" />
                 </hc:SimplePanel>
+
+                <!-- ItemsControl 哈希结果; hc.SimpleText 名称; TextBox 结果; Button 复制 -->
                 <ItemsControl
                     x:Name="itemsHashResult"
                     ItemsSource="{Binding HashResult.Items}">
@@ -169,6 +187,7 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
+
             </hc:SimpleStackPanel>
         </ScrollViewer>
 

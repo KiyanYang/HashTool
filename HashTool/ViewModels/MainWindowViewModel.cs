@@ -19,6 +19,7 @@ namespace HashTool.ViewModels
             aboutPage = new();
 
             ShowPage("home");
+
             ShowPageCommand = new RelayCommand<string>(ShowPage);
         }
 

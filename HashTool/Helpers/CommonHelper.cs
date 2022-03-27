@@ -46,6 +46,8 @@ namespace HashTool.Helpers
             return Helpers.DeepCopy<TIn, TOut>.Trans(obj);
         }
 
+        #region FileSize
+
         public static long GetFileSize(string fullName)
         {
             long size = 0;
@@ -55,14 +57,14 @@ namespace HashTool.Helpers
             }
             return size;
         }
-
         private static readonly string[] DataCapacityUnit = new[] { "B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB" };
-
         public static string FileSizeFormatter(long size)
         {
             var index = (int)Math.Log(size, 1024.0);
             var newSize = size / Math.Pow(1024.0, index);
             return $"{newSize:F2} {DataCapacityUnit[index]}";
         }
+
+        #endregion
     }
 }

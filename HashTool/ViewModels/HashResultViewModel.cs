@@ -18,13 +18,16 @@ namespace HashTool.ViewModels
         public HashResultViewModel(List<HashResultModel> hashResults)
         {
             #region 初始化 HashResults
+
             this.hashResult = hashResults[0];
             this.hashAllResults = new(hashResults);
             this.hashResultItems = new();
             hashResults.ForEach(i => this.hashResultItems.Add(i));
+
             #endregion
 
             #region 初始化 ListBox 参数
+
             if (hashAllResults.Count > 1)
             {
                 hashResultListBoxColWidth = "*";
@@ -35,48 +38,29 @@ namespace HashTool.ViewModels
                 hashResultListBoxColWidth = "Auto";
                 hashResultListBoxVisibility = Visibility.Collapsed;
             }
+
             #endregion
 
-            #region 初始化 Command
             ShowSelectedCommand = new RelayCommand<int>(ShowSelected);
             ViewInExplorerCommand = new RelayCommand<string>(ViewInExplorer);
             CopyToClipboardCommand = new RelayCommand<string>(CopyToClipboard);
-            #endregion
         }
 
         #region Fields
 
+        private List<HashResultModel> hashAllResults;
+
+        private bool? isLowerCase;
+        private string? hashResultListBoxColWidth;
+        private Visibility? hashResultListBoxVisibility;
+
         private HashResultModel hashResult;
         private ObservableCollection<HashResultModel> hashResultItems;
-        private List<HashResultModel> hashAllResults;
-        private string? hashResultListBoxColWidth;
-        private Visibility hashResultListBoxVisibility;
-        private bool? isLowerCase;
 
         #endregion
 
         #region Public Properties/Commands
 
-        public HashResultModel HashResult
-        {
-            get => hashResult;
-            set => SetProperty(ref hashResult, value);
-        }
-        public ObservableCollection<HashResultModel> HashResultItems
-        {
-            get => hashResultItems;
-            set => SetProperty(ref hashResultItems, value);
-        }
-        public string? HashResultListBoxColWidth
-        {
-            get => hashResultListBoxColWidth;
-            set => SetProperty(ref hashResultListBoxColWidth, value);
-        }
-        public Visibility HashResultListBoxVisibility
-        {
-            get => hashResultListBoxVisibility;
-            set => SetProperty(ref hashResultListBoxVisibility, value);
-        }
         public bool IsLowerCase
         {
             get => isLowerCase ??= PropertiesHelper.Settings.IsLowerCase;
@@ -89,6 +73,28 @@ namespace HashTool.ViewModels
                 HashResult.Items.ForEach(i => i.ChangeProperty("Value"));
             }
         }
+        public string HashResultListBoxColWidth
+        {
+            get => hashResultListBoxColWidth ??= "Auto";
+            set => SetProperty(ref hashResultListBoxColWidth, value);
+        }
+        public Visibility HashResultListBoxVisibility
+        {
+            get => hashResultListBoxVisibility ??= Visibility.Visible;
+            set => SetProperty(ref hashResultListBoxVisibility, value);
+        }
+
+        public HashResultModel HashResult
+        {
+            get => hashResult;
+            set => SetProperty(ref hashResult, value);
+        }
+        public ObservableCollection<HashResultModel> HashResultItems
+        {
+            get => hashResultItems;
+            set => SetProperty(ref hashResultItems, value);
+        }
+
         public ICommand ShowSelectedCommand { get; }
         public ICommand ViewInExplorerCommand { get; }
         public ICommand CopyToClipboardCommand { get; }

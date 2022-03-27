@@ -8,55 +8,81 @@ namespace HashTool.Models
 {
     public class HashResultModel : ObservableObject
     {
-        // 输入模式
-        private string inputMode = string.Empty;
-        // 计算模式：文件或文本
-        private string mode = string.Empty;
-        // 计算内容：文件路径或文本
-        private string content = string.Empty;
-        // 以文件计算时
-        private string fileSize = string.Empty;
-        private string lastWriteTime = string.Empty;
-
-        private string computeTime = string.Empty;
-        private string computeCost = string.Empty;
+        private string? inputMode;
+        private string? mode;
+        private string? content;
+        private string? fileSize;
+        private string? lastWriteTime;
+        private string? computeTime;
+        private string? computeCost;
         private List<HashResultItemModel>? items;
 
+        /// <summary>
+        /// 输入模式：文件/文件夹/文本
+        /// </summary>
         public string InputMode
         {
-            get => inputMode;
+            get => inputMode ??= string.Empty;
             set => SetProperty(ref inputMode, value);
         }
+
+        /// <summary>
+        /// 计算模式：文件流或字符串
+        /// </summary>
         public string Mode
         {
-            get => mode;
+            get => mode ??= string.Empty;
             set => SetProperty(ref mode, value);
         }
+
+        /// <summary>
+        /// 计算内容：文件路径或文本
+        /// </summary>
         public string Content
         {
-            get => content;
+            get => content ??= string.Empty;
             set => SetProperty(ref content, value);
         }
+
+        /// <summary>
+        /// 文件流计算模式下，格式化后的文件大小
+        /// </summary>
         public string FileSize
         {
-            get => fileSize;
+            get => fileSize ??= string.Empty;
             set => SetProperty(ref fileSize, value);
         }
+
+        /// <summary>
+        /// 文件流计算模式下，文件最后修改时间
+        /// </summary>
         public string LastWriteTime
         {
-            get => lastWriteTime;
+            get => lastWriteTime ??= string.Empty;
             set => SetProperty(ref lastWriteTime, value);
         }
+
+        /// <summary>
+        /// 计算开始时间
+        /// </summary>
         public string ComputeTime
         {
-            get => computeTime;
+            get => computeTime ??= string.Empty;
             set => SetProperty(ref computeTime, value);
         }
+
+        /// <summary>
+        /// 计算用时
+        /// </summary>
         public string ComputeCost
         {
-            get => computeCost;
+            get => computeCost ??= string.Empty;
             set => SetProperty(ref computeCost, value);
         }
+
+        /// <summary>
+        /// 计算结果
+        /// </summary>
         public List<HashResultItemModel> Items
         {
             get => items ??= new();

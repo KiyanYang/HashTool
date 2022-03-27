@@ -10,7 +10,7 @@ namespace HashTool.Models
     public class HashInputModel : ObservableObject
     {
         private string? mode;
-        private string input = string.Empty;
+        private string? input;
         private List<CheckBoxEnumModel<AlgorithmEnum>>? checkBoxItems;
 
         public static IReadOnlyList<string> ModeItem { get; } = new[]
@@ -26,7 +26,7 @@ namespace HashTool.Models
         }
         public string Input
         {
-            get => input;
+            get => input ??= string.Empty;
             set => SetProperty(ref input, value);
         }
         public List<CheckBoxEnumModel<AlgorithmEnum>> CheckBoxItems

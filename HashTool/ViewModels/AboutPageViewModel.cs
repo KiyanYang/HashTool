@@ -19,43 +19,52 @@ namespace HashTool.ViewModels
     {
         public AboutPageViewModel()
         {
-            update = new();
             openSourceLicenses = new OpenSourceLicenseModel[]
             {
-                new OpenSourceLicenseModel("HandyOrg - HandyControl", "https://github.com/HandyOrg/HandyControl", OpenSourceLicenseModel.MIT),
-                new OpenSourceLicenseModel("Antoine Aubry - YamlDotNet", "https://github.com/aaubry/YamlDotNet", OpenSourceLicenseModel.MIT),
-                new OpenSourceLicenseModel("Microsoft.Toolkit - Microsoft.Toolkit.Mvvm", "https://github.com/CommunityToolkit/WindowsCommunityToolkit", OpenSourceLicenseModel.MIT)
+                new("HandyOrg - HandyControl", "https://github.com/HandyOrg/HandyControl", OpenSourceLicenseModel.MIT),
+                new("Antoine Aubry - YamlDotNet", "https://github.com/aaubry/YamlDotNet", OpenSourceLicenseModel.MIT),
+                new("Microsoft.Toolkit - Microsoft.Toolkit.Mvvm", "https://github.com/CommunityToolkit/WindowsCommunityToolkit", OpenSourceLicenseModel.MIT)
             };
-            buttonCheckUpdateIsEnabled = true;
-            updateStatusText = string.Empty;
+
             CheckUpdateCommand = new RelayCommand(CheckUpdate);
             UpdateCommand = new RelayCommand(OpenUpdater);
             OpenLinkCommand = new RelayCommand<string>(OpenLink);
         }
+
         #region Fields
 
-        private static LatestVersion? latestVersionInfo;
         private static readonly HttpClient httpClient = new();
-        private UpdateModel update;
+        private static LatestVersion? latestVersionInfo;
+
+        private bool? buttonCheckUpdateIsEnabled;
+        private string? assemblyVersion;
+        private string? updateStatusText;
+
+        private UpdateModel? update;
         private OpenSourceLicenseModel[] openSourceLicenses;
-        private bool buttonCheckUpdateIsEnabled;
-        private string updateStatusText;
 
         #endregion
 
         #region Public Properties/Commands
 
+        public bool ButtonCheckUpdateIsEnabled
+        {
+            get => buttonCheckUpdateIsEnabled ??= true;
+            set => SetProperty(ref buttonCheckUpdateIsEnabled, value);
+        }
         public string AssemblyVersion
         {
-            get
-            {
-                var ver = GetAssemblyVersion();
-                return $"v{ver.Major}.{ver.Minor}.{ver.Build}";
-            }
+            get => assemblyVersion ??= GetAssemblyVersion().ToString(3);
         }
+        public string UpdateStatusText
+        {
+            get => updateStatusText ??= string.Empty;
+            set => SetProperty(ref updateStatusText, value);
+        }
+
         public UpdateModel Update
         {
-            get => update;
+            get => update ??= new();
             set => SetProperty(ref update, value);
         }
         public OpenSourceLicenseModel[] OpenSourceLicenses
@@ -63,16 +72,7 @@ namespace HashTool.ViewModels
             get => openSourceLicenses;
             set => SetProperty(ref openSourceLicenses, value);
         }
-        public bool ButtonCheckUpdateIsEnabled
-        {
-            get => buttonCheckUpdateIsEnabled;
-            set => SetProperty(ref buttonCheckUpdateIsEnabled, value);
-        }
-        public string UpdateStatusText
-        {
-            get => updateStatusText;
-            set => SetProperty(ref updateStatusText, value);
-        }
+        
         public ICommand CheckUpdateCommand { get; }
         public ICommand UpdateCommand { get; }
         public ICommand OpenLinkCommand { get; }
@@ -96,8 +96,8 @@ namespace HashTool.ViewModels
                     Update.HasUpdate = true;
                     Update.Version = latestVersionInfo.Tag;
                     Update.DownloadUrl = latestVersionInfo.GiteeDownloadUrl;
-                    Update.GithubUrl = $"https://github.com/KiyanYang/HashTool/releases/tag/{update.Version}";
-                    Update.GiteeUrl = $"https://gitee.com/KiyanYang/HashTool/releases/{update.Version}";
+                    Update.GithubUrl = $"https://github.com/KiyanYang/HashTool/releases/tag/{Update.Version}";
+                    Update.GiteeUrl = $"https://gitee.com/KiyanYang/HashTool/releases/{Update.Version}";
                 }
                 else
                 {
@@ -135,7 +135,7 @@ namespace HashTool.ViewModels
         {
             Assembly assem = Assembly.GetExecutingAssembly();
             AssemblyName assemName = assem.GetName();
-            return assemName.Version ?? new Version();
+            return assemName.Version ?? new Version(1, 0, 0);
         }
 
         private void OpenUpdater()
@@ -151,7 +151,7 @@ namespace HashTool.ViewModels
                 process.StartInfo.FileName = "powershell.exe";
                 var updaterPs1 = Path.GetFullPath(@".\updater.ps1");
                 var targetPath = Path.GetFullPath(@".\");
-                string str = $"-ExecutionPolicy Bypass -File {updaterPs1} -Url {update.DownloadUrl} -SHA256 {latestVersionInfo.SHA256_zip} -TargetPath {targetPath} -Force";
+                string str = $"-ExecutionPolicy Bypass -File {updaterPs1} -Url {Update.DownloadUrl} -SHA256 {latestVersionInfo.SHA256_zip} -TargetPath {targetPath} -Force";
                 process.StartInfo.Arguments = str;
                 process.Start();
                 Environment.Exit(-1);
@@ -173,6 +173,9 @@ namespace HashTool.ViewModels
         #endregion
     }
 
+    /// <summary>
+    /// LatestVersionXml 模型
+    /// </summary>
     public class LatestVersion
     {
         public string Tag = string.Empty;

@@ -10,9 +10,8 @@
         <ResourceDictionary>
             <properties:Settings x:Key="Settings" />
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/SkinDefault.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/HandyControl;component/Themes/Theme.xaml" />
-                <!-- Base -->
+                <hc:Theme Name="HandyTheme" />
+                <!-- User -->
                 <!-- ResourceDictionary Source="Resource/Style/Color.xaml" /> -->
                 <!-- ResourceDictionary Source="Resource/Style/Brush.xaml" /> -->
                 <!-- ResourceDictionary Source="Resource/Style/Geometry.xaml" /> -->

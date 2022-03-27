@@ -23,12 +23,16 @@
         <hc:SimpleStackPanel
             x:Name="simpleStackPanel"
             Orientation="Vertical">
+
             <hc:SimpleStackPanel.Resources>
+                <!-- hc.SimpleStackPanel: Orientation -->
                 <Style TargetType="{x:Type hc:SimpleStackPanel}">
                     <Setter
                         Property="Orientation"
                         Value="Horizontal" />
                 </Style>
+
+                <!-- hc.TextBox: TextWrapping, Margin -->
                 <Style
                     TargetType="{x:Type hc:TextBox}"
                     BasedOn="{StaticResource TextBoxPlusBaseStyle}">
@@ -39,6 +43,8 @@
                         Property="Margin"
                         Value="4,0,4,0" />
                 </Style>
+
+                <!-- CheckBox: HorizontalAlignment, Margin -->
                 <Style
                     TargetType="{x:Type CheckBox}"
                     BasedOn="{StaticResource CheckBoxBaseStyle}">
@@ -49,6 +55,8 @@
                         Property="Margin"
                         Value="12,4,12,4" />
                 </Style>
+
+                <!-- Button: Margin -->
                 <Style
                     TargetType="{x:Type Button}"
                     BasedOn="{StaticResource ButtonPrimary}">
@@ -56,6 +64,8 @@
                         Property="Margin"
                         Value="8,0,8,0" />
                 </Style>
+
+                <!-- hc.SplitButton : Margin -->
                 <Style
                     TargetType="{x:Type hc:SplitButton}"
                     BasedOn="{StaticResource SplitButtonPrimary}">
@@ -64,19 +74,18 @@
                         Value="8,0,8,0" />
                 </Style>
             </hc:SimpleStackPanel.Resources>
+
+            <!-- ComboBox 模式; TextBox 输入; Button 选择文件 -->
             <hc:SimplePanel Margin="0,0,0,8">
                 <ComboBox
-                    x:Name="comboBoxInputMode"
                     ItemsSource="{Binding MainInput.ModeItem}"
                     SelectedItem="{Binding MainInput.Mode, Mode=TwoWay}"
-                    SelectionChanged="comboBoxInputMode_SelectionChanged"
                     Margin="4,0,4,0"
                     Width="84"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Bottom" />
                 <hc:TextBox
-                    x:Name="textBoxInput"
-                    Text="{Binding MainInput.Input, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Text="{Binding MainInput.Input, Mode=TwoWay}"
                     Margin="96,0,96,0"
                     PreviewDragOver="TextBoxInput_PreviewDragOver"
                     PreviewDrop="TextBoxInput_PreviewDrop"
@@ -85,15 +94,15 @@
                     MaxHeight="80"
                     VerticalScrollBarVisibility="Auto" />
                 <Button
-                    x:Name="buttonSelect"
                     Content="选择文件"
-                    Click="ButtonSelect_Click"
+                    Command="{Binding SelectFileCommand}"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
                     Width="84"
                     Margin="4,0,4,0" />
             </hc:SimplePanel>
 
+            <!-- CheckBox 哈希算法选择 -->
             <ItemsControl
                 x:Name="checkBoxItems"
                 ItemsSource="{Binding MainInput.CheckBoxItems}">
@@ -115,15 +124,12 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
+            <!-- ProgressBar 计算进度条 -->
             <hc:SimpleStackPanel
                 Margin="0,8,0,8"
                 HorizontalAlignment="Center">
-                <hc:SimplePanel
-                    x:Name="simplePanelFiles"
-                    Visibility="Collapsed"
-                    Width="{Binding ActualWidth, ConverterParameter=0.30, Converter={StaticResource RelativeWidthConverter}, ElementName=simpleStackPanel, Mode=OneWay}">
+                <hc:SimplePanel Width="{Binding ActualWidth, ConverterParameter=0.30, Converter={StaticResource RelativeWidthConverter}, ElementName=simpleStackPanel, Mode=OneWay}">
                     <ProgressBar
-                        x:Name="progressBarFiles"
                         Margin="8,0,8,0"
                         Value="{Binding ProgressBarMulti.Value}"
                         Minimum="{Binding ProgressBarMulti.Minimum}"
@@ -132,7 +138,6 @@
                 </hc:SimplePanel>
                 <hc:SimplePanel Width="{Binding ActualWidth, ConverterParameter=0.70, Converter={StaticResource RelativeWidthConverter}, ElementName=simpleStackPanel, Mode=OneWay}">
                     <ProgressBar
-                        x:Name="progressBarFile"
                         Margin="8,0,8,0"
                         Value="{Binding ProgressBarSingle.Value}"
                         Minimum="{Binding ProgressBarSingle.Minimum}"
@@ -140,6 +145,8 @@
                         Style="{DynamicResource UserProgressBarSuccess}" />
                 </hc:SimplePanel>
             </hc:SimpleStackPanel>
+
+            <!-- SplitButton 结果功能; Button 计算功能 -->
             <hc:SimpleStackPanel Margin="0,8,0,8">
                 <hc:SimplePanel Width="{Binding ActualWidth, ConverterParameter=0.5, Converter={StaticResource RelativeWidthConverter}, ElementName=simpleStackPanel, Mode=OneWay}">
                     <hc:SimpleStackPanel HorizontalAlignment="Center">
@@ -188,26 +195,30 @@
                     </hc:SimpleStackPanel>
                 </hc:SimplePanel>
             </hc:SimpleStackPanel>
+
+            <!-- TextBox 哈希值; hc.Badge 比较结果 -->
             <hc:SimpleStackPanel Margin="0,8,0,0">
                 <hc:SimplePanel Width="{Binding ActualWidth, ConverterParameter=0.5, Converter={StaticResource RelativeWidthConverter}, ElementName=simpleStackPanel, Mode=OneWay}">
                     <hc:TextBox
-                        x:Name="textBoxVerify1"
-                        TextChanged="TextBoxVerify_TextChanged"
-                        hc:InfoElement.Placeholder="输入要比较的 Hash 值 1" />
+                        MaxLength="256"
+                        Text="{Binding HashValueVerify1, UpdateSourceTrigger=PropertyChanged}"
+                        hc:InfoElement.Placeholder="输入要比较的哈希值 1" />
                 </hc:SimplePanel>
                 <hc:SimplePanel Width="{Binding ActualWidth, ConverterParameter=0.5, Converter={StaticResource RelativeWidthConverter}, ElementName=simpleStackPanel, Mode=OneWay}">
                     <hc:Badge
-                        x:Name="badgeVerify"
                         Status="Text"
-                        ShowBadge="False"
-                        BadgeMargin="0,-16,1,0">
+                        Text="{Binding BadgeVerify.Text}"
+                        ShowBadge="{Binding BadgeVerify.ShowBadge}"
+                        BadgeMargin="0,-16,1,0"
+                        Style="{Binding BadgeVerify.Style}">
                         <hc:TextBox
-                            x:Name="textBoxVerify2"
-                            TextChanged="TextBoxVerify_TextChanged"
-                            hc:InfoElement.Placeholder="输入要比较的 Hash 值 2" />
+                            MaxLength="256"
+                            Text="{Binding HashValueVerify2, UpdateSourceTrigger=PropertyChanged}"
+                            hc:InfoElement.Placeholder="输入要比较的哈希值 2" />
                     </hc:Badge>
                 </hc:SimplePanel>
             </hc:SimpleStackPanel>
+
         </hc:SimpleStackPanel>
     </ScrollViewer>
 </Page>

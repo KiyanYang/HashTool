@@ -21,30 +21,19 @@ namespace HashTool.ViewModels
     {
         public HomePageViewModel()
         {
-            buttonStart = new("开始");
-            buttonReset = new("暂停", false);
-            buttonCancel = new("取消", false);
-
-            #region 初始化界面输入
-
-            mainInput = new();
-            var sAlgorithm = PropertiesHelper.Settings.SelectedHashAlgorithm;
+            hashInput = new();
+            // 初始化哈希算法 CheckBox
             foreach (var a in Enum.GetValues<AlgorithmEnum>()[1..])
             {
-                mainInput.CheckBoxItems.Add(new(a, sAlgorithm.HasFlag(a)));
+                hashInput.CheckBoxItems.Add(new(a, PropertiesHelper.Settings.SelectedHashAlgorithm.HasFlag(a)));
             }
-
-            #endregion
-
-            progressBarSingle = new(minimum: 0, maximum: 1000);
-            progressBarMulti = new(minimum: 0, maximum: 1);
-            taskbarProgress = new(minimum: 0, maximum: 1);
 
             bgWorker = new();
             resetEvent = new(true);
             hashResults = new();
             hashResultHistory = new();
 
+            SelectFileCommand = new RelayCommand(SelectFile);
             ShowResultCommand = new RelayCommand<List<HashResultModel>>(ShowResult);
             SaveResultCommand = new RelayCommand<List<HashResultModel>>(SaveResult);
             StartCommand = new RelayCommand(Start);
@@ -57,13 +46,17 @@ namespace HashTool.ViewModels
 
         #region Fields
 
-        private ButtonModel buttonStart;
-        private ButtonModel buttonReset;
-        private ButtonModel buttonCancel;
-        private HashInputModel mainInput;
-        private ProgressBarModel progressBarSingle;
-        private ProgressBarModel progressBarMulti;
-        private ProgressBarModel taskbarProgress;
+        private string? hashValueVerify1;
+        private string? hashValueVerify2;
+
+        private BadgeModel? badgeVerify;
+        private ButtonModel? buttonStart;
+        private ButtonModel? buttonReset;
+        private ButtonModel? buttonCancel;
+        private HashInputModel hashInput;
+        private ProgressBarModel? progressBarSingle;
+        private ProgressBarModel? progressBarMulti;
+        private ProgressBarModel? taskbarProgress;
 
         private BackgroundWorker bgWorker;
         private ManualResetEvent resetEvent;
@@ -74,39 +67,63 @@ namespace HashTool.ViewModels
 
         #region Public Properties/Commands
 
+        public string HashValueVerify1
+        {
+            get => hashValueVerify1 ??= string.Empty;
+            set
+            {
+                SetProperty(ref hashValueVerify1, value);
+                VerifyHashValue();
+            }
+        }
+        public string HashValueVerify2
+        {
+            get => hashValueVerify2 ??= string.Empty;
+            set
+            {
+                SetProperty(ref hashValueVerify2, value);
+                VerifyHashValue();
+            }
+        }
+
+        public BadgeModel BadgeVerify
+        {
+            get => badgeVerify ??= new(string.Empty, false);
+            set => SetProperty(ref badgeVerify, value);
+        }
         public ButtonModel ButtonStart
         {
-            get => buttonStart;
+            get => buttonStart ??= new("开始");
             set => SetProperty(ref buttonStart, value);
         }
         public ButtonModel ButtonReset
         {
-            get => buttonReset;
+            get => buttonReset ??= new ("暂停", false);
             set => SetProperty(ref buttonReset, value);
         }
         public ButtonModel ButtonCancel
         {
-            get => buttonCancel;
+            get => buttonCancel ??= new("取消", false);
             set => SetProperty(ref buttonCancel, value);
         }
         public HashInputModel MainInput
         {
-            get => mainInput;
-            set => SetProperty(ref mainInput, value);
+            get => hashInput;
+            set => SetProperty(ref hashInput, value);
         }
         public ProgressBarModel ProgressBarSingle
         {
-            get => progressBarSingle;
+            get => progressBarSingle ??= new(minimum: 0, maximum: 1000);
             set => SetProperty(ref progressBarSingle, value);
         }
         public ProgressBarModel ProgressBarMulti
         {
-            get => progressBarMulti;
+            get => progressBarMulti ??= new(minimum: 0, maximum: 1);
             set => SetProperty(ref progressBarMulti, value);
         }
         public ProgressBarModel TaskbarProgress
         {
-            get => taskbarProgress;
+            get => taskbarProgress ??= new(minimum: 0, maximum: 1);
             set => SetProperty(ref taskbarProgress, value);
         }
         public List<HashResultModel> HashResults
@@ -120,6 +137,7 @@ namespace HashTool.ViewModels
             set => SetProperty(ref hashResultHistory, value);
         }
 
+        public ICommand SelectFileCommand { get; }
         public ICommand ShowResultCommand { get; }
         public ICommand SaveResultCommand { get; }
         public ICommand StartCommand { get; }
@@ -131,6 +149,28 @@ namespace HashTool.ViewModels
 
         #region Helper
 
+        private void SelectFile()
+        {
+            OpenFileDialog dialog = new OpenFileDialog();  //选择文件文件对话框
+            dialog.Multiselect = false;  //是否支持多个文件的打开？
+            dialog.Title = "请选择文件";  //标题
+            dialog.Filter = "文件(*.*)|*.*";  //文件类型
+            if (dialog.ShowDialog() == true)
+            {
+                if (MainInput.Mode == "文件夹")
+                {
+                    // 全局弹窗提醒选择文件夹的方法
+                    HandyControl.Controls.Growl.InfoGlobal("选择文件夹内的任意文件来获取文件夹的地址");
+                    // 获取文件夹路径
+                    MainInput.Input = Path.GetDirectoryName(dialog.FileName) ?? string.Empty;
+                }
+                else
+                {
+                    // 获取文件路径
+                    MainInput.Input = dialog.FileName;
+                }
+            }
+        }
         private void ShowResult(List<HashResultModel>? results)
         {
             if (results != null && results.Count > 0)
@@ -216,6 +256,29 @@ namespace HashTool.ViewModels
                 ButtonReset.Content = "暂停";
             }
         }
+        private void VerifyHashValue()
+        {
+            string hash1 = HashValueVerify1.Trim();
+            string hash2 = HashValueVerify2.Trim();
+            if (hash1 == string.Empty || hash2 == string.Empty)
+            {
+                BadgeVerify.ShowBadge = false;
+            }
+            else
+            {
+                BadgeVerify.ShowBadge = true;
+                if (string.Equals(hash1, hash2, StringComparison.OrdinalIgnoreCase))
+                {
+                    BadgeVerify.Text = "相同";
+                    BadgeVerify.SetStyle("BadgeSuccess");
+                }
+                else
+                {
+                    BadgeVerify.Text = "不相同";
+                    BadgeVerify.SetStyle("BadgeDanger");
+                }
+            }
+        }
         private void SetSelectedHashAlgorithm()
         {
             var sAlgorithm = AlgorithmEnum.Null;
@@ -244,14 +307,17 @@ namespace HashTool.ViewModels
                 switch (input.Mode)
                 {
                     case "文本":
-                        e.Result = ComputeHashHelper.HashString(input, worker, progressBarSingle.Maximum);
+                        ProgressBarMulti.Maximum = 1;
+                        TaskbarProgress.Maximum = 1;
+                        e.Result = ComputeHashHelper.HashString(input, worker, ProgressBarSingle.Maximum);
                         break;
                     case "文件":
                         if (File.Exists(input.Input.Trim()))
                         {
                             input.Input = input.Input.Trim();
-                            taskbarProgress.Maximum = 1;
-                            e.Result = ComputeHashHelper.HashFile(resetEvent, worker, e, input, progressBarSingle.Maximum);
+                            ProgressBarMulti.Maximum = 1;
+                            TaskbarProgress.Maximum = 1;
+                            e.Result = ComputeHashHelper.HashFile(resetEvent, worker, e, input, ProgressBarSingle.Maximum);
                             break;
                         }
                         else
@@ -267,8 +333,8 @@ namespace HashTool.ViewModels
                             if (length > 0)
                             {
                                 ProgressBarMulti.Maximum = length;
-                                taskbarProgress.Maximum = length;
-                                e.Result = ComputeHashHelper.HashFolder(resetEvent, worker, e, input, progressBarSingle.Maximum);
+                                TaskbarProgress.Maximum = length;
+                                e.Result = ComputeHashHelper.HashFolder(resetEvent, worker, e, input, ProgressBarSingle.Maximum);
                                 break;
                             }
                             else
@@ -293,9 +359,9 @@ namespace HashTool.ViewModels
             }
             else if (e.Cancelled)
             {
-                progressBarSingle.Value = progressBarSingle.Minimum;
-                progressBarMulti.Value = progressBarMulti.Minimum;
-                taskbarProgress.Value = taskbarProgress.Minimum;
+                ProgressBarSingle.Value = ProgressBarSingle.Minimum;
+                ProgressBarMulti.Value = ProgressBarMulti.Minimum;
+                TaskbarProgress.Value = TaskbarProgress.Minimum;
                 HandyControl.Controls.Growl.SuccessGlobal("已取消！");
             }
             else
@@ -317,9 +383,9 @@ namespace HashTool.ViewModels
         }
         private void bgWorker_ProgressChanged(object? sender, ProgressChangedEventArgs e)
         {
-            progressBarSingle.Value = (e.ProgressPercentage - 1) % 1000 + 1;
-            progressBarMulti.Value = Math.Floor(e.ProgressPercentage / 1000.0);
-            taskbarProgress.Value = e.ProgressPercentage / 1000.0 / taskbarProgress.Maximum;
+            ProgressBarSingle.Value = (e.ProgressPercentage - 1) % 1000 + 1;
+            ProgressBarMulti.Value = Math.Floor(e.ProgressPercentage / 1000.0);
+            TaskbarProgress.Value = e.ProgressPercentage / 1000.0 / TaskbarProgress.Maximum;
         }
 
         #endregion BackgroundWorker

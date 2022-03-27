@@ -16,9 +16,25 @@
                 IsOptimalParagraphEnabled="True"
                 IsHyphenationEnabled="True">
                 <Section
-                    FontFamily="Times New Roman, HarmonyOS Sans SC, 黑体, 微软雅黑"
-                    FontSize="15"
+                    FontFamily="HarmonyOS Sans SC, 微软雅黑"
+                    FontSize="12"
                     LineHeight="20">
+
+                    <Section.Resources>
+                        <!-- Bold: FontSize -->
+                        <Style TargetType="{x:Type Bold}">
+                            <Setter
+                                Property="FontSize"
+                                Value="14" />
+                        </Style>
+                    </Section.Resources>
+
+                    <Paragraph>
+                        <Bold>哈希值对比框是否区分大小写？</Bold>
+                        <LineBreak />
+                        对比时，不区分大小写，同时也会忽略前后的空白字符。但是 QuickXor 使用 Base64 编码是区分大小写的，因此比较 QuickXor 时需要自己辅助比较。
+                    </Paragraph>
+
                     <Paragraph>
                         <Bold>如何通过“选择文件”按钮来自动获取文件夹地址？</Bold>
                         <LineBreak />

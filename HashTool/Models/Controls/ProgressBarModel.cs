@@ -4,6 +4,7 @@ namespace HashTool.Models.Controls
 {
     public class ProgressBarModel : ObservableObject
     {
+        public ProgressBarModel() { }
         public ProgressBarModel(double value = 0, double minimum = 0, double maximum = 100)
         {
             this.value = value;

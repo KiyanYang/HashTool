@@ -40,6 +40,14 @@ namespace HashTool.Helpers
             return Convert.ToBase64String(data);
         }
 
+        /// <summary>
+        /// 设置计算时需要使用的哈希算法字典。
+        /// </summary>
+        /// <remarks>
+        /// 该方法应该对某一任务只进行一次调用，以避免在计算时由于界面参数的变化导致后续计算所使用的参数发生改变。
+        /// </remarks>
+        /// <param name="hashInput">哈希计算所需的参数</param>
+        /// <exception cref="ArgumentOutOfRangeException">调用的哈希算法不在范围之内。</exception>
         private static void SetHashAlgorithmDict(HashInputModel hashInput)
         {
             hashAlgorithmDict.Clear();
@@ -62,6 +70,7 @@ namespace HashTool.Helpers
                 hashAlgorithmDict.Add(i.EnumContent, algorithm);
             }
         }
+        
         private static HashResultItemModel BuildHashResultItem(AlgorithmEnum id, byte[] data)
         {
             string hash = id switch
@@ -76,9 +85,9 @@ namespace HashTool.Helpers
 
         public static HashResultModel HashString(HashInputModel hashInput, BackgroundWorker? worker, double? maximum)
         {
+            SetHashAlgorithmDict(hashInput);
             Stopwatch stopWatch = Stopwatch.StartNew();
 
-            SetHashAlgorithmDict(hashInput);
             HashResultModel hashResult = new();
             hashResult.InputMode = hashInput.Mode;
             hashResult.Mode = "字符串_UTF-8";
@@ -404,14 +413,19 @@ namespace HashTool.Helpers
         }
     }
 
+    /// <summary>
+    /// QuickXorHash 算法实现。
+    /// </summary>
+    /// <remarks>
+    /// 来自【MicroSoft.Docs】<see href="https://docs.microsoft.com/en-us/onedrive/developer/code-snippets/quickxorhash">Code Snippets: QuickXorHash Algorithm</see>，有删改。
+    /// </remarks>
     internal class QuickXor : HashAlgorithm
     {
         private const int BitsInLastCell = 32;
         private const byte Shift = 11;
-        private const int Threshold = 600;
         private const byte WidthInBits = 160;
 
-        private ulong[] _data;
+        private ulong[] _data = new ulong[0];
         private long _lengthSoFar;
         private int _shiftSoFar;
 
@@ -449,7 +463,7 @@ namespace HashTool.Helpers
                     else
                     {
                         int index1 = vectorArrayIndex;
-                        int index2 = isLastCell ? 0 : (vectorArrayIndex + 1);
+                        int index2 = isLastCell ? 0 : vectorArrayIndex + 1;
                         byte low = (byte)(bitsInVectorCell - vectorOffset);
 
                         byte xoredByte = 0;
@@ -481,7 +495,7 @@ namespace HashTool.Helpers
             byte[] rgb = new byte[(WidthInBits - 1) / 8 + 1];
 
             // Block copy all our bitvectors to this byte array
-            for (Int32 i = 0; i < this._data.Length - 1; i++)
+            for (int i = 0; i < this._data.Length - 1; i++)
             {
                 Buffer.BlockCopy(
                     BitConverter.GetBytes(this._data[i]), 0,

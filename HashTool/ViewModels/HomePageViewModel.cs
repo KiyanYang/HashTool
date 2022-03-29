@@ -98,7 +98,7 @@ namespace HashTool.ViewModels
         }
         public ButtonModel ButtonReset
         {
-            get => buttonReset ??= new ("暂停", false);
+            get => buttonReset ??= new("暂停", false);
             set => SetProperty(ref buttonReset, value);
         }
         public ButtonModel ButtonCancel
@@ -224,7 +224,7 @@ namespace HashTool.ViewModels
             {
                 resetEvent = new(true);
                 hashResults.Clear();
-                bgWorker.RunWorkerAsync(CommonHelper.DeepCopy(MainInput));
+                bgWorker.RunWorkerAsync(MainInput);
                 ButtonStart.IsEnabled = false;
                 ButtonReset.IsEnabled = true;
                 ButtonCancel.IsEnabled = true;

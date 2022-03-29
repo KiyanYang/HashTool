@@ -92,6 +92,7 @@ namespace HashTool.Models
 
     public class HashResultItemModel : ObservableObject
     {
+        public HashResultItemModel() { }
         public HashResultItemModel(AlgorithmEnum id, string value)
         {
             this.id = id;
@@ -99,7 +100,7 @@ namespace HashTool.Models
         }
 
         private AlgorithmEnum id;
-        private string value;
+        private string? value;
 
         public AlgorithmEnum Id
         {
@@ -108,7 +109,7 @@ namespace HashTool.Models
         }
         public string Value
         {
-            get => value;
+            get => value ??= string.Empty;
             set => SetProperty(ref this.value, value);
         }
 

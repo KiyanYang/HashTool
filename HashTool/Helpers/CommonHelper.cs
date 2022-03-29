@@ -37,15 +37,6 @@ namespace HashTool.Helpers
             value = default(T);
         }
 
-        public static T DeepCopy<T>(T obj)
-        {
-            return Helpers.DeepCopy<T, T>.Trans(obj);
-        }
-        public static TOut DeepCopy<TIn, TOut>(TIn obj)
-        {
-            return Helpers.DeepCopy<TIn, TOut>.Trans(obj);
-        }
-
         #region FileSize
 
         public static long GetFileSize(string fullName)

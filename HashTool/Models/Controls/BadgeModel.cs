@@ -6,19 +6,20 @@ namespace HashTool.Models.Controls
 {
     public class BadgeModel : ObservableObject
     {
+        public BadgeModel() { }
         public BadgeModel(string text, bool showBadge = true)
         {
             this.text = text;
             this.showBadge = showBadge;
         }
 
-        private string text;
+        private string? text;
         private bool showBadge;
         private Style? style;
 
         public string Text
         {
-            get => text;
+            get => text ??= string.Empty;
             set => SetProperty(ref text, value);
         }
         public bool ShowBadge

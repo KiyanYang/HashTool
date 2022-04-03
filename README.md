@@ -41,7 +41,8 @@ Releases 链接：[`GitHub`](https://github.com/KiyanYang/HashTool/releases)；[
   - [Microsoft.Toolkit.Mvvm](https://github.com/CommunityToolkit/WindowsCommunityToolkit)
   - [HandyControl](https://github.com/HandyOrg/HandyControl)
   - [YamlDotNet](https://github.com/aaubry/YamlDotNet)
+  - [crc](https://github.com/invertedtomato/crc)
 
-- 文章
+- 代码片段
 
-  - [Bindable Converter, Converter Parameter and StringFormat](https://www.codeproject.com/Articles/459958/Bindable-Converter-Converter-Parameter-and-StringF)
+  - [QuickXorHash.cs](https://gist.github.com/rgregg/c07a91964300315c6c3e77f7b5b861e4)

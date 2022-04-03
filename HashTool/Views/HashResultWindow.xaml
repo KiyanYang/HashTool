@@ -170,10 +170,13 @@
                                     x:Name="hashResultText"
                                     Margin="80,0,52,0">
                                     <TextBox.Text>
-                                        <converters:BindableBinding
-                                            Path="Value"
-                                            Converter="{StaticResource LowerCaseConverter}"
-                                            ConverterParameterBinding="{Binding Id}" />
+                                        <MultiBinding Converter="{StaticResource LowerCaseConverter}">
+                                            <Binding Path="Value" />
+                                            <Binding Path="Id" />
+                                            <Binding
+                                                Path="DataContext.IsLowerCase"
+                                                ElementName="itemsHashResult" />
+                                        </MultiBinding>
                                     </TextBox.Text>
                                 </TextBox>
                                 <Button

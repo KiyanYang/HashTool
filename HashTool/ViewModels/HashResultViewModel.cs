@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) Kiyan Yang. All rights reserved.
+// Licensed under the GNU General Public License v3.0.
+// See LICENSE file in the project root for full license information.
+
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -68,9 +72,6 @@ namespace HashTool.ViewModels
             {
                 SetProperty(ref isLowerCase, value);
                 PropertiesHelper.Settings.IsLowerCase = value;
-
-                // 刷新界面内容
-                HashResult.Items.ForEach(i => i.ChangeProperty("Value"));
             }
         }
         public string HashResultListBoxColWidth

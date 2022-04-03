@@ -1,4 +1,8 @@
-﻿using System.Runtime.CompilerServices;
+﻿// Copyright (c) Kiyan Yang. All rights reserved.
+// Licensed under the GNU General Public License v3.0.
+// See LICENSE file in the project root for full license information.
+
+using System.Runtime.CompilerServices;
 
 using HashTool.Models.Enums;
 using HashTool.Properties;

@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) Kiyan Yang. All rights reserved.
+// Licensed under the GNU General Public License v3.0.
+// See LICENSE file in the project root for full license information.
+
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
@@ -72,7 +76,7 @@ namespace HashTool.ViewModels
             get => openSourceLicenses;
             set => SetProperty(ref openSourceLicenses, value);
         }
-        
+
         public ICommand CheckUpdateCommand { get; }
         public ICommand UpdateCommand { get; }
         public ICommand OpenLinkCommand { get; }

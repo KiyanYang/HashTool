@@ -161,7 +161,7 @@
                         <DataTemplate>
                             <hc:SimplePanel Margin="0,4,0,4">
                                 <hc:SimpleText
-                                    Text="{Binding Id}"
+                                    Text="{Binding Name}"
                                     Width="76"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
@@ -172,7 +172,7 @@
                                     <TextBox.Text>
                                         <MultiBinding Converter="{StaticResource LowerCaseConverter}">
                                             <Binding Path="Value" />
-                                            <Binding Path="Id" />
+                                            <Binding Path="Name" />
                                             <Binding
                                                 Path="DataContext.IsLowerCase"
                                                 ElementName="itemsHashResult" />

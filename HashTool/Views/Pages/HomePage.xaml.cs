@@ -6,6 +6,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 
+using HashTool.Models.Controls;
 using HashTool.ViewModels;
 
 namespace HashTool.Views.Pages
@@ -23,11 +24,11 @@ namespace HashTool.Views.Pages
             DataContext = homeViewModel;
         }
 
-        private HomePageViewModel homeViewModel;
+        private readonly HomePageViewModel homeViewModel;
 
-        public HomePageViewModel HomeViewModel
+        public ProgressBarModel TaskbarProgress
         {
-            get => homeViewModel;
+            get => homeViewModel.TaskbarProgress;
         }
 
         private void TextBoxInput_PreviewDragOver(object sender, DragEventArgs e)  //不能使用PreviewDragEnter, 否则在TextBox内无法捕获数据

@@ -30,9 +30,9 @@ namespace HashTool.ViewModels
         #region Fields
 
         private PageModel page;
-        private HomePage homePage;
-        private HelpPage helpPage;
-        private AboutPage aboutPage;
+        private readonly HomePage homePage;
+        private readonly HelpPage helpPage;
+        private readonly AboutPage aboutPage;
 
         #endregion
 
@@ -45,7 +45,7 @@ namespace HashTool.ViewModels
         }
         public ProgressBarModel TaskbarProgress
         {
-            get => homePage.HomeViewModel.TaskbarProgress;
+            get => homePage.TaskbarProgress;
         }
         public ICommand ShowPageCommand { get; }
 

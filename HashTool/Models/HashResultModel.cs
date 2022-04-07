@@ -4,8 +4,6 @@
 
 using System.Collections.Generic;
 
-using HashTool.Models.Enums;
-
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace HashTool.Models
@@ -97,19 +95,19 @@ namespace HashTool.Models
     public class HashResultItemModel : ObservableObject
     {
         public HashResultItemModel() { }
-        public HashResultItemModel(AlgorithmEnum id, string value)
+        public HashResultItemModel(string name, string value)
         {
-            this.id = id;
+            this.name = name;
             this.value = value;
         }
 
-        private AlgorithmEnum id;
+        private string? name;
         private string? value;
 
-        public AlgorithmEnum Id
+        public string Name
         {
-            get => id;
-            set => SetProperty(ref id, value);
+            get => name ??= string.Empty;
+            set => SetProperty(ref name, value);
         }
         public string Value
         {

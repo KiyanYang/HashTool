@@ -9,10 +9,10 @@ using System.IO;
 using System.Threading;
 using System.Windows.Input;
 
+using HashTool.Common;
 using HashTool.Helpers;
 using HashTool.Models;
 using HashTool.Models.Controls;
-using HashTool.Models.Enums;
 using HashTool.Views;
 
 using Microsoft.Toolkit.Mvvm.ComponentModel;
@@ -27,9 +27,10 @@ namespace HashTool.ViewModels
         {
             hashInput = new();
             // 初始化哈希算法 CheckBox
-            foreach (var a in Enum.GetValues<AlgorithmEnum>()[1..])
+            var selectedHashAlgorithm = Properties.Settings.Default.SelectedHashAlgorithm;
+            foreach (var name in new HashAlgorithmNames())
             {
-                hashInput.CheckBoxItems.Add(new(a, PropertiesHelper.Settings.SelectedHashAlgorithm.HasFlag(a)));
+                hashInput.CheckBoxItems.Add(new(name, selectedHashAlgorithm.Contains(name)));
             }
 
             bgWorker = new();
@@ -62,10 +63,10 @@ namespace HashTool.ViewModels
         private ProgressBarModel? progressBarMulti;
         private ProgressBarModel? taskbarProgress;
 
-        private BackgroundWorker bgWorker;
+        private readonly BackgroundWorker bgWorker;
         private ManualResetEvent resetEvent;
         private List<HashResultModel> hashResults;
-        private List<HashResultModel> hashResultHistory;
+        private readonly List<HashResultModel> hashResultHistory;
 
         #endregion
 
@@ -138,7 +139,6 @@ namespace HashTool.ViewModels
         public List<HashResultModel> HashResultHistory
         {
             get => hashResultHistory;
-            set => SetProperty(ref hashResultHistory, value);
         }
 
         public ICommand SelectFileCommand { get; }
@@ -155,7 +155,7 @@ namespace HashTool.ViewModels
 
         private void SelectFile()
         {
-            OpenFileDialog dialog = new OpenFileDialog();  //选择文件文件对话框
+            OpenFileDialog dialog = new();  //选择文件文件对话框
             dialog.Multiselect = false;  //是否支持多个文件的打开？
             dialog.Title = "请选择文件";  //标题
             dialog.Filter = "文件(*.*)|*.*";  //文件类型
@@ -191,7 +191,7 @@ namespace HashTool.ViewModels
         {
             if (results != null && results.Count > 0)
             {
-                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                SaveFileDialog saveFileDialog = new();
 
                 saveFileDialog.FileName = "HashTool 结果_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
                 saveFileDialog.Filter = "YAML (*.yaml)|*.yaml|JSON (*.json)|*.json|纯文本 (*.txt)|*.txt|XML (*.xml)|*.xml";
@@ -285,13 +285,14 @@ namespace HashTool.ViewModels
         }
         private void SetSelectedHashAlgorithm()
         {
-            var sAlgorithm = AlgorithmEnum.Null;
+            var setting = Properties.Settings.Default;
+            setting.SelectedHashAlgorithm.Clear();
             foreach (var i in MainInput.CheckBoxItems)
             {
                 if (i.IsChecked == true)
-                    sAlgorithm |= i.EnumContent;
+                    setting.SelectedHashAlgorithm.Add(i.Content);
             }
-            PropertiesHelper.Settings.SelectedHashAlgorithm = sAlgorithm;
+            setting.Save();
         }
 
         #region BackgroundWorker
@@ -306,6 +307,9 @@ namespace HashTool.ViewModels
         }
         private void bgWorker_DoWork(object? sender, DoWorkEventArgs e)
         {
+            ProgressBarSingle.Value = ProgressBarSingle.Minimum;
+            ProgressBarMulti.Value = ProgressBarMulti.Minimum;
+            TaskbarProgress.Value = TaskbarProgress.Minimum;
             if (sender is BackgroundWorker worker && e.Argument is HashInputModel input)
             {
                 switch (input.Mode)

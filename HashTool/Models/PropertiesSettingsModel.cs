@@ -2,9 +2,9 @@
 // Licensed under the GNU General Public License v3.0.
 // See LICENSE file in the project root for full license information.
 
+using System.Collections.Specialized;
 using System.Runtime.CompilerServices;
 
-using HashTool.Models.Enums;
 using HashTool.Properties;
 
 using Microsoft.Toolkit.Mvvm.ComponentModel;
@@ -14,7 +14,7 @@ namespace HashTool.Models
     public class PropertiesSettingsModel : ObservableObject
     {
         private bool? isLowerCase;
-        private AlgorithmEnum? selectedHashAlgorithm;
+        private StringCollection? selectedHashAlgorithm;
 
         public bool IsLowerCase
         {
@@ -25,17 +25,17 @@ namespace HashTool.Models
                 SaveSettings(value);
             }
         }
-        public AlgorithmEnum SelectedHashAlgorithm
+        public StringCollection SelectedHashAlgorithm
         {
-            get => selectedHashAlgorithm ??= (AlgorithmEnum)Settings.Default.SelectedHashAlgorithm;
+            get => selectedHashAlgorithm ??= Settings.Default.SelectedHashAlgorithm;
             set
             {
                 SetProperty(ref selectedHashAlgorithm, value);
-                SaveSettings((int)value);
+                SaveSettings(value);
             }
         }
 
-        private void SaveSettings<T>(T value, [CallerMemberName] string? propertyName = null)
+        private static void SaveSettings<T>(T value, [CallerMemberName] string? propertyName = null)
         {
             Settings.Default[propertyName] = value;
             Settings.Default.Save();

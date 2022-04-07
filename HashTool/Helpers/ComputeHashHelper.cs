@@ -12,38 +12,42 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+using HashTool.Common;
 using HashTool.Helpers.Hashs;
 using HashTool.Models;
-using HashTool.Models.Enums;
 
 namespace HashTool.Helpers
 {
     public class ComputeHashHelper
     {
         private static readonly HashAlgorithm crc32 = CRC.CreateCRC32();
+        private static readonly HashAlgorithm md2 = CSharpHash.CreateMD2();
+        private static readonly HashAlgorithm md4 = CSharpHash.CreateMD4();
         private static readonly HashAlgorithm md5 = MD5.Create();
         private static readonly HashAlgorithm sha1 = SHA1.Create();
+        private static readonly HashAlgorithm sha224 = CSharpHash.CreateSHA2_224();
         private static readonly HashAlgorithm sha256 = SHA256.Create();
         private static readonly HashAlgorithm sha384 = SHA384.Create();
         private static readonly HashAlgorithm sha512 = SHA512.Create();
+        private static readonly HashAlgorithm sha3_224 = CSharpHash.CreateSHA3_224();
+        private static readonly HashAlgorithm sha3_256 = CSharpHash.CreateSHA3_256();
+        private static readonly HashAlgorithm sha3_384 = CSharpHash.CreateSHA3_384();
+        private static readonly HashAlgorithm sha3_512 = CSharpHash.CreateSHA3_512();
+        private static readonly HashAlgorithm blake2B_160 = CSharpHash.CreateBlake2B_160();
+        private static readonly HashAlgorithm blake2B_256 = CSharpHash.CreateBlake2B_256();
+        private static readonly HashAlgorithm blake2B_384 = CSharpHash.CreateBlake2B_384();
+        private static readonly HashAlgorithm blake2B_512 = CSharpHash.CreateBlake2B_512();
+        private static readonly HashAlgorithm blake2S_128 = CSharpHash.CreateBlake2S_128();
+        private static readonly HashAlgorithm blake2S_160 = CSharpHash.CreateBlake2S_160();
+        private static readonly HashAlgorithm blake2S_224 = CSharpHash.CreateBlake2S_224();
+        private static readonly HashAlgorithm blake2S_256 = CSharpHash.CreateBlake2S_256();
+        private static readonly HashAlgorithm keccak_224 = CSharpHash.CreateKeccak_224();
+        private static readonly HashAlgorithm keccak_256 = CSharpHash.CreateKeccak_256();
+        private static readonly HashAlgorithm keccak_288 = CSharpHash.CreateKeccak_288();
+        private static readonly HashAlgorithm keccak_384 = CSharpHash.CreateKeccak_384();
+        private static readonly HashAlgorithm keccak_512 = CSharpHash.CreateKeccak_512();
         private static readonly HashAlgorithm quickXor = new QuickXorHash();
-        private static readonly Dictionary<AlgorithmEnum, HashAlgorithm> hashAlgorithmDict = new();
-
-        private static string HashFormatHex(byte[] data)
-        {
-            StringBuilder sBuilder = new();
-
-            foreach (byte b in data)
-            {
-                sBuilder.Append($"{b:X2}");
-            }
-
-            return sBuilder.ToString();
-        }
-        private static string HashFormatBase64(byte[] data)
-        {
-            return Convert.ToBase64String(data);
-        }
+        private static readonly Dictionary<string, HashAlgorithm> hashAlgorithmDict = new();
 
         /// <summary>
         /// 设置计算时需要使用的哈希算法字典。
@@ -61,32 +65,53 @@ namespace HashTool.Helpers
             {
                 if (i.IsChecked != true)
                     continue;
-                algorithm = i.EnumContent switch
+                algorithm = i.Content switch
                 {
-                    AlgorithmEnum.MD5 => md5,
-                    AlgorithmEnum.CRC32 => crc32,
-                    AlgorithmEnum.SHA1 => sha1,
-                    AlgorithmEnum.SHA256 => sha256,
-                    AlgorithmEnum.SHA384 => sha384,
-                    AlgorithmEnum.SHA512 => sha512,
-                    AlgorithmEnum.QuickXor => quickXor,
-                    _ => throw new ArgumentOutOfRangeException(),
+                    HashAlgorithmNames.CRC32 => crc32,
+                    HashAlgorithmNames.MD2 => md2,
+                    HashAlgorithmNames.MD4 => md4,
+                    HashAlgorithmNames.MD5 => md5,
+                    HashAlgorithmNames.SHA1 => sha1,
+                    HashAlgorithmNames.SHA224 => sha224,
+                    HashAlgorithmNames.SHA256 => sha256,
+                    HashAlgorithmNames.SHA384 => sha384,
+                    HashAlgorithmNames.SHA512 => sha512,
+                    HashAlgorithmNames.SHA3_224 => sha3_224,
+                    HashAlgorithmNames.SHA3_256 => sha3_256,
+                    HashAlgorithmNames.SHA3_384 => sha3_384,
+                    HashAlgorithmNames.SHA3_512 => sha3_512,
+                    HashAlgorithmNames.Blake2B_160 => blake2B_160,
+                    HashAlgorithmNames.Blake2B_256 => blake2B_256,
+                    HashAlgorithmNames.Blake2B_384 => blake2B_384,
+                    HashAlgorithmNames.Blake2B_512 => blake2B_512,
+                    HashAlgorithmNames.Blake2S_128 => blake2S_128,
+                    HashAlgorithmNames.Blake2S_160 => blake2S_160,
+                    HashAlgorithmNames.Blake2S_224 => blake2S_224,
+                    HashAlgorithmNames.Blake2S_256 => blake2S_256,
+                    HashAlgorithmNames.Keccak_224 => keccak_224,
+                    HashAlgorithmNames.Keccak_256 => keccak_256,
+                    HashAlgorithmNames.Keccak_288 => keccak_288,
+                    HashAlgorithmNames.Keccak_384 => keccak_384,
+                    HashAlgorithmNames.Keccak_512 => keccak_512,
+                    HashAlgorithmNames.QuickXor => quickXor,
+                    _ => throw new ArgumentOutOfRangeException(nameof(hashInput), "The input.CheckBoxItems'EnumContent out of range."),
                 };
-                hashAlgorithmDict.Add(i.EnumContent, algorithm);
+                hashAlgorithmDict.Add(i.Content, algorithm);
             }
         }
 
-        private static HashResultItemModel BuildHashResultItem(AlgorithmEnum id, byte[] data)
+        private static HashResultItemModel BuildHashResultItem(string name, byte[] hashValue)
         {
-            string hash = id switch
+            string hash = name switch
             {
-                AlgorithmEnum.QuickXor => HashFormatBase64(data),
-                _ => HashFormatHex(data),
+                HashAlgorithmNames.QuickXor => HashFormatBase64(hashValue),
+                _ => HashFormatHex(hashValue),
             };
-            return new HashResultItemModel(id, hash);
+            return new HashResultItemModel(name, hash);
         }
 
-        public static HashResultModel HashString(HashInputModel hashInput) => HashString(hashInput, null, null);
+        public static HashResultModel HashString(HashInputModel hashInput) =>
+            HashString(hashInput, null, null);
 
         public static HashResultModel HashString(HashInputModel hashInput, BackgroundWorker? worker, double? maximum)
         {
@@ -100,10 +125,10 @@ namespace HashTool.Helpers
             hashResult.ComputeTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
 
             byte[] hashValue;
-            foreach (var hashId in hashAlgorithmDict.Keys)
+            foreach (var name in hashAlgorithmDict.Keys)
             {
-                hashValue = hashAlgorithmDict[hashId].ComputeHash(Encoding.UTF8.GetBytes(hashInput.Input));
-                hashResult.Items.Add(BuildHashResultItem(hashId, hashValue));
+                hashValue = hashAlgorithmDict[name].ComputeHash(Encoding.UTF8.GetBytes(hashInput.Input));
+                hashResult.Items.Add(BuildHashResultItem(name, hashValue));
             }
             if (worker != null && maximum != null)
             {
@@ -125,8 +150,8 @@ namespace HashTool.Helpers
             hashResult.InputMode = mainInput.Mode;
             hashResult.Mode = "文件流";
             hashResult.Content = fileInfo.FullName;
-            hashResult.FileSize = CommonHelper.FileSizeFormatter(fileInfo.Length);
-            hashResult.LastWriteTime = fileInfo.LastWriteTime.ToString("yyyy/MM/dd HH:mm:ss");
+            hashResult.FileSize = FileSizeFormatHelper.Format(fileInfo.Length);
+            hashResult.LastWriteTime = fileInfo.LastWriteTime.ToString("yyyy/MM/dd HH:mm:ss.fff");
             hashResult.ComputeTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
             Stopwatch stopWatch = Stopwatch.StartNew();
 
@@ -134,17 +159,23 @@ namespace HashTool.Helpers
 
             #region 定义文件流读取参数及变量
 
-            // 自定义缓冲区大小 1024 KB
-            int bufferSize = 1024 * 1024;
+            // 自定义缓冲区大小，分为 4 档：文件大小，16 KB，1 MB，4 MB
+            int bufferSize = fileInfo.Length switch
+            {
+                < 1024 * 32 => (int)fileInfo.Length,
+                < 1024 * 1024 => 1024 * 16,
+                < 1024 * 1024 * 256 => 1024 * 1024,
+                _ => 1024 * 1024 * 4,
+            };
             byte[] buffer = new byte[bufferSize];
             // 每次实际读取长度，此初值仅为启动作用，真正的赋值在屏障内完成
-            int readLength = fileStream.Length > 0 ? bufferSize : 0;
+            var readLength = bufferSize;
 
             #endregion
 
             #region 使用屏障完成多算法的并行计算
 
-            using Barrier barrier = new Barrier(hashAlgorithmDict.Count, (b) =>
+            using Barrier barrier = new(hashAlgorithmDict.Count, (b) =>
             {
                 readLength = fileStream.Read(buffer, 0, bufferSize);
 
@@ -153,8 +184,9 @@ namespace HashTool.Helpers
                 // 设置进度条为 maximum 份, 并且对多文件流设置偏移量
                 worker.ReportProgress((int)(maximum * ((double)fileStream.Position / fileStream.Length + offset)));
             });
-            // 定义动作，先屏障同步并完成读取文件、报告进度等操作，再并行计算
-            Action<HashAlgorithm> action = hashAlgorithm =>
+
+            // 定义本地函数，先屏障同步并完成读取文件、报告进度等操作，再并行计算
+            void action(HashAlgorithm hashAlgorithm)
             {
                 while (readLength > 0)
                 {
@@ -167,7 +199,8 @@ namespace HashTool.Helpers
                     barrier.SignalAndWait();
                     hashAlgorithm.TransformBlock(buffer, 0, readLength, null, 0);
                 }
-            };
+            }
+
             // 开启并行动作
             Parallel.ForEach(hashAlgorithmDict.Values, action);
 
@@ -179,8 +212,7 @@ namespace HashTool.Helpers
                 foreach (var kvp in hashAlgorithmDict)
                 {
                     kvp.Value.TransformFinalBlock(buffer, 0, 0);
-                    var hashValue = kvp.Value.Hash;
-                    if (hashValue != null)
+                    if (kvp.Value.Hash is byte[] hashValue)
                     {
                         var s = BuildHashResultItem(kvp.Key, hashValue);
                         hashResult.Items.Add(s);
@@ -217,5 +249,25 @@ namespace HashTool.Helpers
             }
             return hashResults;
         }
+
+        #region 格式化哈希值 bytes -> string
+
+        private static string HashFormatHex(byte[] data)
+        {
+            StringBuilder sBuilder = new(data.Length << 1);
+
+            foreach (byte b in data)
+            {
+                sBuilder.Append($"{b:X2}");
+            }
+
+            return sBuilder.ToString();
+        }
+        private static string HashFormatBase64(byte[] data)
+        {
+            return Convert.ToBase64String(data);
+        }
+
+        #endregion
     }
 }

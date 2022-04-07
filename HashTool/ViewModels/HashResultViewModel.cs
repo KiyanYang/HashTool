@@ -9,7 +9,6 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 
-using HashTool.Helpers;
 using HashTool.Models;
 
 using Microsoft.Toolkit.Mvvm.ComponentModel;
@@ -23,10 +22,10 @@ namespace HashTool.ViewModels
         {
             #region 初始化 HashResults
 
-            this.hashResult = hashResults[0];
-            this.hashAllResults = new(hashResults);
-            this.hashResultItems = new();
-            hashResults.ForEach(i => this.hashResultItems.Add(i));
+            hashResult = hashResults[0];
+            hashAllResults = new(hashResults);
+            hashResultItems = new();
+            hashResults.ForEach(i => hashResultItems.Add(i));
 
             #endregion
 
@@ -52,7 +51,7 @@ namespace HashTool.ViewModels
 
         #region Fields
 
-        private List<HashResultModel> hashAllResults;
+        private readonly List<HashResultModel> hashAllResults;
 
         private bool? isLowerCase;
         private string? hashResultListBoxColWidth;
@@ -67,11 +66,11 @@ namespace HashTool.ViewModels
 
         public bool IsLowerCase
         {
-            get => isLowerCase ??= PropertiesHelper.Settings.IsLowerCase;
+            get => isLowerCase ??= GetInstance<PropertiesSettingsModel>().IsLowerCase;
             set
             {
                 SetProperty(ref isLowerCase, value);
-                PropertiesHelper.Settings.IsLowerCase = value;
+                GetInstance<PropertiesSettingsModel>().IsLowerCase = value;
             }
         }
         public string HashResultListBoxColWidth

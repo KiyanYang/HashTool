@@ -6,7 +6,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-using HashTool.Models.Enums;
+using HashTool.Common;
 
 namespace HashTool.Converters
 {
@@ -16,8 +16,8 @@ namespace HashTool.Converters
         {
             if (values.Length == 3
                 && values[0] is string val
-                && values[1] is AlgorithmEnum arg
-                && arg != AlgorithmEnum.QuickXor
+                && values[1] is string arg
+                && arg != HashAlgorithmNames.QuickXor
                 && values[2] is bool isLowerCase
                 && isLowerCase)
                 return val.ToLower();

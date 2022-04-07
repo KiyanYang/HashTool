@@ -18,7 +18,7 @@ using YamlDotNet.Serialization;
 
 namespace HashTool.Helpers
 {
-    internal class SerializerHelper
+    internal static class SerializerHelper
     {
         public static void Json<T>(string path, List<T> list)
         {
@@ -41,7 +41,7 @@ namespace HashTool.Helpers
         public static void Text<T>(string path, List<T> list)
         {
             var serializer = new SerializerBuilder().Build();
-            StringBuilder stringBulider = new StringBuilder();
+            StringBuilder stringBulider = new();
             foreach (T item in list)
             {
                 if (item != null)
@@ -84,7 +84,7 @@ namespace HashTool.Helpers
             dict.Add("计算开始时间", hashResult.ComputeTime);
             dict.Add("计算用时", hashResult.ComputeCost);
 
-            hashResult.Items.ForEach(i => dict.Add(i.Id.ToString(), i.Value));
+            hashResult.Items.ForEach(i => dict.Add(i.Name, i.Value));
 
             return dict;
         }

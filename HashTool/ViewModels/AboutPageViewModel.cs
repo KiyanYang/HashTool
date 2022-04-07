@@ -23,16 +23,10 @@ namespace HashTool.ViewModels
     {
         public AboutPageViewModel()
         {
-            openSourceLicenses = new OpenSourceLicenseModel[]
-            {
-                new("HandyOrg - HandyControl", "https://github.com/HandyOrg/HandyControl", OpenSourceLicenseModel.MIT),
-                new("Antoine Aubry - YamlDotNet", "https://github.com/aaubry/YamlDotNet", OpenSourceLicenseModel.MIT),
-                new("Microsoft.Toolkit - Microsoft.Toolkit.Mvvm", "https://github.com/CommunityToolkit/WindowsCommunityToolkit", OpenSourceLicenseModel.MIT)
-            };
-
             CheckUpdateCommand = new RelayCommand(CheckUpdate);
             UpdateCommand = new RelayCommand(OpenUpdater);
             OpenLinkCommand = new RelayCommand<string>(OpenLink);
+            OpenFileCommand = new RelayCommand<string>(OpenFile);
         }
 
         #region Fields
@@ -45,7 +39,6 @@ namespace HashTool.ViewModels
         private string? updateStatusText;
 
         private UpdateModel? update;
-        private OpenSourceLicenseModel[] openSourceLicenses;
 
         #endregion
 
@@ -68,18 +61,13 @@ namespace HashTool.ViewModels
 
         public UpdateModel Update
         {
-            get => update ??= new();
-            set => SetProperty(ref update, value);
-        }
-        public OpenSourceLicenseModel[] OpenSourceLicenses
-        {
-            get => openSourceLicenses;
-            set => SetProperty(ref openSourceLicenses, value);
+            get => update ??= GetInstance<UpdateModel>();
         }
 
         public ICommand CheckUpdateCommand { get; }
         public ICommand UpdateCommand { get; }
         public ICommand OpenLinkCommand { get; }
+        public ICommand OpenFileCommand { get; }
 
         #endregion
 
@@ -172,6 +160,14 @@ namespace HashTool.ViewModels
                 return;
 
             Process.Start("explorer.exe", link);
+        }
+
+        private void OpenFile(string? path)
+        {
+            if (path == null)
+                return;
+            var fullPath = Path.GetFullPath(path);
+            Process.Start("explorer.exe", fullPath);
         }
 
         #endregion

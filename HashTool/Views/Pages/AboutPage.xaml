@@ -19,12 +19,9 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300" />
             <ColumnDefinition
-                MinWidth="260"
-                MaxWidth="360"
-                Width="*" />
-            <ColumnDefinition
-                MaxWidth="480"
+                MaxWidth="500"
                 Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -54,20 +51,20 @@
                     BasedOn="{StaticResource ButtonDefault}">
                     <Setter
                         Property="Width"
-                        Value="76" />
+                        Value="80" />
                     <Setter
                         Property="Margin"
-                        Value="4,0,4,0" />
+                        Value="6,0,6,0" />
                 </Style>
 
                 <!-- TextBlock: Width, Margin, VerticalAlignment, TextAlignment -->
                 <Style TargetType="TextBlock">
                     <Setter
                         Property="Width"
-                        Value="76" />
+                        Value="80" />
                     <Setter
                         Property="Margin"
-                        Value="4,0,4,0" />
+                        Value="6,0,6,0" />
                     <Setter
                         Property="VerticalAlignment"
                         Value="Center" />
@@ -81,14 +78,13 @@
             <hc:SimpleStackPanel>
                 <TextBlock Text="项目地址" />
                 <Button
-                    BorderBrush="Transparent"
                     Content="GitHub"
+                    BorderBrush="Transparent"
                     Command="{Binding OpenLinkCommand}"
                     CommandParameter="https://github.com/KiyanYang/HashTool" />
                 <Button
+                    Content="Gitee"
                     BorderBrush="Transparent"
-                    Padding="0"
-                    Content="Gitee (镜像)"
                     Command="{Binding OpenLinkCommand}"
                     CommandParameter="https://gitee.com/KiyanYang/HashTool" />
             </hc:SimpleStackPanel>
@@ -117,68 +113,35 @@
                 <TextBlock Text="发行地址" />
                 <Button
                     Content="GitHub"
+                    BorderBrush="Transparent"
                     Command="{Binding OpenLinkCommand}"
                     CommandParameter="{Binding Update.GithubUrl}" />
                 <Button
                     Content="Gitee"
+                    BorderBrush="Transparent"
                     Command="{Binding OpenLinkCommand}"
                     CommandParameter="{Binding Update.GiteeUrl}" />
             </hc:SimpleStackPanel>
 
-            <!-- TextBlock 说明（无更新/!检测失败/!新版本信息） -->
-            <hc:SimplePanel Visibility="{Binding Update.HasUpdate, Converter={StaticResource Boolean2VisibilityReConverter}}">
-                <TextBlock
-                    Width="200"
-                    HorizontalAlignment="Center"
-                    Text="{Binding UpdateStatusText}" />
-            </hc:SimplePanel>
-
+            <Button
+                Width="120"
+                Margin="6,20,0,0"
+                BorderBrush="Transparent"
+                Background="Transparent"
+                Foreground="#0969da"
+                Content="开放源代码许可"
+                Command="{Binding OpenFileCommand}"
+                CommandParameter="./ThirdPartyNotices.html"
+                HorizontalAlignment="Left" />
         </hc:SimpleStackPanel>
 
-        <hc:SimpleStackPanel
+        <hc:SimplePanel
             Grid.Column="1"
-            Grid.Row="0">
-
+            Grid.Row="0"
+            Visibility="{Binding Update.HasUpdate, Converter={StaticResource Boolean2VisibilityReConverter}}">
             <TextBlock
-                Text="开放源代码许可"
-                Margin="8,4,0,4"
-                Padding="10,0,0,0"
-                FontSize="16" />
-
-            <Border
-                x:Name="borderOpenSourceLicenses"
-                Margin="8,0,8,0">
-                <ItemsControl
-                    ItemsSource="{Binding OpenSourceLicenses}"
-                    HorizontalAlignment="Left">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button
-                                Height="64"
-                                Width="{Binding ActualWidth, ElementName=borderOpenSourceLicenses}"
-                                BorderBrush="Transparent"
-                                HorizontalContentAlignment="Left"
-                                Command="{Binding DataContext.OpenLinkCommand, ElementName=page}"
-                                CommandParameter="{Binding Link}">
-                                <hc:SimpleStackPanel>
-                                    <hc:SimpleText
-                                        Text="{Binding Name}"
-                                        Margin="0,0,0,2" />
-                                    <hc:SimpleText
-                                        Text="{Binding Link}"
-                                        FontSize="12"
-                                        Foreground="Gray" />
-                                    <hc:SimpleText
-                                        Text="{Binding License}"
-                                        FontSize="12"
-                                        Foreground="Gray" />
-                                </hc:SimpleStackPanel>
-                            </Button>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </Border>
-
-        </hc:SimpleStackPanel>
+                HorizontalAlignment="Left"
+                Text="{Binding UpdateStatusText}" />
+        </hc:SimplePanel>
     </Grid>
 </Page>

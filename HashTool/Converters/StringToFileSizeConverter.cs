@@ -14,10 +14,9 @@ namespace HashTool.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            long val;
-            if (long.TryParse((string)value, out val))
+            if (long.TryParse((string)value, out long val))
             {
-                return CommonHelper.FileSizeFormatter(val);
+                return FileSizeFormatHelper.Format(val);
             }
             return string.Empty;
         }

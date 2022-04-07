@@ -72,22 +72,22 @@ namespace HashTool.Helpers.Hashs
         /// <summary>
         ///     查表法所使用的计算表。
         /// </summary>
-        private readonly ulong[] PrecomputationTable = new ulong[256];
+        private readonly ulong[] precomputationTable = new ulong[256];
 
         /// <summary>
         ///     用于隐藏 64 位工作寄存器中不需要的数据的掩码。
         /// </summary>
-        private readonly ulong Mask;
+        private readonly ulong mask;
 
         /// <summary>
         ///     输出反转处理时所使用的参数。
         /// </summary>
-        private readonly int ToRight;
+        private readonly int toRight;
 
         /// <summary>
         ///     截至目前，处理的所有缓冲区的累积 CRC 值。
         /// </summary>
-        private ulong Current;
+        private ulong current;
 
         #endregion
 
@@ -105,13 +105,13 @@ namespace HashTool.Helpers.Hashs
             IsInputReflected = isInputReflected;
             IsOutputReflected = isOutputReflected;
             OutputXor = outputXor;
-            Mask = ulong.MaxValue >> (64 - width);
+            mask = ulong.MaxValue >> (64 - width);
 
             CreateLookupTable();
 
             if (IsOutputReflected == false)
             {
-                ToRight = Width < 8 ? 0 : Width - 8;
+                toRight = Width < 8 ? 0 : Width - 8;
             }
 
             Initialize();
@@ -119,7 +119,7 @@ namespace HashTool.Helpers.Hashs
 
         public override void Initialize()
         {
-            Current = IsOutputReflected ? ReverseBits(Initial, Width) : Initial;
+            current = IsOutputReflected ? ReverseBits(Initial, Width) : Initial;
         }
 
         protected override void HashCore(byte[] array, int ibStart, int cbSize)
@@ -138,21 +138,21 @@ namespace HashTool.Helpers.Hashs
             {
                 for (var i = ibStart; i < ibStart + cbSize; i++)
                 {
-                    Current = PrecomputationTable[(Current ^ array[i]) & 0xFF] ^ (Current >> 8);
+                    current = precomputationTable[(current ^ array[i]) & 0xFF] ^ (current >> 8);
                 }
             }
             else
             {
                 for (var i = ibStart; i < ibStart + cbSize; i++)
                 {
-                    Current = PrecomputationTable[((Current >> ToRight) ^ array[i]) & 0xFF] ^ (Current << 8);
+                    current = precomputationTable[((current >> toRight) ^ array[i]) & 0xFF] ^ (current << 8);
                 }
             }
         }
 
         protected override byte[] HashFinal()
         {
-            var output = (Current ^ OutputXor) & Mask;
+            var output = (current ^ OutputXor) & mask;
 
             var result = BitConverter.GetBytes(output);
 
@@ -170,7 +170,7 @@ namespace HashTool.Helpers.Hashs
 
         private void CreateLookupTable()
         {
-            for (var i = 0; i < PrecomputationTable.Length; i++)
+            for (var i = 0; i < precomputationTable.Length; i++)
             {
                 var r = (ulong)i;
 
@@ -202,7 +202,7 @@ namespace HashTool.Helpers.Hashs
                     r = ReverseBits(r, Width);
                 }
 
-                PrecomputationTable[i] = r;
+                precomputationTable[i] = r;
             }
         }
 

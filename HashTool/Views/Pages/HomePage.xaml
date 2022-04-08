@@ -9,8 +9,8 @@
     xmlns:converter="clr-namespace:HashTool.Converters"
     mc:Ignorable="d"
     d:DesignHeight="360"
-    d:DesignWidth="580"
-    Title="HomePage">
+    d:DesignWidth="560"
+    Title="主页">
 
     <Page.Resources>
         <converter:RelativeWidthConverter x:Key="RelativeWidthConverter" />

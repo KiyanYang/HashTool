@@ -9,8 +9,8 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:converter="clr-namespace:HashTool.Converters"
     mc:Ignorable="d"
-    d:DesignHeight="260"
-    d:DesignWidth="520"
+    d:DesignHeight="360"
+    d:DesignWidth="560"
     Title="关于">
 
     <Page.Resources>

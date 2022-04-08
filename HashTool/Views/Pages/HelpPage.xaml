@@ -6,9 +6,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:HashTool.Views.Pages"
     mc:Ignorable="d"
-    d:DesignHeight="260"
-    d:DesignWidth="500"
-    Title="Help">
+    d:DesignHeight="360"
+    d:DesignWidth="560"
+    Title="帮助">
 
     <Grid>
         <FlowDocumentScrollViewer BorderBrush="Transparent">

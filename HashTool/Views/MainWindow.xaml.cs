@@ -4,6 +4,8 @@
 
 using System.Windows;
 
+using HashTool.ViewModels;
+
 namespace HashTool.Views
 {
     /// <summary>
@@ -14,6 +16,9 @@ namespace HashTool.Views
         public MainWindow()
         {
             InitializeComponent();
+
+            MainWindowViewModel mainWindowViewModel = new();
+            DataContext = mainWindowViewModel;
         }
     }
 }

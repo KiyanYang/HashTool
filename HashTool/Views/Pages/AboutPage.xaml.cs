@@ -18,7 +18,6 @@ namespace HashTool.Views.Pages
             InitializeComponent();
 
             AboutPageViewModel aboutViewModel = new();
-
             DataContext = aboutViewModel;
         }
     }

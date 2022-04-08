@@ -7,7 +7,6 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:HashTool.Views"
     xmlns:converter="clr-namespace:HashTool.Converters"
-    xmlns:viewModel="clr-namespace:HashTool.ViewModels"
     mc:Ignorable="d"
     Title="HashTool 哈希校验工具"
     Height="420"
@@ -19,10 +18,6 @@
         <converter:RelativeWidthConverter x:Key="RelativeWidthConverter" />
         <converter:ProportionStringConverter x:Key="ProportionStringConverter" />
     </Window.Resources>
-
-    <Window.DataContext>
-        <viewModel:MainWindowViewModel x:Name="ViewModel" />
-    </Window.DataContext>
 
     <Window.TaskbarItemInfo>
         <TaskbarItemInfo
@@ -66,22 +61,22 @@
                 <Button
                     Content="主页"
                     Command="{Binding ShowPageCommand}"
-                    CommandParameter="home" />
+                    CommandParameter="{Binding Content, RelativeSource={RelativeSource Self}}" />
                 <Button
                     Content="帮助"
                     Command="{Binding ShowPageCommand}"
-                    CommandParameter="help" />
+                    CommandParameter="{Binding Content, RelativeSource={RelativeSource Self}}" />
                 <Button
                     Content="关于"
                     Command="{Binding ShowPageCommand}"
-                    CommandParameter="about" />
+                    CommandParameter="{Binding Content, RelativeSource={RelativeSource Self}}" />
             </hc:SimpleStackPanel>
         </ScrollViewer>
 
         <TextBlock
             Grid.Column="1"
             Grid.Row="0"
-            Text="{Binding Page.Name}"
+            Text="{Binding CurrentPage.Title}"
             Margin="16,0,0,0"
             VerticalAlignment="Bottom"
             FontSize="16"
@@ -89,7 +84,7 @@
         <Frame
             Grid.Column="1"
             Grid.Row="1"
-            Content="{Binding Page.Page}"
+            Content="{Binding CurrentPage}"
             NavigationUIVisibility="Hidden"
             BorderBrush="Transparent" />
     </Grid>

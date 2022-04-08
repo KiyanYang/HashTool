@@ -105,7 +105,7 @@ namespace HashTool.ViewModels
 
         private void ShowSelected(int index)
         {
-            if (index >= 0)
+            if (index >= 0 && index < hashAllResults.Count)
             {
                 HashResult = hashAllResults[index];
             }

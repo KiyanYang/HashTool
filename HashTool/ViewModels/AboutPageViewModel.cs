@@ -127,13 +127,13 @@ namespace HashTool.ViewModels
         {
             Assembly assem = Assembly.GetExecutingAssembly();
             AssemblyName assemName = assem.GetName();
-            return assemName.Version ?? new Version(1, 0, 0);
+            return assemName.Version ?? new Version(1, 0, 0, 0);
         }
 
         private void OpenUpdater()
         {
             var res = HandyControl.Controls.MessageBox.Show("是否关闭程序并开始更新", "是否关闭并更新", MessageBoxButton.OKCancel);
-            // 这里不要使用相等判断，以防止未点击按钮（直接右上关闭消息框）的情况
+            // 这里不要判断是否点击的是取消按钮，以防止未点击按钮（直接右上关闭消息框）的情况
             if (res != MessageBoxResult.OK)
                 return;
 
@@ -166,6 +166,7 @@ namespace HashTool.ViewModels
         {
             if (path == null)
                 return;
+
             var fullPath = Path.GetFullPath(path);
             Process.Start("explorer.exe", fullPath);
         }

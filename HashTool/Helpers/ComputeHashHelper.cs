@@ -140,7 +140,7 @@ namespace HashTool.Helpers
             return hashResult;
         }
 
-        private static HashResultModel HashStream(ManualResetEvent resetEvent, BackgroundWorker worker, DoWorkEventArgs e, FileInfo fileInfo, HashInputModel mainInput, double maximum, int offset)
+        private static HashResultModel HashStream(ManualResetEventSlim mres, BackgroundWorker worker, DoWorkEventArgs e, FileInfo fileInfo, HashInputModel mainInput, double maximum, int offset)
         {
             #region 初始化文件流，哈希算法实例字典
 
@@ -179,7 +179,7 @@ namespace HashTool.Helpers
             {
                 readLength = fileStream.Read(buffer, 0, bufferSize);
 
-                resetEvent.WaitOne();
+                mres.Wait();
 
                 // 设置进度条为 maximum 份, 并且对多文件流设置偏移量
                 worker.ReportProgress((int)(maximum * ((double)fileStream.Position / fileStream.Length + offset)));
@@ -226,13 +226,13 @@ namespace HashTool.Helpers
             return hashResult;
         }
 
-        public static HashResultModel HashFile(ManualResetEvent resetEvent, BackgroundWorker worker, DoWorkEventArgs e, HashInputModel mainInput, double maximum)
+        public static HashResultModel HashFile(ManualResetEventSlim mres, BackgroundWorker worker, DoWorkEventArgs e, HashInputModel mainInput, double maximum)
         {
             SetHashAlgorithmDict(mainInput);
-            return HashStream(resetEvent, worker, e, new FileInfo(mainInput.Input), mainInput, maximum, 0);
+            return HashStream(mres, worker, e, new FileInfo(mainInput.Input), mainInput, maximum, 0);
         }
 
-        public static List<HashResultModel> HashFolder(ManualResetEvent resetEvent, BackgroundWorker worker, DoWorkEventArgs e, HashInputModel mainInput, double maximum)
+        public static List<HashResultModel> HashFolder(ManualResetEventSlim mres, BackgroundWorker worker, DoWorkEventArgs e, HashInputModel mainInput, double maximum)
         {
             SetHashAlgorithmDict(mainInput);
             FileInfo[] fileInfos = new DirectoryInfo(mainInput.Input).GetFiles();
@@ -245,7 +245,7 @@ namespace HashTool.Helpers
                     e.Cancel = true;
                     break;
                 }
-                hashResults.Add(HashStream(resetEvent, worker, e, fileInfos[i], mainInput, maximum, i));
+                hashResults.Add(HashStream(mres, worker, e, fileInfos[i], mainInput, maximum, i));
             }
             return hashResults;
         }

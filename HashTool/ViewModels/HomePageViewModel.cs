@@ -33,11 +33,6 @@ namespace HashTool.ViewModels
                 hashInput.CheckBoxItems.Add(new(name, selectedHashAlgorithm.Contains(name)));
             }
 
-            bgWorker = new();
-            resetEvent = new(true);
-            hashResults = new();
-            hashResultHistory = new();
-
             SelectFileCommand = new RelayCommand(SelectFile);
             ShowResultCommand = new RelayCommand<List<HashResultModel>>(ShowResult);
             SaveResultCommand = new RelayCommand<List<HashResultModel>>(SaveResult);
@@ -62,11 +57,11 @@ namespace HashTool.ViewModels
         private ProgressBarModel? progressBarSingle;
         private ProgressBarModel? progressBarMulti;
         private ProgressBarModel? taskbarProgress;
+        private List<HashResultModel>? hashResults;
+        private List<HashResultModel>? hashResultHistory;
 
-        private readonly BackgroundWorker bgWorker;
-        private ManualResetEvent resetEvent;
-        private List<HashResultModel> hashResults;
-        private readonly List<HashResultModel> hashResultHistory;
+        private readonly BackgroundWorker bgWorker = new();
+        private readonly ManualResetEventSlim mres = new(true);
 
         #endregion
 
@@ -133,12 +128,12 @@ namespace HashTool.ViewModels
         }
         public List<HashResultModel> HashResults
         {
-            get => hashResults;
+            get => hashResults ??= new();
             set => SetProperty(ref hashResults, value);
         }
         public List<HashResultModel> HashResultHistory
         {
-            get => hashResultHistory;
+            get => hashResultHistory ??= new();
         }
 
         public ICommand SelectFileCommand { get; }
@@ -226,8 +221,8 @@ namespace HashTool.ViewModels
         {
             if (!bgWorker.IsBusy)
             {
-                resetEvent = new(true);
-                hashResults.Clear();
+                mres.Set();
+                HashResults.Clear();
                 bgWorker.RunWorkerAsync(MainInput);
                 ButtonStart.IsEnabled = false;
                 ButtonReset.IsEnabled = true;
@@ -242,11 +237,11 @@ namespace HashTool.ViewModels
                 {
                     case "暂停":
                         ButtonReset.Content = "继续";
-                        resetEvent.Reset();
+                        mres.Reset();
                         break;
                     case "继续":
                         ButtonReset.Content = "暂停";
-                        resetEvent.Set();
+                        mres.Set();
                         break;
                 }
             }
@@ -255,7 +250,7 @@ namespace HashTool.ViewModels
         {
             if (bgWorker.IsBusy)
             {
-                resetEvent.Set();
+                mres.Set();
                 bgWorker.CancelAsync();
                 ButtonReset.Content = "暂停";
             }
@@ -325,7 +320,7 @@ namespace HashTool.ViewModels
                             input.Input = input.Input.Trim();
                             ProgressBarMulti.Maximum = 1;
                             TaskbarProgress.Maximum = 1;
-                            e.Result = ComputeHashHelper.HashFile(resetEvent, worker, e, input, ProgressBarSingle.Maximum);
+                            e.Result = ComputeHashHelper.HashFile(mres, worker, e, input, ProgressBarSingle.Maximum);
                             break;
                         }
                         else
@@ -342,7 +337,7 @@ namespace HashTool.ViewModels
                             {
                                 ProgressBarMulti.Maximum = length;
                                 TaskbarProgress.Maximum = length;
-                                e.Result = ComputeHashHelper.HashFolder(resetEvent, worker, e, input, ProgressBarSingle.Maximum);
+                                e.Result = ComputeHashHelper.HashFolder(mres, worker, e, input, ProgressBarSingle.Maximum);
                                 break;
                             }
                             else
@@ -376,13 +371,13 @@ namespace HashTool.ViewModels
             {
                 if (e.Result is HashResultModel result)
                 {
-                    hashResults.Add(result);
-                    hashResultHistory.Add(result);
+                    HashResults.Add(result);
+                    HashResultHistory.Add(result);
                 }
                 else if (e.Result is List<HashResultModel> results)
                 {
-                    hashResults.AddRange(results);
-                    hashResultHistory.AddRange(results);
+                    HashResults.AddRange(results);
+                    HashResultHistory.AddRange(results);
                 }
             }
             ButtonStart.IsEnabled = true;

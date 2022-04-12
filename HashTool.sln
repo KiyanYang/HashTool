@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HashTool", "HashTool\HashTool.csproj", "{0BCDEDF5-C734-4BDB-A260-C1F06C81F454}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HashToolTest", "HashToolTest\HashToolTest.csproj", "{4335ACE7-5013-4F5A-8FB5-98E500CC3EB3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HashToolTest", "HashToolTest\HashToolTest.csproj", "{4335ACE7-5013-4F5A-8FB5-98E500CC3EB3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

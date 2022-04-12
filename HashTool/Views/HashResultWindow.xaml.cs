@@ -19,9 +19,8 @@ namespace HashTool.Views
         {
             InitializeComponent();
 
-            HashResultViewModel hashResultViewModel = new(hashResultModels);
-            DataContext = hashResultViewModel;
+            HashResultViewModel vm = new(hashResultModels);
+            DataContext = vm;
         }
-
     }
 }

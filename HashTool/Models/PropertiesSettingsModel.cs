@@ -28,11 +28,6 @@ namespace HashTool.Models
         public StringCollection SelectedHashAlgorithm
         {
             get => selectedHashAlgorithm ??= Settings.Default.SelectedHashAlgorithm;
-            set
-            {
-                SetProperty(ref selectedHashAlgorithm, value);
-                SaveSettings(value);
-            }
         }
 
         private static void SaveSettings<T>(T value, [CallerMemberName] string? propertyName = null)

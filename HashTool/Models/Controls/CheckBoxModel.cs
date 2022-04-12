@@ -9,10 +9,10 @@ namespace HashTool.Models.Controls
     public class CheckBoxModel : ObservableObject
     {
         public CheckBoxModel() { }
-        public CheckBoxModel(string? content, bool isEnabled = true)
+        public CheckBoxModel(string? content, bool isChecked = true)
         {
             this.content = content;
-            isChecked = isEnabled;
+            this.isChecked = isChecked;
         }
 
         private string? content;

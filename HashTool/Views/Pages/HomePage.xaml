@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:local="clr-namespace:HashTool.Views.Pages"
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:converter="clr-namespace:HashTool.Converters"
@@ -13,13 +14,15 @@
     Title="主页">
 
     <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converter:Boolean2VisibilityReConverter x:Key="Boolean2VisibilityReConverter" />
         <converter:RelativeWidthConverter x:Key="RelativeWidthConverter" />
         <converter:ProportionStringConverter x:Key="ProportionStringConverter" />
     </Page.Resources>
 
     <ScrollViewer
         Margin="12"
-        MaxWidth="800">
+        MaxWidth="960">
         <hc:SimpleStackPanel
             x:Name="simpleStackPanel"
             Orientation="Vertical">
@@ -30,6 +33,15 @@
                     <Setter
                         Property="Orientation"
                         Value="Horizontal" />
+                </Style>
+
+                <!-- ComboBox: Margin -->
+                <Style
+                    TargetType="{x:Type ComboBox}"
+                    BasedOn="{StaticResource ComboBoxBaseStyle}">
+                    <Setter
+                        Property="Margin"
+                        Value="4,0,4,0" />
                 </Style>
 
                 <!-- hc.TextBox: TextWrapping, Margin -->
@@ -78,38 +90,47 @@
                 </Style>
             </hc:SimpleStackPanel.Resources>
 
-            <!-- ComboBox 模式; TextBox 输入; Button 选择文件 -->
-            <hc:SimplePanel Margin="0,0,0,8">
+            <!-- ComboBox 模式; TextBox 输入; Button 选择文件; ComboBox 字符编码 -->
+            <DockPanel Margin="0,0,0,8">
                 <ComboBox
-                    ItemsSource="{Binding MainInput.ModeItem}"
-                    SelectedItem="{Binding MainInput.Mode, Mode=TwoWay}"
-                    Margin="4,0,4,0"
+                    DockPanel.Dock="Left"
+                    ItemsSource="{Binding HashInput.ModeItems}"
+                    SelectedItem="{Binding HashInputMode, Mode=TwoWay}"
                     Width="84"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Bottom" />
+                <Button
+                    DockPanel.Dock="Right"
+                    Content="浏览…"
+                    Command="{Binding BrowserDialogCommand}"
+                    Visibility="{Binding IsTextMode, Converter={StaticResource Boolean2VisibilityReConverter}}"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Width="80"
+                    Margin="4,0,4,0" />
+                <ComboBox
+                    DockPanel.Dock="Right"
+                    ItemsSource="{Binding HashInput.EncodingNameItems}"
+                    SelectedItem="{Binding HashInput.EncodingName, Mode=TwoWay}"
+                    Visibility="{Binding IsTextMode, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Width="132"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom" />
                 <hc:TextBox
-                    Text="{Binding MainInput.Input, Mode=TwoWay}"
-                    Margin="96,0,96,0"
+                    Text="{Binding HashInput.Input, Mode=TwoWay}"
                     PreviewDragOver="TextBoxInput_PreviewDragOver"
                     PreviewDrop="TextBoxInput_PreviewDrop"
                     AcceptsReturn="True"
                     AcceptsTab="True"
                     MaxHeight="80"
                     VerticalScrollBarVisibility="Auto" />
-                <Button
-                    Content="选择文件"
-                    Command="{Binding SelectFileCommand}"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Bottom"
-                    Width="84"
-                    Margin="4,0,4,0" />
-            </hc:SimplePanel>
+            </DockPanel>
 
             <!-- CheckBox 哈希算法选择 -->
             <ItemsControl
                 x:Name="checkBoxItems"
                 HorizontalAlignment="Center"
-                ItemsSource="{Binding MainInput.CheckBoxItems}">
+                ItemsSource="{Binding HashInput.CheckBoxItems}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel

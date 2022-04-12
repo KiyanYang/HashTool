@@ -49,7 +49,7 @@ namespace HashTool.Views.Pages
             try
             {
                 var path = (string[])e.Data.GetData(DataFormats.FileDrop);
-                homeViewModel.MainInput.Input = path[0];
+                homeViewModel.HashInput.Input = path[0];
             }
             catch (Exception ex)
             {

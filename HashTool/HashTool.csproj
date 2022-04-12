@@ -5,7 +5,7 @@
         <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
         <Nullable>enable</Nullable>
         <UseWPF>true</UseWPF>
-        <UseWindowsForms>False</UseWindowsForms>
+        <UseWindowsForms>true</UseWindowsForms>
         <ApplicationIcon>Resource\HashTool.ico</ApplicationIcon>
         <AssemblyVersion>1.2.2.0</AssemblyVersion>
         <FileVersion>1.2.2.0</FileVersion>
@@ -24,6 +24,7 @@
         <PackageReference Include="HandyControl" Version="3.3.0" />
         <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
         <PackageReference Include="SharpHash" Version="1.1.0" />
+        <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.0" />
         <PackageReference Include="YamlDotNet" Version="11.2.1" />
     </ItemGroup>
     <ItemGroup>

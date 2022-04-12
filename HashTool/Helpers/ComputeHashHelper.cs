@@ -120,14 +120,16 @@ namespace HashTool.Helpers
 
             HashResultModel hashResult = new();
             hashResult.InputMode = hashInput.Mode;
-            hashResult.Mode = "字符串_UTF-8";
+            hashResult.Mode = "字符串";
             hashResult.Content = hashInput.Input;
+            hashResult.EncodingName = hashInput.EncodingName;
             hashResult.ComputeTime = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss.fff");
 
             byte[] hashValue;
+            var encoding = Encoding.GetEncoding(hashInput.EncodingName);
             foreach (var name in hashAlgorithmDict.Keys)
             {
-                hashValue = hashAlgorithmDict[name].ComputeHash(Encoding.UTF8.GetBytes(hashInput.Input));
+                hashValue = hashAlgorithmDict[name].ComputeHash(encoding.GetBytes(hashInput.Input));
                 hashResult.Items.Add(BuildHashResultItem(name, hashValue));
             }
             if (worker != null && maximum != null)

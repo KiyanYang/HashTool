@@ -33,7 +33,7 @@ namespace HashTool.ViewModels
                 hashInput.CheckBoxItems.Add(new(name, selectedHashAlgorithm.Contains(name)));
             }
 
-            SelectFileCommand = new RelayCommand(SelectFile);
+            BrowserDialogCommand = new RelayCommand(BrowserDialog);
             ShowResultCommand = new RelayCommand<List<HashResultModel>>(ShowResult);
             SaveResultCommand = new RelayCommand<List<HashResultModel>>(SaveResult);
             StartCommand = new RelayCommand(Start);
@@ -44,8 +44,9 @@ namespace HashTool.ViewModels
             InitializeBackgroundWorker();
         }
 
-        #region Fields
+        #region Fields & Private Properties
 
+        private bool? isTextMode;
         private string? hashValueVerify1;
         private string? hashValueVerify2;
 
@@ -67,12 +68,20 @@ namespace HashTool.ViewModels
 
         #region Public Properties/Commands
 
+        /// <summary>
+        /// 是否是文本模式
+        /// </summary>
+        public bool IsTextMode
+        {
+            get => isTextMode ??= false;
+            set => SetProperty(ref isTextMode, value);
+        }
         public string HashValueVerify1
         {
             get => hashValueVerify1 ??= string.Empty;
             set
             {
-                SetProperty(ref hashValueVerify1, value);
+                SetProperty(ref hashValueVerify1, value.Trim());
                 VerifyHashValue();
             }
         }
@@ -81,7 +90,7 @@ namespace HashTool.ViewModels
             get => hashValueVerify2 ??= string.Empty;
             set
             {
-                SetProperty(ref hashValueVerify2, value);
+                SetProperty(ref hashValueVerify2, value.Trim());
                 VerifyHashValue();
             }
         }
@@ -106,10 +115,19 @@ namespace HashTool.ViewModels
             get => buttonCancel ??= new("取消", false);
             set => SetProperty(ref buttonCancel, value);
         }
-        public HashInputModel MainInput
+        public HashInputModel HashInput
         {
             get => hashInput;
             set => SetProperty(ref hashInput, value);
+        }
+        public string HashInputMode
+        {
+            get => HashInput.Mode;
+            set
+            {
+                HashInput.Mode = value;
+                IsTextMode = value == "文本";
+            }
         }
         public ProgressBarModel ProgressBarSingle
         {
@@ -136,7 +154,7 @@ namespace HashTool.ViewModels
             get => hashResultHistory ??= new();
         }
 
-        public ICommand SelectFileCommand { get; }
+        public ICommand BrowserDialogCommand { get; }
         public ICommand ShowResultCommand { get; }
         public ICommand SaveResultCommand { get; }
         public ICommand StartCommand { get; }
@@ -148,25 +166,27 @@ namespace HashTool.ViewModels
 
         #region Helper
 
-        private void SelectFile()
+        private void BrowserDialog()
         {
-            OpenFileDialog dialog = new();  //选择文件文件对话框
-            dialog.Multiselect = false;  //是否支持多个文件的打开？
-            dialog.Title = "请选择文件";  //标题
-            dialog.Filter = "文件(*.*)|*.*";  //文件类型
-            if (dialog.ShowDialog() == true)
+            if (HashInput.Mode == HashInputModel.ModeItems[0])
             {
-                if (MainInput.Mode == "文件夹")
-                {
-                    // 全局弹窗提醒选择文件夹的方法
-                    HandyControl.Controls.Growl.InfoGlobal("选择文件夹内的任意文件来获取文件夹的地址");
-                    // 获取文件夹路径
-                    MainInput.Input = Path.GetDirectoryName(dialog.FileName) ?? string.Empty;
-                }
-                else
+                OpenFileDialog dialog = new();  //选择文件文件对话框
+                dialog.Multiselect = false;  //是否支持多个文件的打开？
+                dialog.Title = "请选择文件";  //标题
+                dialog.Filter = "文件(*.*)|*.*";  //文件类型
+                if (dialog.ShowDialog() == true)
                 {
                     // 获取文件路径
-                    MainInput.Input = dialog.FileName;
+                    HashInput.Input = dialog.FileName;
+                }
+            }
+            else if (HashInput.Mode == HashInputModel.ModeItems[1])
+            {
+                System.Windows.Forms.FolderBrowserDialog dialog = new();
+                if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    // 获取文件路径
+                    HashInput.Input = dialog.SelectedPath;
                 }
             }
         }
@@ -188,7 +208,7 @@ namespace HashTool.ViewModels
             {
                 SaveFileDialog saveFileDialog = new();
 
-                saveFileDialog.FileName = "HashTool 结果_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+                saveFileDialog.FileName = $"HashTool 结果_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}";
                 saveFileDialog.Filter = "YAML (*.yaml)|*.yaml|JSON (*.json)|*.json|纯文本 (*.txt)|*.txt|XML (*.xml)|*.xml";
                 saveFileDialog.RestoreDirectory = true;
 
@@ -223,7 +243,7 @@ namespace HashTool.ViewModels
             {
                 mres.Set();
                 HashResults.Clear();
-                bgWorker.RunWorkerAsync(MainInput);
+                bgWorker.RunWorkerAsync(HashInput);
                 ButtonStart.IsEnabled = false;
                 ButtonReset.IsEnabled = true;
                 ButtonCancel.IsEnabled = true;
@@ -257,16 +277,14 @@ namespace HashTool.ViewModels
         }
         private void VerifyHashValue()
         {
-            string hash1 = HashValueVerify1.Trim();
-            string hash2 = HashValueVerify2.Trim();
-            if (hash1 == string.Empty || hash2 == string.Empty)
+            if (string.IsNullOrEmpty(HashValueVerify1) || string.IsNullOrEmpty(HashValueVerify2))
             {
                 BadgeVerify.ShowBadge = false;
             }
             else
             {
                 BadgeVerify.ShowBadge = true;
-                if (string.Equals(hash1, hash2, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(HashValueVerify1, HashValueVerify2, StringComparison.OrdinalIgnoreCase))
                 {
                     BadgeVerify.Text = "相同";
                     BadgeVerify.SetStyle("BadgeSuccess");
@@ -278,11 +296,14 @@ namespace HashTool.ViewModels
                 }
             }
         }
+        /// <summary>
+        /// 设置 Properties.Settings.Default 中的 SelectedHashAlgorithm。
+        /// </summary>
         private void SetSelectedHashAlgorithm()
         {
             var setting = Properties.Settings.Default;
             setting.SelectedHashAlgorithm.Clear();
-            foreach (var i in MainInput.CheckBoxItems)
+            foreach (var i in HashInput.CheckBoxItems)
             {
                 if (i.IsChecked == true)
                     setting.SelectedHashAlgorithm.Add(i.Content);

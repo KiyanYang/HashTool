@@ -11,7 +11,9 @@
     Title="帮助">
 
     <Grid>
-        <FlowDocumentScrollViewer BorderBrush="Transparent">
+        <FlowDocumentScrollViewer
+            BorderBrush="Transparent"
+            IsToolBarVisible="False">
             <FlowDocument
                 IsOptimalParagraphEnabled="True"
                 IsHyphenationEnabled="True">
@@ -33,18 +35,6 @@
                         <Bold>哈希值对比框是否区分大小写？</Bold>
                         <LineBreak />
                         对比时，不区分大小写，同时也会忽略前后的空白字符。但是 QuickXor 使用 Base64 编码是区分大小写的，因此比较 QuickXor 时需要自己辅助比较。
-                    </Paragraph>
-
-                    <Paragraph>
-                        <Bold>如何通过“选择文件”按钮来自动获取文件夹地址？</Bold>
-                        <LineBreak />
-                        在“文件夹”模式下，通过“选择文件”按钮来选择文件夹内的任意文件，即可自动获取此文件夹的地址。
-                    </Paragraph>
-
-                    <Paragraph>
-                        <Bold>如何在“文本”模式下选择文件编码格式？</Bold>
-                        <LineBreak />
-                        暂时无法选择，之后可能会提供。
                     </Paragraph>
 
                     <Paragraph>

@@ -13,6 +13,7 @@ namespace HashTool.Models
         private string? inputMode;
         private string? mode;
         private string? content;
+        private string? encodingName;
         private string? fileSize;
         private string? lastWriteTime;
         private string? computeTime;
@@ -44,6 +45,15 @@ namespace HashTool.Models
         {
             get => content ??= string.Empty;
             set => SetProperty(ref content, value);
+        }
+
+        /// <summary>
+        /// 计算内容：字符编码名称
+        /// </summary>
+        public string EncodingName
+        {
+            get => encodingName ??= string.Empty;
+            set => SetProperty(ref encodingName, value);
         }
 
         /// <summary>

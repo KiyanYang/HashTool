@@ -79,11 +79,18 @@ namespace HashTool.Helpers
             dict.Add("输入模式", hashResult.InputMode);
             dict.Add("计算模式", hashResult.Mode);
             dict.Add("计算内容", hashResult.Content);
-            dict.Add("文件大小", hashResult.FileSize);
-            dict.Add("文件修改时间", hashResult.LastWriteTime);
+            if (hashResult.Mode == "字符串")
+            {
+                dict.Add("字符编码", hashResult.EncodingName);
+            }
+            else if (hashResult.Mode == "文件流")
+            {
+                dict.Add("文件大小", hashResult.FileSize);
+                dict.Add("文件修改时间", hashResult.LastWriteTime);
+            }
+
             dict.Add("计算开始时间", hashResult.ComputeTime);
             dict.Add("计算用时", hashResult.ComputeCost);
-
             hashResult.Items.ForEach(i => dict.Add(i.Name, i.Value));
 
             return dict;

@@ -122,6 +122,15 @@
                         VerticalScrollBarVisibility="Auto" />
                 </hc:SimplePanel>
 
+                <!-- hc.SimpleText 字符编码; TextBox 字符编码 -->
+                <hc:SimplePanel Visibility="{Binding HashResult.EncodingName, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
+                    <hc:SimpleText Text="字符编码" />
+                    <TextBox
+                        Text="{Binding HashResult.EncodingName}"
+                        MaxHeight="80"
+                        VerticalScrollBarVisibility="Auto" />
+                </hc:SimplePanel>
+
                 <!-- hc.SimpleText 文件大小; TextBox 格式化后的大小 -->
                 <hc:SimplePanel Visibility="{Binding HashResult.FileSize, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
                     <hc:SimpleText Text="文件大小" />

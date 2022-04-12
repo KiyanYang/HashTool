@@ -37,6 +37,7 @@
             Margin="4,4,4,4"
             Visibility="{Binding HashResultListBoxVisibility}"
             ItemsSource="{Binding HashResultItems}"
+            SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}"
             DisplayMemberPath="Content"
             Background="Transparent"
             BorderBrush="Transparent"
@@ -44,15 +45,7 @@
             ScrollViewer.CanContentScroll="True"
             VirtualizingPanel.IsVirtualizing="True"
             VirtualizingPanel.ScrollUnit="Item"
-            VirtualizingPanel.VirtualizationMode="Recycling">
-            <hc:Interaction.Triggers>
-                <hc:EventTrigger EventName="SelectionChanged">
-                    <hc:EventToCommand
-                        Command="{Binding ShowSelectedCommand}"
-                        CommandParameter="{Binding SelectedIndex, ElementName=lboxHashResultItems}" />
-                </hc:EventTrigger>
-            </hc:Interaction.Triggers>
-        </ListBox>
+            VirtualizingPanel.VirtualizationMode="Recycling" />
 
         <GridSplitter
             Grid.Row="0"

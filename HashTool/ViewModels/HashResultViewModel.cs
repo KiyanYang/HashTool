@@ -44,7 +44,6 @@ namespace HashTool.ViewModels
 
             #endregion
 
-            ShowSelectedCommand = new RelayCommand<int>(ShowSelected);
             ViewInExplorerCommand = new RelayCommand<string>(ViewInExplorer);
             CopyToClipboardCommand = new RelayCommand<string>(CopyToClipboard);
         }
@@ -56,6 +55,7 @@ namespace HashTool.ViewModels
         private bool? isLowerCase;
         private string? hashResultListBoxColWidth;
         private Visibility? hashResultListBoxVisibility;
+        private int? selectedIndex;
 
         private HashResultModel hashResult;
         private ObservableCollection<HashResultModel> hashResultItems;
@@ -83,19 +83,36 @@ namespace HashTool.ViewModels
             get => hashResultListBoxVisibility ??= Visibility.Visible;
             set => SetProperty(ref hashResultListBoxVisibility, value);
         }
+        /// <summary>
+        /// 当前所选择项目的索引。
+        /// </summary>
+        public int SelectedIndex
+        {
+            get => selectedIndex ??= 0;
+            set
+            {
+                SetProperty(ref selectedIndex, value);
+                ShowSelected(value);
+            }
+        }
 
+        /// <summary>
+        /// 用于展示的哈希结果。
+        /// </summary>
         public HashResultModel HashResult
         {
             get => hashResult;
             set => SetProperty(ref hashResult, value);
         }
+        /// <summary>
+        /// 全部的哈希结果。
+        /// </summary>
         public ObservableCollection<HashResultModel> HashResultItems
         {
             get => hashResultItems;
             set => SetProperty(ref hashResultItems, value);
         }
 
-        public ICommand ShowSelectedCommand { get; }
         public ICommand ViewInExplorerCommand { get; }
         public ICommand CopyToClipboardCommand { get; }
 

@@ -20,9 +20,9 @@
 
 HashTool 支持文件、文件夹或文本的哈希计算，对于文件采用并行计算（在选择多种算法时优势明显），此外还提供了结果导出和对比框校验功能。
 
-## 依赖环境
+## 环境
 
-- `.NET 6` [点击下载](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-6.0.3-windows-x64-installer)
+- `.NET 6.0 Desktop Runtime - Windows x64` [点击下载](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-6.0.4-windows-x64-installer)
 
 ## 使用
 

@@ -26,7 +26,7 @@ function Start-SleepWithExit {
         [int]$Seconds,
         [string]$Text
     )
-    Write-WithDate "$Text，窗口将在 $Seconds 秒后自动关闭。"
+    Write-WithDate "$Text 窗口将在 $Seconds 秒后自动关闭。"
     Start-Sleep -Seconds $Seconds
     Exit
 }

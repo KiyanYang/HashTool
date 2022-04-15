@@ -32,24 +32,36 @@ jobs:
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: ${{ env.DotnetVersion }}
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: $env:USERPROFILE/.nuget/packages
+          # Look to see if there is a cache hit for the corresponding requirements file
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget
       - name: Restore dependencies
         run: dotnet restore
       - name: Build
         run: |
-          dotnet build `
+          dotnet build HashTool`
             --configuration ${{ matrix.configuration }} `
-            --output ./bin/${{ matrix.configuration }}/${{ env.OutputDirectory }} `
+            --output ./HashTool/bin/${{ matrix.configuration }}/${{ env.OutputDirectory }} `
+            --no-restore
+          dotnet build HashToolTest`
+            --configuration ${{ matrix.configuration }} `
+            --output ./HashToolTest/bin/${{ matrix.configuration }}/${{ env.OutputDirectory }} `
             --no-restore
       - name: Test
         run: |
           dotnet test `
             --configuration ${{ matrix.configuration }} `
-            --output ./bin/${{ matrix.configuration }}/${{ env.OutputDirectory }} `
+            --output ./HashToolTest/bin/${{ matrix.configuration }}/${{ env.OutputDirectory }} `
             --no-build `
             --verbosity normal
       - name: Upload bin directory
         uses: actions/upload-artifact@v3
-        if: ${{ success() }}
+        if: success() && ${{ matrix.configuration }} == 'Release'
         with:
           name: ${{ env.OutputDirectory }}
-          path: ./bin/Release/${{ env.OutputDirectory }}
+          path: ./HashTool/bin/Release/${{ env.OutputDirectory }}

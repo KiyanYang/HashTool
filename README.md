@@ -13,6 +13,7 @@
 ![License GPL-3.0](https://img.shields.io/github/license/KiyanYang/HashTool)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/KiyanYang/HashTool)
 ![GitHub issues](https://img.shields.io/github/issues/KiyanYang/HashTool)
+[![.NET Build & Test](https://github.com/KiyanYang/HashTool/actions/workflows/dotnet.yml/badge.svg)](https://github.com/KiyanYang/HashTool/actions/workflows/dotnet.yml)
 
 </div>
 

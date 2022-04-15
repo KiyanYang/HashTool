@@ -28,7 +28,7 @@ jobs:
       - name: Set the value in pwsh
         run: |
           "OutputDirectory=HashTool-$(git rev-parse --short HEAD)" >> $env:GITHUB_ENV
-          "UserProfile=$(env:USERPROFILE)" >> $env:GITHUB_ENV
+          "UserProfile=$env:USERPROFILE" >> $env:GITHUB_ENV
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
         with:
@@ -36,7 +36,7 @@ jobs:
       - name: Cache dependencies
         uses: actions/cache@v3
         with:
-          path: ${{ env.USERPROFILE }}/.nuget/packages
+          path: ${{ env.UserProfile }}/.nuget/packages
           # Look to see if there is a cache hit for the corresponding requirements file
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
           restore-keys: |

@@ -2,14 +2,18 @@ name: .NET Build & Test
 
 on:
   push:
+    branches:
+      - "main"
   pull_request:
-    branches: [main]
+    branches:
+      - "main"
     paths:
       - "**.cs"
+      - "**.xaml"
       - "**.csproj"
 
 env:
-  DOTNET_VERSION: "6.0.x"
+  DotnetVersion: "6.0.x"
 
 jobs:
   build-and-test:
@@ -21,17 +25,34 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Set the OutputDirectory in pwsh
+        run: |
+          "OutputDirectory=HashTool-$(git rev-parse --short HEAD)" >> $env:GITHUB_ENV
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+          dotnet-version: ${{ env.DotnetVersion }}
       - name: Restore dependencies
         run: dotnet restore
       - name: Build
-        run: dotnet build --configuration $env:Configuration --no-restore
+        run: |
+          dotnet build `
+            --configuration $Configuration `
+            --output ./bin/$Configuration/${{ env.OutputDirectory }} `
+            --no-restore
         env:
           Configuration: ${{ matrix.configuration }}
       - name: Test
-        run: dotnet test --configuration $env:Configuration --no-build --verbosity normal
+        run: |
+          dotnet test `
+            --configuration $Configuration `
+            --no-build `
+            --verbosity normal
         env:
           Configuration: ${{ matrix.configuration }}
+      - name: Upload bin directory
+        uses: actions/upload-artifact@v3
+        if: ${{ success() }}
+        with:
+          name: ${{ env.OutputDirectory }}
+          path: ./bin/Release/${{ env.OutputDirectory }}

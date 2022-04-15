@@ -44,6 +44,7 @@ jobs:
         run: |
           dotnet test `
             --configuration ${{ matrix.configuration }} `
+            --output ./bin/${{ matrix.configuration }}/${{ env.OutputDirectory }} `
             --no-build `
             --verbosity normal
       - name: Upload bin directory

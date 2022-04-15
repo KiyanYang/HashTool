@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - "main"
+    paths:
+      - "**.cs"
+      - "**.xaml"
+      - "**.csproj"
   pull_request:
     branches:
       - "main"
@@ -62,7 +66,7 @@ jobs:
             --verbosity normal
       - name: Upload bin directory
         uses: actions/upload-artifact@v3
-        if: success() && ${{ matrix.configuration }} == 'Release'
+        if: ${{ success() }} && ${{ matrix.configuration }} == 'Release'
         with:
           name: ${{ env.OutputDirectory }}
           path: ./HashTool/bin/Release/${{ env.OutputDirectory }}

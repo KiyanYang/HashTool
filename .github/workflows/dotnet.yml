@@ -37,19 +37,15 @@ jobs:
       - name: Build
         run: |
           dotnet build `
-            --configuration $Configuration `
-            --output ./bin/$Configuration/${{ env.OutputDirectory }} `
+            --configuration ${{ matrix.configuration }} `
+            --output ./bin/${{ matrix.configuration }}/${{ env.OutputDirectory }} `
             --no-restore
-        env:
-          Configuration: ${{ matrix.configuration }}
       - name: Test
         run: |
           dotnet test `
-            --configuration $Configuration `
+            --configuration ${{ matrix.configuration }} `
             --no-build `
             --verbosity normal
-        env:
-          Configuration: ${{ matrix.configuration }}
       - name: Upload bin directory
         uses: actions/upload-artifact@v3
         if: ${{ success() }}

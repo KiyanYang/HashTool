@@ -19,6 +19,7 @@ on:
 
 env:
   DotnetVersion: "6.0.x"
+  DotnetVersionPattern: "6.0."
 
 jobs:
   build-and-test:
@@ -36,7 +37,7 @@ jobs:
           "OutputDirectory=HashTool-$(git rev-parse --short HEAD)" >> $env:GITHUB_ENV
           "UserProfile=$env:USERPROFILE" >> $env:GITHUB_ENV
       - name: Setup .NET
-        if: env.CurrentDotnetVersion -notmatch '6\.0\.'
+        if: ${{ !startsWith(env.CurrentDotnetVersion, env.DotnetVersionPattern) }}
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: ${{ env.DotnetVersion }}

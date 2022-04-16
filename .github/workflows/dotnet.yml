@@ -35,7 +35,6 @@ jobs:
         run: |
           "CurrentDotnetVersion=$(dotnet --version)" >> $env:GITHUB_ENV
           "OutputDirectory=HashTool-$(git rev-parse --short HEAD)" >> $env:GITHUB_ENV
-          "UserProfile=$env:USERPROFILE" >> $env:GITHUB_ENV
       - name: Setup .NET
         if: ${{ !startsWith(env.CurrentDotnetVersion, env.DotnetVersionPattern) }}
         uses: actions/setup-dotnet@v2
@@ -44,10 +43,12 @@ jobs:
       - name: Cache dependencies
         uses: actions/cache@v3
         with:
-          path: ${{ env.UserProfile }}/.nuget/packages
+          path: |
+            ~/.nuget/packages
+            !~/.nuget/packages/unwanted
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-nuget
+            ${{ runner.os }}-nuget-
       - name: Restore dependencies
         run: dotnet restore
       - name: Build

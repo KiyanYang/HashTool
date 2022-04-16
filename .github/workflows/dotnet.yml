@@ -32,9 +32,11 @@ jobs:
         uses: actions/checkout@v3
       - name: Set the value in pwsh
         run: |
+          "CurrentDotnetVersion=$(dotnet --version)" >> $env:GITHUB_ENV
           "OutputDirectory=HashTool-$(git rev-parse --short HEAD)" >> $env:GITHUB_ENV
           "UserProfile=$env:USERPROFILE" >> $env:GITHUB_ENV
       - name: Setup .NET
+        if: env.CurrentDotnetVersion -notmatch '6\.0\.'
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: ${{ env.DotnetVersion }}

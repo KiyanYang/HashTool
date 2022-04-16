@@ -15,6 +15,7 @@ on:
       - "**.cs"
       - "**.xaml"
       - "**.csproj"
+  workflow_dispatch:
 
 env:
   DotnetVersion: "6.0.x"
@@ -41,7 +42,6 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ env.UserProfile }}/.nuget/packages
-          # Look to see if there is a cache hit for the corresponding requirements file
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
           restore-keys: |
             ${{ runner.os }}-nuget
@@ -66,7 +66,7 @@ jobs:
             --verbosity normal
       - name: Upload bin directory
         uses: actions/upload-artifact@v3
-        if: ${{ success() }} && ${{ matrix.configuration }} == 'Release'
+        if: success() && matrix.configuration == 'Release'
         with:
           name: ${{ env.OutputDirectory }}
           path: ./HashTool/bin/Release/${{ env.OutputDirectory }}

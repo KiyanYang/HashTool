@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
@@ -25,12 +26,12 @@ namespace HashTool.ViewModels
     {
         public HomePageViewModel()
         {
-            hashInput = new();
+            _hashInput = new();
             // 初始化哈希算法 CheckBox
-            var selectedHashAlgorithm = Properties.Settings.Default.SelectedHashAlgorithm;
-            foreach (var name in new HashAlgorithmNames())
+            StringCollection selectedHashAlgorithm = Properties.Settings.Default.SelectedHashAlgorithm;
+            foreach (string name in new HashAlgorithmNames())
             {
-                hashInput.CheckBoxItems.Add(new(name, selectedHashAlgorithm.Contains(name)));
+                _hashInput.CheckBoxItems.Add(new(name, selectedHashAlgorithm.Contains(name)));
             }
 
             BrowserDialogCommand = new RelayCommand(BrowserDialog);
@@ -46,23 +47,23 @@ namespace HashTool.ViewModels
 
         #region Fields & Private Properties
 
-        private bool? isTextMode;
-        private string? hashValueVerify1;
-        private string? hashValueVerify2;
+        private bool? _isTextMode;
+        private string? _hashValueVerify1;
+        private string? _hashValueVerify2;
 
-        private BadgeModel? badgeVerify;
-        private ButtonModel? buttonStart;
-        private ButtonModel? buttonReset;
-        private ButtonModel? buttonCancel;
-        private HashInputModel hashInput;
-        private ProgressBarModel? progressBarSingle;
-        private ProgressBarModel? progressBarMulti;
-        private ProgressBarModel? taskbarProgress;
-        private List<HashResultModel>? hashResults;
-        private List<HashResultModel>? hashResultHistory;
+        private BadgeModel? _badgeVerify;
+        private ButtonModel? _buttonStart;
+        private ButtonModel? _buttonReset;
+        private ButtonModel? _buttonCancel;
+        private HashInputModel _hashInput;
+        private ProgressBarModel? _progressBarSingle;
+        private ProgressBarModel? _progressBarMulti;
+        private ProgressBarModel? _taskbarProgress;
+        private List<HashResultModel>? _hashResults;
+        private List<HashResultModel>? _hashResultHistory;
 
-        private readonly BackgroundWorker bgWorker = new();
-        private readonly ManualResetEventSlim mres = new(true);
+        private readonly BackgroundWorker _bgWorker = new();
+        private readonly ManualResetEventSlim _mres = new(true);
 
         #endregion
 
@@ -73,52 +74,52 @@ namespace HashTool.ViewModels
         /// </summary>
         public bool IsTextMode
         {
-            get => isTextMode ??= false;
-            set => SetProperty(ref isTextMode, value);
+            get => _isTextMode ??= false;
+            set => SetProperty(ref _isTextMode, value);
         }
         public string HashValueVerify1
         {
-            get => hashValueVerify1 ??= string.Empty;
+            get => _hashValueVerify1 ??= string.Empty;
             set
             {
-                SetProperty(ref hashValueVerify1, value.Trim());
+                SetProperty(ref _hashValueVerify1, value.Trim());
                 VerifyHashValue();
             }
         }
         public string HashValueVerify2
         {
-            get => hashValueVerify2 ??= string.Empty;
+            get => _hashValueVerify2 ??= string.Empty;
             set
             {
-                SetProperty(ref hashValueVerify2, value.Trim());
+                SetProperty(ref _hashValueVerify2, value.Trim());
                 VerifyHashValue();
             }
         }
 
         public BadgeModel BadgeVerify
         {
-            get => badgeVerify ??= new(string.Empty, false);
-            set => SetProperty(ref badgeVerify, value);
+            get => _badgeVerify ??= new(string.Empty, false);
+            set => SetProperty(ref _badgeVerify, value);
         }
         public ButtonModel ButtonStart
         {
-            get => buttonStart ??= new("开始");
-            set => SetProperty(ref buttonStart, value);
+            get => _buttonStart ??= new("开始");
+            set => SetProperty(ref _buttonStart, value);
         }
         public ButtonModel ButtonReset
         {
-            get => buttonReset ??= new("暂停", false);
-            set => SetProperty(ref buttonReset, value);
+            get => _buttonReset ??= new("暂停", false);
+            set => SetProperty(ref _buttonReset, value);
         }
         public ButtonModel ButtonCancel
         {
-            get => buttonCancel ??= new("取消", false);
-            set => SetProperty(ref buttonCancel, value);
+            get => _buttonCancel ??= new("取消", false);
+            set => SetProperty(ref _buttonCancel, value);
         }
         public HashInputModel HashInput
         {
-            get => hashInput;
-            set => SetProperty(ref hashInput, value);
+            get => _hashInput;
+            set => SetProperty(ref _hashInput, value);
         }
         public string HashInputMode
         {
@@ -131,27 +132,27 @@ namespace HashTool.ViewModels
         }
         public ProgressBarModel ProgressBarSingle
         {
-            get => progressBarSingle ??= new(minimum: 0, maximum: 1000);
-            set => SetProperty(ref progressBarSingle, value);
+            get => _progressBarSingle ??= new(minimum: 0, maximum: 1000);
+            set => SetProperty(ref _progressBarSingle, value);
         }
         public ProgressBarModel ProgressBarMulti
         {
-            get => progressBarMulti ??= new(minimum: 0, maximum: 1);
-            set => SetProperty(ref progressBarMulti, value);
+            get => _progressBarMulti ??= new(minimum: 0, maximum: 1);
+            set => SetProperty(ref _progressBarMulti, value);
         }
         public ProgressBarModel TaskbarProgress
         {
-            get => taskbarProgress ??= new(minimum: 0, maximum: 1);
-            set => SetProperty(ref taskbarProgress, value);
+            get => _taskbarProgress ??= new(minimum: 0, maximum: 1);
+            set => SetProperty(ref _taskbarProgress, value);
         }
         public List<HashResultModel> HashResults
         {
-            get => hashResults ??= new();
-            set => SetProperty(ref hashResults, value);
+            get => _hashResults ??= new();
+            set => SetProperty(ref _hashResults, value);
         }
         public List<HashResultModel> HashResultHistory
         {
-            get => hashResultHistory ??= new();
+            get => _hashResultHistory ??= new();
         }
 
         public ICommand BrowserDialogCommand { get; }
@@ -214,7 +215,7 @@ namespace HashTool.ViewModels
 
                 if (saveFileDialog.ShowDialog() == true)
                 {
-                    var res = SerializerHelper.BuildHashResult(results);
+                    List<Dictionary<string, string>> res = SerializerHelper.BuildHashResult(results);
                     switch (saveFileDialog.FilterIndex)
                     {
                         case 1:
@@ -239,11 +240,11 @@ namespace HashTool.ViewModels
         }
         private void Start()
         {
-            if (!bgWorker.IsBusy)
+            if (!_bgWorker.IsBusy)
             {
-                mres.Set();
+                _mres.Set();
                 HashResults.Clear();
-                bgWorker.RunWorkerAsync(HashInput);
+                _bgWorker.RunWorkerAsync(HashInput);
                 ButtonStart.IsEnabled = false;
                 ButtonReset.IsEnabled = true;
                 ButtonCancel.IsEnabled = true;
@@ -251,27 +252,27 @@ namespace HashTool.ViewModels
         }
         private void Reset()
         {
-            if (bgWorker.IsBusy)
+            if (_bgWorker.IsBusy)
             {
                 switch (ButtonReset.Content)
                 {
                     case "暂停":
                         ButtonReset.Content = "继续";
-                        mres.Reset();
+                        _mres.Reset();
                         break;
                     case "继续":
                         ButtonReset.Content = "暂停";
-                        mres.Set();
+                        _mres.Set();
                         break;
                 }
             }
         }
         private void Cancel()
         {
-            if (bgWorker.IsBusy)
+            if (_bgWorker.IsBusy)
             {
-                mres.Set();
-                bgWorker.CancelAsync();
+                _mres.Set();
+                _bgWorker.CancelAsync();
                 ButtonReset.Content = "暂停";
             }
         }
@@ -301,9 +302,9 @@ namespace HashTool.ViewModels
         /// </summary>
         private void SetSelectedHashAlgorithm()
         {
-            var setting = Properties.Settings.Default;
+            Properties.Settings setting = Properties.Settings.Default;
             setting.SelectedHashAlgorithm.Clear();
-            foreach (var i in HashInput.CheckBoxItems)
+            foreach (CheckBoxModel i in HashInput.CheckBoxItems)
             {
                 if (i.IsChecked == true)
                     setting.SelectedHashAlgorithm.Add(i.Content);
@@ -315,11 +316,11 @@ namespace HashTool.ViewModels
 
         private void InitializeBackgroundWorker()
         {
-            bgWorker.WorkerReportsProgress = true;
-            bgWorker.WorkerSupportsCancellation = true;
-            bgWorker.DoWork += new DoWorkEventHandler(bgWorker_DoWork);
-            bgWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bgWorker_RunWorkerCompleted);
-            bgWorker.ProgressChanged += new ProgressChangedEventHandler(bgWorker_ProgressChanged);
+            _bgWorker.WorkerReportsProgress = true;
+            _bgWorker.WorkerSupportsCancellation = true;
+            _bgWorker.DoWork += new DoWorkEventHandler(bgWorker_DoWork);
+            _bgWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bgWorker_RunWorkerCompleted);
+            _bgWorker.ProgressChanged += new ProgressChangedEventHandler(bgWorker_ProgressChanged);
         }
         private void bgWorker_DoWork(object? sender, DoWorkEventArgs e)
         {
@@ -341,7 +342,7 @@ namespace HashTool.ViewModels
                             input.Input = input.Input.Trim();
                             ProgressBarMulti.Maximum = 1;
                             TaskbarProgress.Maximum = 1;
-                            e.Result = ComputeHashHelper.HashFile(mres, worker, e, input, ProgressBarSingle.Maximum);
+                            e.Result = ComputeHashHelper.HashFile(_mres, worker, e, input, ProgressBarSingle.Maximum);
                             break;
                         }
                         else
@@ -358,7 +359,7 @@ namespace HashTool.ViewModels
                             {
                                 ProgressBarMulti.Maximum = length;
                                 TaskbarProgress.Maximum = length;
-                                e.Result = ComputeHashHelper.HashFolder(mres, worker, e, input, ProgressBarSingle.Maximum);
+                                e.Result = ComputeHashHelper.HashFolder(_mres, worker, e, input, ProgressBarSingle.Maximum);
                                 break;
                             }
                             else

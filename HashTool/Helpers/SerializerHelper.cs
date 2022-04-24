@@ -33,14 +33,14 @@ namespace HashTool.Helpers
 
         public static void Yaml<T>(string path, List<T> list)
         {
-            var serializer = new SerializerBuilder().Build();
-            var yaml = serializer.Serialize(list);
+            ISerializer serializer = new SerializerBuilder().Build();
+            string yaml = serializer.Serialize(list);
             File.WriteAllTextAsync(path, yaml);
         }
 
         public static void Text<T>(string path, List<T> list)
         {
-            var serializer = new SerializerBuilder().Build();
+            ISerializer serializer = new SerializerBuilder().Build();
             StringBuilder stringBulider = new();
             foreach (T item in list)
             {
@@ -104,30 +104,30 @@ namespace HashTool.Helpers
 
             return list;
         }
+
+        #region XmlSerializer Helper
+
+        [XmlRoot("HashTool")]
+        private class HashResultRoot
+        {
+            [XmlElement("Result")]
+            public HashResultItem[]? HashResultItems;
+        }
+
+        private class HashResultItem
+        {
+            [XmlElement("Item")]
+            public Item[]? Items;
+        }
+
+        private class Item
+        {
+            [XmlAttribute]
+            public string? id;
+            [XmlText]
+            public string? value;
+        }
+
+        #endregion  XmlSerializer Helper
     }
-
-    #region XmlSerializer Helper
-
-    [XmlRoot("HashTool")]
-    public class HashResultRoot
-    {
-        [XmlElement("Result")]
-        public HashResultItem[]? HashResultItems;
-    }
-
-    public class HashResultItem
-    {
-        [XmlElement("Item")]
-        public Item[]? Items;
-    }
-
-    public class Item
-    {
-        [XmlAttribute]
-        public string? id;
-        [XmlText]
-        public string? value;
-    }
-
-    #endregion  XmlSerializer Helper
 }

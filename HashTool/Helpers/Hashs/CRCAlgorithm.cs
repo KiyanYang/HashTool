@@ -72,22 +72,22 @@ namespace HashTool.Helpers.Hashs
         /// <summary>
         ///     查表法所使用的计算表。
         /// </summary>
-        private readonly ulong[] precomputationTable = new ulong[256];
+        private readonly ulong[] _precomputationTable = new ulong[256];
 
         /// <summary>
         ///     用于隐藏 64 位工作寄存器中不需要的数据的掩码。
         /// </summary>
-        private readonly ulong mask;
+        private readonly ulong _mask;
 
         /// <summary>
         ///     输出反转处理时所使用的参数。
         /// </summary>
-        private readonly int toRight;
+        private readonly int _toRight;
 
         /// <summary>
         ///     截至目前，处理的所有缓冲区的累积 CRC 值。
         /// </summary>
-        private ulong current;
+        private ulong _current;
 
         #endregion
 
@@ -105,13 +105,13 @@ namespace HashTool.Helpers.Hashs
             IsInputReflected = isInputReflected;
             IsOutputReflected = isOutputReflected;
             OutputXor = outputXor;
-            mask = ulong.MaxValue >> (64 - width);
+            _mask = ulong.MaxValue >> (64 - width);
 
             CreateLookupTable();
 
             if (IsOutputReflected == false)
             {
-                toRight = Width < 8 ? 0 : Width - 8;
+                _toRight = Width < 8 ? 0 : Width - 8;
             }
 
             Initialize();
@@ -119,7 +119,7 @@ namespace HashTool.Helpers.Hashs
 
         public override void Initialize()
         {
-            current = IsOutputReflected ? ReverseBits(Initial, Width) : Initial;
+            _current = IsOutputReflected ? ReverseBits(Initial, Width) : Initial;
         }
 
         protected override void HashCore(byte[] array, int ibStart, int cbSize)
@@ -136,25 +136,25 @@ namespace HashTool.Helpers.Hashs
 
             if (IsOutputReflected)
             {
-                for (var i = ibStart; i < ibStart + cbSize; i++)
+                for (int i = ibStart; i < ibStart + cbSize; i++)
                 {
-                    current = precomputationTable[(current ^ array[i]) & 0xFF] ^ (current >> 8);
+                    _current = _precomputationTable[(_current ^ array[i]) & 0xFF] ^ (_current >> 8);
                 }
             }
             else
             {
-                for (var i = ibStart; i < ibStart + cbSize; i++)
+                for (int i = ibStart; i < ibStart + cbSize; i++)
                 {
-                    current = precomputationTable[((current >> toRight) ^ array[i]) & 0xFF] ^ (current << 8);
+                    _current = _precomputationTable[((_current >> _toRight) ^ array[i]) & 0xFF] ^ (_current << 8);
                 }
             }
         }
 
         protected override byte[] HashFinal()
         {
-            var output = (current ^ OutputXor) & mask;
+            ulong output = (_current ^ OutputXor) & _mask;
 
-            var result = BitConverter.GetBytes(output);
+            byte[] result = BitConverter.GetBytes(output);
 
             if (BitConverter.IsLittleEndian == false)
             {
@@ -170,9 +170,9 @@ namespace HashTool.Helpers.Hashs
 
         private void CreateLookupTable()
         {
-            for (var i = 0; i < precomputationTable.Length; i++)
+            for (int i = 0; i < _precomputationTable.Length; i++)
             {
-                var r = (ulong)i;
+                ulong r = (ulong)i;
 
                 if (IsInputReflected)
                 {
@@ -183,9 +183,9 @@ namespace HashTool.Helpers.Hashs
                     r <<= Width - 8;
                 }
 
-                var lastBit = 1UL << (Width - 1);
+                ulong lastBit = 1UL << (Width - 1);
 
-                for (var j = 0; j < 8; j++)
+                for (int j = 0; j < 8; j++)
                 {
                     if ((r & lastBit) != 0)
                     {
@@ -202,7 +202,7 @@ namespace HashTool.Helpers.Hashs
                     r = ReverseBits(r, Width);
                 }
 
-                precomputationTable[i] = r;
+                _precomputationTable[i] = r;
             }
         }
 
@@ -210,7 +210,7 @@ namespace HashTool.Helpers.Hashs
         {
             ulong output = 0;
 
-            for (var i = valueLength - 1; i >= 0; i--)
+            for (int i = valueLength - 1; i >= 0; i--)
             {
                 output |= (value & 1) << i;
                 value >>= 1;

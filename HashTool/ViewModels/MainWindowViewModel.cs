@@ -22,10 +22,10 @@ namespace HashTool.ViewModels
 
         #region Fields
 
-        private Page? currentPage;
-        private HomePage? homePage;
-        private HelpPage? helpPage;
-        private AboutPage? aboutPage;
+        private Page? _currentPage;
+        private HomePage? _homePage;
+        private HelpPage? _helpPage;
+        private AboutPage? _aboutPage;
 
         #endregion
 
@@ -33,23 +33,23 @@ namespace HashTool.ViewModels
 
         public Page CurrentPage
         {
-            get => currentPage ??= HomePage;
-            set => SetProperty(ref currentPage, value);
+            get => _currentPage ??= HomePage;
+            set => SetProperty(ref _currentPage, value);
         }
         public HomePage HomePage
         {
-            get => homePage ??= new();
-            set => SetProperty(ref currentPage, value);
+            get => _homePage ??= new();
+            set => SetProperty(ref _currentPage, value);
         }
         public HelpPage HelpPage
         {
-            get => helpPage ??= new();
-            set => SetProperty(ref currentPage, value);
+            get => _helpPage ??= new();
+            set => SetProperty(ref _currentPage, value);
         }
         public AboutPage AboutPage
         {
-            get => aboutPage ??= new();
-            set => SetProperty(ref currentPage, value);
+            get => _aboutPage ??= new();
+            set => SetProperty(ref _currentPage, value);
         }
         public ProgressBarModel TaskbarProgress
         {

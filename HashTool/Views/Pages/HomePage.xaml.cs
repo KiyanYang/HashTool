@@ -20,15 +20,15 @@ namespace HashTool.Views.Pages
         {
             InitializeComponent();
 
-            homeViewModel = new();
-            DataContext = homeViewModel;
+            _homeViewModel = new();
+            DataContext = _homeViewModel;
         }
 
-        private readonly HomePageViewModel homeViewModel;
+        private readonly HomePageViewModel _homeViewModel;
 
         public ProgressBarModel TaskbarProgress
         {
-            get => homeViewModel.TaskbarProgress;
+            get => _homeViewModel.TaskbarProgress;
         }
 
         private void TextBoxInput_PreviewDragOver(object sender, DragEventArgs e)  //不能使用PreviewDragEnter, 否则在TextBox内无法捕获数据
@@ -48,8 +48,10 @@ namespace HashTool.Views.Pages
         {
             try
             {
-                var path = (string[])e.Data.GetData(DataFormats.FileDrop);
-                homeViewModel.HashInput.Input = path[0];
+                if (e.Data.GetData(DataFormats.FileDrop) is string[] paths)
+                {
+                    _homeViewModel.HashInput.Input = paths[0];
+                }
             }
             catch (Exception ex)
             {

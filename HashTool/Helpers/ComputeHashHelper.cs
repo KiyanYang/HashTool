@@ -15,39 +15,40 @@ using System.Threading.Tasks;
 using HashTool.Common;
 using HashTool.Helpers.Hashs;
 using HashTool.Models;
+using HashTool.Models.Controls;
 
 namespace HashTool.Helpers
 {
     public class ComputeHashHelper
     {
-        private static readonly HashAlgorithm crc32 = CRC.CreateCRC32();
-        private static readonly HashAlgorithm md2 = CSharpHash.CreateMD2();
-        private static readonly HashAlgorithm md4 = CSharpHash.CreateMD4();
-        private static readonly HashAlgorithm md5 = MD5.Create();
-        private static readonly HashAlgorithm sha1 = SHA1.Create();
-        private static readonly HashAlgorithm sha224 = CSharpHash.CreateSHA2_224();
-        private static readonly HashAlgorithm sha256 = SHA256.Create();
-        private static readonly HashAlgorithm sha384 = SHA384.Create();
-        private static readonly HashAlgorithm sha512 = SHA512.Create();
-        private static readonly HashAlgorithm sha3_224 = CSharpHash.CreateSHA3_224();
-        private static readonly HashAlgorithm sha3_256 = CSharpHash.CreateSHA3_256();
-        private static readonly HashAlgorithm sha3_384 = CSharpHash.CreateSHA3_384();
-        private static readonly HashAlgorithm sha3_512 = CSharpHash.CreateSHA3_512();
-        private static readonly HashAlgorithm blake2B_160 = CSharpHash.CreateBlake2B_160();
-        private static readonly HashAlgorithm blake2B_256 = CSharpHash.CreateBlake2B_256();
-        private static readonly HashAlgorithm blake2B_384 = CSharpHash.CreateBlake2B_384();
-        private static readonly HashAlgorithm blake2B_512 = CSharpHash.CreateBlake2B_512();
-        private static readonly HashAlgorithm blake2S_128 = CSharpHash.CreateBlake2S_128();
-        private static readonly HashAlgorithm blake2S_160 = CSharpHash.CreateBlake2S_160();
-        private static readonly HashAlgorithm blake2S_224 = CSharpHash.CreateBlake2S_224();
-        private static readonly HashAlgorithm blake2S_256 = CSharpHash.CreateBlake2S_256();
-        private static readonly HashAlgorithm keccak_224 = CSharpHash.CreateKeccak_224();
-        private static readonly HashAlgorithm keccak_256 = CSharpHash.CreateKeccak_256();
-        private static readonly HashAlgorithm keccak_288 = CSharpHash.CreateKeccak_288();
-        private static readonly HashAlgorithm keccak_384 = CSharpHash.CreateKeccak_384();
-        private static readonly HashAlgorithm keccak_512 = CSharpHash.CreateKeccak_512();
-        private static readonly HashAlgorithm quickXor = new QuickXorHash();
-        private static readonly Dictionary<string, HashAlgorithm> hashAlgorithmDict = new();
+        private static readonly HashAlgorithm s_crc32 = CRC.CreateCRC32();
+        private static readonly HashAlgorithm s_md2 = CSharpHash.CreateMD2();
+        private static readonly HashAlgorithm s_md4 = CSharpHash.CreateMD4();
+        private static readonly HashAlgorithm s_md5 = MD5.Create();
+        private static readonly HashAlgorithm s_sha1 = SHA1.Create();
+        private static readonly HashAlgorithm s_sha224 = CSharpHash.CreateSHA2_224();
+        private static readonly HashAlgorithm s_sha256 = SHA256.Create();
+        private static readonly HashAlgorithm s_sha384 = SHA384.Create();
+        private static readonly HashAlgorithm s_sha512 = SHA512.Create();
+        private static readonly HashAlgorithm s_sha3_224 = CSharpHash.CreateSHA3_224();
+        private static readonly HashAlgorithm s_sha3_256 = CSharpHash.CreateSHA3_256();
+        private static readonly HashAlgorithm s_sha3_384 = CSharpHash.CreateSHA3_384();
+        private static readonly HashAlgorithm s_sha3_512 = CSharpHash.CreateSHA3_512();
+        private static readonly HashAlgorithm s_blake2B_160 = CSharpHash.CreateBlake2B_160();
+        private static readonly HashAlgorithm s_blake2B_256 = CSharpHash.CreateBlake2B_256();
+        private static readonly HashAlgorithm s_blake2B_384 = CSharpHash.CreateBlake2B_384();
+        private static readonly HashAlgorithm s_blake2B_512 = CSharpHash.CreateBlake2B_512();
+        private static readonly HashAlgorithm s_blake2S_128 = CSharpHash.CreateBlake2S_128();
+        private static readonly HashAlgorithm s_blake2S_160 = CSharpHash.CreateBlake2S_160();
+        private static readonly HashAlgorithm s_blake2S_224 = CSharpHash.CreateBlake2S_224();
+        private static readonly HashAlgorithm s_blake2S_256 = CSharpHash.CreateBlake2S_256();
+        private static readonly HashAlgorithm s_keccak_224 = CSharpHash.CreateKeccak_224();
+        private static readonly HashAlgorithm s_keccak_256 = CSharpHash.CreateKeccak_256();
+        private static readonly HashAlgorithm s_keccak_288 = CSharpHash.CreateKeccak_288();
+        private static readonly HashAlgorithm s_keccak_384 = CSharpHash.CreateKeccak_384();
+        private static readonly HashAlgorithm s_keccak_512 = CSharpHash.CreateKeccak_512();
+        private static readonly HashAlgorithm s_quickXor = new QuickXorHash();
+        private static readonly Dictionary<string, HashAlgorithm> s_hashAlgorithmDict = new();
 
         /// <summary>
         /// 设置计算时需要使用的哈希算法字典。
@@ -59,44 +60,44 @@ namespace HashTool.Helpers
         /// <exception cref="ArgumentOutOfRangeException">调用的哈希算法不在范围之内。</exception>
         private static void SetHashAlgorithmDict(HashInputModel hashInput)
         {
-            hashAlgorithmDict.Clear();
+            s_hashAlgorithmDict.Clear();
             HashAlgorithm algorithm;
-            foreach (var i in hashInput.CheckBoxItems)
+            foreach (CheckBoxModel i in hashInput.CheckBoxItems)
             {
                 if (i.IsChecked != true)
                     continue;
                 algorithm = i.Content switch
                 {
-                    HashAlgorithmNames.CRC32 => crc32,
-                    HashAlgorithmNames.MD2 => md2,
-                    HashAlgorithmNames.MD4 => md4,
-                    HashAlgorithmNames.MD5 => md5,
-                    HashAlgorithmNames.SHA1 => sha1,
-                    HashAlgorithmNames.SHA224 => sha224,
-                    HashAlgorithmNames.SHA256 => sha256,
-                    HashAlgorithmNames.SHA384 => sha384,
-                    HashAlgorithmNames.SHA512 => sha512,
-                    HashAlgorithmNames.SHA3_224 => sha3_224,
-                    HashAlgorithmNames.SHA3_256 => sha3_256,
-                    HashAlgorithmNames.SHA3_384 => sha3_384,
-                    HashAlgorithmNames.SHA3_512 => sha3_512,
-                    HashAlgorithmNames.Blake2B_160 => blake2B_160,
-                    HashAlgorithmNames.Blake2B_256 => blake2B_256,
-                    HashAlgorithmNames.Blake2B_384 => blake2B_384,
-                    HashAlgorithmNames.Blake2B_512 => blake2B_512,
-                    HashAlgorithmNames.Blake2S_128 => blake2S_128,
-                    HashAlgorithmNames.Blake2S_160 => blake2S_160,
-                    HashAlgorithmNames.Blake2S_224 => blake2S_224,
-                    HashAlgorithmNames.Blake2S_256 => blake2S_256,
-                    HashAlgorithmNames.Keccak_224 => keccak_224,
-                    HashAlgorithmNames.Keccak_256 => keccak_256,
-                    HashAlgorithmNames.Keccak_288 => keccak_288,
-                    HashAlgorithmNames.Keccak_384 => keccak_384,
-                    HashAlgorithmNames.Keccak_512 => keccak_512,
-                    HashAlgorithmNames.QuickXor => quickXor,
+                    HashAlgorithmNames.CRC32 => s_crc32,
+                    HashAlgorithmNames.MD2 => s_md2,
+                    HashAlgorithmNames.MD4 => s_md4,
+                    HashAlgorithmNames.MD5 => s_md5,
+                    HashAlgorithmNames.SHA1 => s_sha1,
+                    HashAlgorithmNames.SHA224 => s_sha224,
+                    HashAlgorithmNames.SHA256 => s_sha256,
+                    HashAlgorithmNames.SHA384 => s_sha384,
+                    HashAlgorithmNames.SHA512 => s_sha512,
+                    HashAlgorithmNames.SHA3_224 => s_sha3_224,
+                    HashAlgorithmNames.SHA3_256 => s_sha3_256,
+                    HashAlgorithmNames.SHA3_384 => s_sha3_384,
+                    HashAlgorithmNames.SHA3_512 => s_sha3_512,
+                    HashAlgorithmNames.Blake2B_160 => s_blake2B_160,
+                    HashAlgorithmNames.Blake2B_256 => s_blake2B_256,
+                    HashAlgorithmNames.Blake2B_384 => s_blake2B_384,
+                    HashAlgorithmNames.Blake2B_512 => s_blake2B_512,
+                    HashAlgorithmNames.Blake2S_128 => s_blake2S_128,
+                    HashAlgorithmNames.Blake2S_160 => s_blake2S_160,
+                    HashAlgorithmNames.Blake2S_224 => s_blake2S_224,
+                    HashAlgorithmNames.Blake2S_256 => s_blake2S_256,
+                    HashAlgorithmNames.Keccak_224 => s_keccak_224,
+                    HashAlgorithmNames.Keccak_256 => s_keccak_256,
+                    HashAlgorithmNames.Keccak_288 => s_keccak_288,
+                    HashAlgorithmNames.Keccak_384 => s_keccak_384,
+                    HashAlgorithmNames.Keccak_512 => s_keccak_512,
+                    HashAlgorithmNames.QuickXor => s_quickXor,
                     _ => throw new ArgumentOutOfRangeException(nameof(hashInput), "The input.CheckBoxItems'EnumContent out of range."),
                 };
-                hashAlgorithmDict.Add(i.Content, algorithm);
+                s_hashAlgorithmDict.Add(i.Content, algorithm);
             }
         }
 
@@ -127,9 +128,9 @@ namespace HashTool.Helpers
 
             byte[] hashValue;
             var encoding = Encoding.GetEncoding(hashInput.EncodingName);
-            foreach (var name in hashAlgorithmDict.Keys)
+            foreach (string name in s_hashAlgorithmDict.Keys)
             {
-                hashValue = hashAlgorithmDict[name].ComputeHash(encoding.GetBytes(hashInput.Input));
+                hashValue = s_hashAlgorithmDict[name].ComputeHash(encoding.GetBytes(hashInput.Input));
                 hashResult.Items.Add(BuildHashResultItem(name, hashValue));
             }
             if (worker != null && maximum != null)
@@ -171,13 +172,13 @@ namespace HashTool.Helpers
             };
             byte[] buffer = new byte[bufferSize];
             // 每次实际读取长度，此初值仅为启动作用，真正的赋值在屏障内完成
-            var readLength = bufferSize;
+            int readLength = bufferSize;
 
             #endregion
 
             #region 使用屏障完成多算法的并行计算
 
-            using Barrier barrier = new(hashAlgorithmDict.Count, (b) =>
+            using Barrier barrier = new(s_hashAlgorithmDict.Count, (b) =>
             {
                 readLength = fileStream.Read(buffer, 0, bufferSize);
 
@@ -204,19 +205,19 @@ namespace HashTool.Helpers
             }
 
             // 开启并行动作
-            Parallel.ForEach(hashAlgorithmDict.Values, action);
+            Parallel.ForEach(s_hashAlgorithmDict.Values, action);
 
             #endregion
 
             // 判断是否进行最后一次哈希计算
             if (!worker.CancellationPending)
             {
-                foreach (var kvp in hashAlgorithmDict)
+                foreach (KeyValuePair<string, HashAlgorithm> kvp in s_hashAlgorithmDict)
                 {
                     kvp.Value.TransformFinalBlock(buffer, 0, 0);
                     if (kvp.Value.Hash is byte[] hashValue)
                     {
-                        var s = BuildHashResultItem(kvp.Key, hashValue);
+                        HashResultItemModel s = BuildHashResultItem(kvp.Key, hashValue);
                         hashResult.Items.Add(s);
                     }
                 }

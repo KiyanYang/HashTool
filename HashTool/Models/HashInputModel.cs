@@ -13,10 +13,10 @@ namespace HashTool.Models
 {
     public class HashInputModel : ObservableObject
     {
-        private string? mode;
-        private string? input;
-        private string? encodingName;
-        private List<CheckBoxModel>? checkBoxItems;
+        private string? _mode;
+        private string? _input;
+        private string? _encodingName;
+        private List<CheckBoxModel>? _checkBoxItems;
 
         public static IReadOnlyList<string> ModeItems { get; } = new[]
         {
@@ -28,23 +28,23 @@ namespace HashTool.Models
 
         public string Mode
         {
-            get => mode ??= ModeItems[0];
-            set => SetProperty(ref mode, value);
+            get => _mode ??= ModeItems[0];
+            set => SetProperty(ref _mode, value);
         }
         public string Input
         {
-            get => input ??= string.Empty;
-            set => SetProperty(ref input, value);
+            get => _input ??= string.Empty;
+            set => SetProperty(ref _input, value);
         }
         public string EncodingName
         {
-            get => encodingName ??= "utf-8";
-            set => SetProperty(ref encodingName, value);
+            get => _encodingName ??= "utf-8";
+            set => SetProperty(ref _encodingName, value);
         }
         public List<CheckBoxModel> CheckBoxItems
         {
-            get => checkBoxItems ??= new();
-            set => SetProperty(ref checkBoxItems, value);
+            get => _checkBoxItems ??= new();
+            set => SetProperty(ref _checkBoxItems, value);
         }
     }
 }

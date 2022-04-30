@@ -2,13 +2,10 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="HashTool.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="SelectedHashAlgorithm" Type="System.Collections.Specialized.StringCollection" Scope="User">
+    <Setting Name="SelectedHashAlgorithms" Type="System.Collections.Specialized.StringCollection" Scope="User">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;ArrayOfString xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
-  &lt;string&gt;CRC32&lt;/string&gt;
-  &lt;string&gt;MD4&lt;/string&gt;
   &lt;string&gt;MD5&lt;/string&gt;
-  &lt;string&gt;SHA1&lt;/string&gt;
   &lt;string&gt;SHA256&lt;/string&gt;
 &lt;/ArrayOfString&gt;</Value>
     </Setting>

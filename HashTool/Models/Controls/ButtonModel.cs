@@ -11,22 +11,22 @@ namespace HashTool.Models.Controls
         public ButtonModel() { }
         public ButtonModel(string content, bool isEnabled = true)
         {
-            this.content = content;
-            this.isEnabled = isEnabled;
+            _content = content;
+            _isEnabled = isEnabled;
         }
 
-        private string? content;
-        private bool isEnabled;
+        private string? _content;
+        private bool _isEnabled;
 
         public string Content
         {
-            get => content ??= string.Empty;
-            set => SetProperty(ref content, value);
+            get => _content ??= string.Empty;
+            set => SetProperty(ref _content, value);
         }
         public bool IsEnabled
         {
-            get => isEnabled;
-            set => SetProperty(ref isEnabled, value);
+            get => _isEnabled;
+            set => SetProperty(ref _isEnabled, value);
         }
     }
 }

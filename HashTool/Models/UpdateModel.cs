@@ -8,36 +8,36 @@ namespace HashTool.Models
 {
     internal class UpdateModel : ObservableObject
     {
-        private bool? hasUpdate;
-        private string? version;
-        private string? downloadUrl;
-        private string? githubUrl;
-        private string? giteeUrl;
+        private bool? _hasUpdate;
+        private string? _version;
+        private string? _downloadUrl;
+        private string? _githubUrl;
+        private string? _giteeUrl;
 
         public bool? HasUpdate
         {
-            get => hasUpdate;
-            set => SetProperty(ref hasUpdate, value);
+            get => _hasUpdate;
+            set => SetProperty(ref _hasUpdate, value);
         }
         public string? Version
         {
-            get => version;
-            set => SetProperty(ref version, value);
+            get => _version;
+            set => SetProperty(ref _version, value);
         }
         public string? DownloadUrl
         {
-            get => downloadUrl;
-            set => SetProperty(ref downloadUrl, value);
+            get => _downloadUrl;
+            set => SetProperty(ref _downloadUrl, value);
         }
         public string? GithubUrl
         {
-            get => githubUrl;
-            set => SetProperty(ref githubUrl, value);
+            get => _githubUrl;
+            set => SetProperty(ref _githubUrl, value);
         }
         public string? GiteeUrl
         {
-            get => giteeUrl;
-            set => SetProperty(ref giteeUrl, value);
+            get => _giteeUrl;
+            set => SetProperty(ref _giteeUrl, value);
         }
     }
 }

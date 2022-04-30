@@ -64,9 +64,9 @@ namespace HashTool.Helpers.Hashs
         private const byte Shift = 11;
         private const byte WidthInBits = 160;
 
-        private ulong[] data = Array.Empty<ulong>();
-        private long lengthSoFar;
-        private int shiftSoFar;
+        private ulong[] _data = Array.Empty<ulong>();
+        private long _lengthSoFar;
+        private int _shiftSoFar;
 
         public QuickXorHash()
         {
@@ -77,7 +77,7 @@ namespace HashTool.Helpers.Hashs
         {
             unchecked
             {
-                int currentShift = shiftSoFar;
+                int currentShift = _shiftSoFar;
 
                 // The bitvector where we'll start xoring
                 int vectorArrayIndex = currentShift / 64;
@@ -88,7 +88,7 @@ namespace HashTool.Helpers.Hashs
 
                 for (int i = 0; i < iterations; i++)
                 {
-                    bool isLastCell = vectorArrayIndex == data.Length - 1;
+                    bool isLastCell = vectorArrayIndex == _data.Length - 1;
                     int bitsInVectorCell = isLastCell ? QuickXorHash.BitsInLastCell : 64;
 
                     // There's at least 2 bitvectors before we reach the end of the array
@@ -96,7 +96,7 @@ namespace HashTool.Helpers.Hashs
                     {
                         for (int j = ibStart + i; j < cbSize + ibStart; j += QuickXorHash.WidthInBits)
                         {
-                            data[vectorArrayIndex] ^= (ulong)array[j] << vectorOffset;
+                            _data[vectorArrayIndex] ^= (ulong)array[j] << vectorOffset;
                         }
                     }
                     else
@@ -110,8 +110,8 @@ namespace HashTool.Helpers.Hashs
                         {
                             xoredByte ^= array[j];
                         }
-                        data[index1] ^= (ulong)xoredByte << vectorOffset;
-                        data[index2] ^= (ulong)xoredByte >> low;
+                        _data[index1] ^= (ulong)xoredByte << vectorOffset;
+                        _data[index2] ^= (ulong)xoredByte >> low;
                     }
                     vectorOffset += QuickXorHash.Shift;
                     while (vectorOffset >= bitsInVectorCell)
@@ -122,10 +122,10 @@ namespace HashTool.Helpers.Hashs
                 }
 
                 // Update the starting position in a circular shift pattern
-                shiftSoFar = (shiftSoFar + QuickXorHash.Shift * (cbSize % QuickXorHash.WidthInBits)) % QuickXorHash.WidthInBits;
+                _shiftSoFar = (_shiftSoFar + QuickXorHash.Shift * (cbSize % QuickXorHash.WidthInBits)) % QuickXorHash.WidthInBits;
             }
 
-            lengthSoFar += cbSize;
+            _lengthSoFar += cbSize;
         }
 
         protected override byte[] HashFinal()
@@ -134,23 +134,23 @@ namespace HashTool.Helpers.Hashs
             byte[] rgb = new byte[(WidthInBits - 1) / 8 + 1];
 
             // Block copy all our bitvectors to this byte array
-            for (int i = 0; i < data.Length - 1; i++)
+            for (int i = 0; i < _data.Length - 1; i++)
             {
                 Buffer.BlockCopy(
-                    BitConverter.GetBytes(data[i]), 0,
+                    BitConverter.GetBytes(_data[i]), 0,
                     rgb, i * 8,
                     8);
             }
 
             Buffer.BlockCopy(
-                BitConverter.GetBytes(data[data.Length - 1]), 0,
-                rgb, (data.Length - 1) * 8,
-                rgb.Length - (data.Length - 1) * 8);
+                BitConverter.GetBytes(_data[_data.Length - 1]), 0,
+                rgb, (_data.Length - 1) * 8,
+                rgb.Length - (_data.Length - 1) * 8);
 
             // XOR the file length with the least significant bits
             // Note that GetBytes is architecture-dependent, so care should
             // be taken with porting. The expected value is 8-bytes in length in little-endian format
-            var lengthBytes = BitConverter.GetBytes(lengthSoFar);
+            byte[] lengthBytes = BitConverter.GetBytes(_lengthSoFar);
             System.Diagnostics.Debug.Assert(lengthBytes.Length == 8);
             for (int i = 0; i < lengthBytes.Length; i++)
             {
@@ -162,9 +162,9 @@ namespace HashTool.Helpers.Hashs
 
         public sealed override void Initialize()
         {
-            data = new ulong[(QuickXorHash.WidthInBits - 1) / 64 + 1];
-            shiftSoFar = 0;
-            lengthSoFar = 0;
+            _data = new ulong[(QuickXorHash.WidthInBits - 1) / 64 + 1];
+            _shiftSoFar = 0;
+            _lengthSoFar = 0;
         }
 
         public override int HashSize

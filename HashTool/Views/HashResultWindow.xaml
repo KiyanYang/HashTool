@@ -16,7 +16,7 @@
         <converters:LowerCaseConverter x:Key="LowerCaseConverter" />
     </Window.Resources>
 
-    <Grid>
+    <Grid x:Name="grid">
         <Grid.RowDefinitions>
             <RowDefinition Height="32" />
             <RowDefinition Height="*" />
@@ -30,7 +30,6 @@
         </Grid.ColumnDefinitions>
 
         <ListBox
-            x:Name="lboxHashResultItems"
             Grid.Row="0"
             Grid.Column="0"
             Grid.RowSpan="2"
@@ -71,7 +70,9 @@
         <ScrollViewer
             Grid.Row="1"
             Grid.Column="2">
-            <hc:SimpleStackPanel Margin="4,0,8,8">
+            <hc:SimpleStackPanel
+                Margin="4,0,8,8"
+                DataContext="{Binding SelectedHashResult}">
 
                 <hc:SimpleStackPanel.Resources>
                     <!-- hc.SimplePanel: Margin -->
@@ -114,51 +115,49 @@
                 </hc:SimpleStackPanel.Resources>
 
                 <!-- hc.SimpleText 计算模式; TextBox 计算内容 -->
-                <hc:SimplePanel Visibility="{Binding HashResult.Mode, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
-                    <hc:SimpleText Text="{Binding HashResult.Mode}" />
+                <hc:SimplePanel Visibility="{Binding Mode, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
+                    <hc:SimpleText Text="{Binding Mode}" />
                     <TextBox
-                        Text="{Binding HashResult.Content}"
+                        Text="{Binding Content}"
                         MaxHeight="80"
                         VerticalScrollBarVisibility="Auto" />
                 </hc:SimplePanel>
 
                 <!-- hc.SimpleText 字符编码; TextBox 字符编码 -->
-                <hc:SimplePanel Visibility="{Binding HashResult.EncodingName, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
+                <hc:SimplePanel Visibility="{Binding EncodingName, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
                     <hc:SimpleText Text="字符编码" />
                     <TextBox
-                        Text="{Binding HashResult.EncodingName}"
+                        Text="{Binding EncodingName}"
                         MaxHeight="80"
                         VerticalScrollBarVisibility="Auto" />
                 </hc:SimplePanel>
 
                 <!-- hc.SimpleText 文件大小; TextBox 格式化后的大小 -->
-                <hc:SimplePanel Visibility="{Binding HashResult.FileSize, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
+                <hc:SimplePanel Visibility="{Binding FileSize, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
                     <hc:SimpleText Text="文件大小" />
-                    <TextBox Text="{Binding HashResult.FileSize}" />
+                    <TextBox Text="{Binding FileSize}" />
                 </hc:SimplePanel>
 
                 <!-- hc.SimpleText 文件修改时间; TextBox 文件修改时间 -->
-                <hc:SimplePanel Visibility="{Binding HashResult.LastWriteTime, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
+                <hc:SimplePanel Visibility="{Binding LastWriteTime, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
                     <hc:SimpleText Text="文件修改时间" />
-                    <TextBox Text="{Binding HashResult.LastWriteTime}" />
+                    <TextBox Text="{Binding LastWriteTime}" />
                 </hc:SimplePanel>
 
                 <!-- hc.SimpleText 计算开始时间; TextBox 计算开始时间 -->
-                <hc:SimplePanel Visibility="{Binding HashResult.ComputeTime, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
+                <hc:SimplePanel Visibility="{Binding ComputeTime, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
                     <hc:SimpleText Text="计算开始时间" />
-                    <TextBox Text="{Binding HashResult.ComputeTime}" />
+                    <TextBox Text="{Binding ComputeTime}" />
                 </hc:SimplePanel>
 
                 <!-- hc.SimpleText 计算用时; TextBox 计算用时 -->
-                <hc:SimplePanel Visibility="{Binding HashResult.ComputeCost, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
+                <hc:SimplePanel Visibility="{Binding ComputeCost, Converter={StaticResource String2VisibilityConverter}, Mode=OneWay}">
                     <hc:SimpleText Text="计算用时" />
-                    <TextBox Text="{Binding HashResult.ComputeCost}" />
+                    <TextBox Text="{Binding ComputeCost}" />
                 </hc:SimplePanel>
 
                 <!-- ItemsControl 哈希结果; hc.SimpleText 名称; TextBox 结果; Button 复制 -->
-                <ItemsControl
-                    x:Name="itemsHashResult"
-                    ItemsSource="{Binding HashResult.Items}">
+                <ItemsControl ItemsSource="{Binding Items}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <hc:SimplePanel Margin="0,4,0,4">
@@ -177,7 +176,7 @@
                                             <Binding Path="Name" />
                                             <Binding
                                                 Path="DataContext.IsLowerCase"
-                                                ElementName="itemsHashResult" />
+                                                ElementName="grid" />
                                         </MultiBinding>
                                     </TextBox.Text>
                                 </TextBox>
@@ -186,7 +185,7 @@
                                     Width="44"
                                     HorizontalAlignment="Right"
                                     Style="{StaticResource ButtonPrimary}"
-                                    Command="{Binding DataContext.CopyToClipboardCommand, ElementName=itemsHashResult}"
+                                    Command="{Binding DataContext.CopyToClipboardCommand, ElementName=grid}"
                                     CommandParameter="{Binding Text, ElementName=hashResultText}" />
                             </hc:SimplePanel>
                         </DataTemplate>

@@ -10,23 +10,23 @@ namespace HashTool.Models
 {
     public class HashResultModel : ObservableObject
     {
-        private string? inputMode;
-        private string? mode;
-        private string? content;
-        private string? encodingName;
-        private string? fileSize;
-        private string? lastWriteTime;
-        private string? computeTime;
-        private string? computeCost;
-        private List<HashResultItemModel>? items;
+        private string? _inputMode;
+        private string? _mode;
+        private string? _content;
+        private string? _encodingName;
+        private string? _fileSize;
+        private string? _lastWriteTime;
+        private string? _computeTime;
+        private string? _computeCost;
+        private List<HashResultItemModel>? _items;
 
         /// <summary>
         /// 输入模式：文件/文件夹/文本
         /// </summary>
         public string InputMode
         {
-            get => inputMode ??= string.Empty;
-            set => SetProperty(ref inputMode, value);
+            get => _inputMode ??= string.Empty;
+            set => SetProperty(ref _inputMode, value);
         }
 
         /// <summary>
@@ -34,8 +34,8 @@ namespace HashTool.Models
         /// </summary>
         public string Mode
         {
-            get => mode ??= string.Empty;
-            set => SetProperty(ref mode, value);
+            get => _mode ??= string.Empty;
+            set => SetProperty(ref _mode, value);
         }
 
         /// <summary>
@@ -43,8 +43,8 @@ namespace HashTool.Models
         /// </summary>
         public string Content
         {
-            get => content ??= string.Empty;
-            set => SetProperty(ref content, value);
+            get => _content ??= string.Empty;
+            set => SetProperty(ref _content, value);
         }
 
         /// <summary>
@@ -52,8 +52,8 @@ namespace HashTool.Models
         /// </summary>
         public string EncodingName
         {
-            get => encodingName ??= string.Empty;
-            set => SetProperty(ref encodingName, value);
+            get => _encodingName ??= string.Empty;
+            set => SetProperty(ref _encodingName, value);
         }
 
         /// <summary>
@@ -61,8 +61,8 @@ namespace HashTool.Models
         /// </summary>
         public string FileSize
         {
-            get => fileSize ??= string.Empty;
-            set => SetProperty(ref fileSize, value);
+            get => _fileSize ??= string.Empty;
+            set => SetProperty(ref _fileSize, value);
         }
 
         /// <summary>
@@ -70,8 +70,8 @@ namespace HashTool.Models
         /// </summary>
         public string LastWriteTime
         {
-            get => lastWriteTime ??= string.Empty;
-            set => SetProperty(ref lastWriteTime, value);
+            get => _lastWriteTime ??= string.Empty;
+            set => SetProperty(ref _lastWriteTime, value);
         }
 
         /// <summary>
@@ -79,8 +79,8 @@ namespace HashTool.Models
         /// </summary>
         public string ComputeTime
         {
-            get => computeTime ??= string.Empty;
-            set => SetProperty(ref computeTime, value);
+            get => _computeTime ??= string.Empty;
+            set => SetProperty(ref _computeTime, value);
         }
 
         /// <summary>
@@ -88,8 +88,8 @@ namespace HashTool.Models
         /// </summary>
         public string ComputeCost
         {
-            get => computeCost ??= string.Empty;
-            set => SetProperty(ref computeCost, value);
+            get => _computeCost ??= string.Empty;
+            set => SetProperty(ref _computeCost, value);
         }
 
         /// <summary>
@@ -97,8 +97,8 @@ namespace HashTool.Models
         /// </summary>
         public List<HashResultItemModel> Items
         {
-            get => items ??= new();
-            set => SetProperty(ref items, value);
+            get => _items ??= new();
+            set => SetProperty(ref _items, value);
         }
     }
 
@@ -107,22 +107,22 @@ namespace HashTool.Models
         public HashResultItemModel() { }
         public HashResultItemModel(string name, string value)
         {
-            this.name = name;
-            this.value = value;
+            _name = name;
+            _value = value;
         }
 
-        private string? name;
-        private string? value;
+        private string? _name;
+        private string? _value;
 
         public string Name
         {
-            get => name ??= string.Empty;
-            set => SetProperty(ref name, value);
+            get => _name ??= string.Empty;
+            set => SetProperty(ref _name, value);
         }
         public string Value
         {
-            get => value ??= string.Empty;
-            set => SetProperty(ref this.value, value);
+            get => _value ??= string.Empty;
+            set => SetProperty(ref _value, value);
         }
 
         /// <summary>

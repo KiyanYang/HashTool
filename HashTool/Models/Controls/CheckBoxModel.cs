@@ -11,22 +11,22 @@ namespace HashTool.Models.Controls
         public CheckBoxModel() { }
         public CheckBoxModel(string? content, bool isChecked = true)
         {
-            this.content = content;
-            this.isChecked = isChecked;
+            _content = content;
+            _isChecked = isChecked;
         }
 
-        private string? content;
-        private bool? isChecked;
+        private string? _content;
+        private bool? _isChecked;
 
         public string Content
         {
-            get => content ??= string.Empty;
-            set => SetProperty(ref content, value);
+            get => _content ??= string.Empty;
+            set => SetProperty(ref _content, value);
         }
         public bool? IsChecked
         {
-            get => isChecked;
-            set => SetProperty(ref isChecked, value);
+            get => _isChecked;
+            set => SetProperty(ref _isChecked, value);
         }
     }
 }

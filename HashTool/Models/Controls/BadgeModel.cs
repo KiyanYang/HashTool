@@ -13,28 +13,28 @@ namespace HashTool.Models.Controls
         public BadgeModel() { }
         public BadgeModel(string text, bool showBadge = true)
         {
-            this.text = text;
-            this.showBadge = showBadge;
+            _text = text;
+            _showBadge = showBadge;
         }
 
-        private string? text;
-        private bool showBadge;
-        private Style? style;
+        private string? _text;
+        private bool _showBadge;
+        private Style? _style;
 
         public string Text
         {
-            get => text ??= string.Empty;
-            set => SetProperty(ref text, value);
+            get => _text ??= string.Empty;
+            set => SetProperty(ref _text, value);
         }
         public bool ShowBadge
         {
-            get => showBadge;
-            set => SetProperty(ref showBadge, value);
+            get => _showBadge;
+            set => SetProperty(ref _showBadge, value);
         }
         public Style? Style
         {
-            get => style;
-            set => SetProperty(ref style, value);
+            get => _style;
+            set => SetProperty(ref _style, value);
         }
 
         public bool SetStyle(string name)

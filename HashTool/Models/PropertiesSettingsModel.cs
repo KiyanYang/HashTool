@@ -13,21 +13,21 @@ namespace HashTool.Models
 {
     public class PropertiesSettingsModel : ObservableObject
     {
-        private bool? isLowerCase;
-        private StringCollection? selectedHashAlgorithm;
+        private bool? _isLowerCase;
+        private StringCollection? _selectedHashAlgorithm;
 
         public bool IsLowerCase
         {
-            get => isLowerCase ??= Settings.Default.IsLowerCase;
+            get => _isLowerCase ??= Settings.Default.IsLowerCase;
             set
             {
-                SetProperty(ref isLowerCase, value);
+                SetProperty(ref _isLowerCase, value);
                 SaveSettings(value);
             }
         }
         public StringCollection SelectedHashAlgorithm
         {
-            get => selectedHashAlgorithm ??= Settings.Default.SelectedHashAlgorithm;
+            get => _selectedHashAlgorithm ??= Settings.Default.SelectedHashAlgorithm;
         }
 
         private static void SaveSettings<T>(T value, [CallerMemberName] string? propertyName = null)

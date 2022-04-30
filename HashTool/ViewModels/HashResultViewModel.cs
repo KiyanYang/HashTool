@@ -22,24 +22,22 @@ namespace HashTool.ViewModels
         {
             #region 初始化 HashResults
 
-            hashResult = hashResults[0];
-            hashAllResults = new(hashResults);
-            hashResultItems = new();
-            hashResults.ForEach(i => hashResultItems.Add(i));
+            _selectedHashResult = hashResults[0];
+            _hashResultItems = new(hashResults);
 
             #endregion
 
             #region 初始化 ListBox 参数
 
-            if (hashAllResults.Count > 1)
+            if (hashResults.Count > 1)
             {
-                hashResultListBoxColWidth = "*";
-                hashResultListBoxVisibility = Visibility.Visible;
+                _hashResultListBoxColWidth = "*";
+                _hashResultListBoxVisibility = Visibility.Visible;
             }
             else
             {
-                hashResultListBoxColWidth = "Auto";
-                hashResultListBoxVisibility = Visibility.Collapsed;
+                _hashResultListBoxColWidth = "Auto";
+                _hashResultListBoxVisibility = Visibility.Collapsed;
             }
 
             #endregion
@@ -50,48 +48,58 @@ namespace HashTool.ViewModels
 
         #region Fields
 
-        private readonly List<HashResultModel> hashAllResults;
+        private bool? _isLowerCase;
+        private string? _hashResultListBoxColWidth;
+        private Visibility? _hashResultListBoxVisibility;
+        private int? _selectedIndex;
 
-        private bool? isLowerCase;
-        private string? hashResultListBoxColWidth;
-        private Visibility? hashResultListBoxVisibility;
-        private int? selectedIndex;
-
-        private HashResultModel hashResult;
-        private ObservableCollection<HashResultModel> hashResultItems;
+        private HashResultModel _selectedHashResult;
+        private ObservableCollection<HashResultModel> _hashResultItems;
 
         #endregion
 
         #region Public Properties/Commands
 
+        /// <summary>
+        /// 复选框，结果是否小写。
+        /// </summary>
         public bool IsLowerCase
         {
-            get => isLowerCase ??= GetInstance<PropertiesSettingsModel>().IsLowerCase;
+            get => _isLowerCase ??= GetInstance<PropertiesSettingsModel>().IsLowerCase;
             set
             {
-                SetProperty(ref isLowerCase, value);
+                SetProperty(ref _isLowerCase, value);
                 GetInstance<PropertiesSettingsModel>().IsLowerCase = value;
             }
         }
+
+        /// <summary>
+        /// 左侧结果列表的列宽。
+        /// </summary>
         public string HashResultListBoxColWidth
         {
-            get => hashResultListBoxColWidth ??= "Auto";
-            set => SetProperty(ref hashResultListBoxColWidth, value);
+            get => _hashResultListBoxColWidth ??= "Auto";
+            set => SetProperty(ref _hashResultListBoxColWidth, value);
         }
+
+        /// <summary>
+        /// 左侧结果列表的可见性。
+        /// </summary>
         public Visibility HashResultListBoxVisibility
         {
-            get => hashResultListBoxVisibility ??= Visibility.Visible;
-            set => SetProperty(ref hashResultListBoxVisibility, value);
+            get => _hashResultListBoxVisibility ??= Visibility.Visible;
+            set => SetProperty(ref _hashResultListBoxVisibility, value);
         }
+
         /// <summary>
         /// 当前所选择项目的索引。
         /// </summary>
         public int SelectedIndex
         {
-            get => selectedIndex ??= 0;
+            get => _selectedIndex ??= 0;
             set
             {
-                SetProperty(ref selectedIndex, value);
+                SetProperty(ref _selectedIndex, value);
                 ShowSelected(value);
             }
         }
@@ -99,18 +107,19 @@ namespace HashTool.ViewModels
         /// <summary>
         /// 用于展示的哈希结果。
         /// </summary>
-        public HashResultModel HashResult
+        public HashResultModel SelectedHashResult
         {
-            get => hashResult;
-            set => SetProperty(ref hashResult, value);
+            get => _selectedHashResult;
+            set => SetProperty(ref _selectedHashResult, value);
         }
+
         /// <summary>
         /// 全部的哈希结果。
         /// </summary>
         public ObservableCollection<HashResultModel> HashResultItems
         {
-            get => hashResultItems;
-            set => SetProperty(ref hashResultItems, value);
+            get => _hashResultItems;
+            set => SetProperty(ref _hashResultItems, value);
         }
 
         public ICommand ViewInExplorerCommand { get; }
@@ -122,16 +131,18 @@ namespace HashTool.ViewModels
 
         private void ShowSelected(int index)
         {
-            if (index >= 0 && index < hashAllResults.Count)
+            if (index >= 0 && index < HashResultItems.Count)
             {
-                HashResult = hashAllResults[index];
+                SelectedHashResult = HashResultItems[index];
             }
         }
 
         private void ViewInExplorer(string? path)
         {
             if (path == null)
+            {
                 return;
+            }
 
             string fullPath = Path.GetFullPath(path);
             Process p = new();
@@ -143,7 +154,9 @@ namespace HashTool.ViewModels
         private void CopyToClipboard(string? text)
         {
             if (text == null)
+            {
                 return;
+            }
 
             Clipboard.SetText(text);
             HandyControl.Controls.Growl.SuccessGlobal("已复制到剪贴板！");

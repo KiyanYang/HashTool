@@ -11,29 +11,29 @@ namespace HashTool.Models.Controls
         public ProgressBarModel() { }
         public ProgressBarModel(double value = 0, double minimum = 0, double maximum = 100)
         {
-            this.value = value;
-            this.minimum = minimum;
-            this.maximum = maximum;
+            _value = value;
+            _minimum = minimum;
+            _maximum = maximum;
         }
 
-        private double value;
-        private double minimum;
-        private double maximum;
+        private double _value;
+        private double _minimum;
+        private double _maximum;
 
         public double Value
         {
-            get => value;
-            set => SetProperty(ref this.value, value);
+            get => _value;
+            set => SetProperty(ref _value, value);
         }
         public double Minimum
         {
-            get => minimum;
-            set => SetProperty(ref minimum, value);
+            get => _minimum;
+            set => SetProperty(ref _minimum, value);
         }
         public double Maximum
         {
-            get => maximum;
-            set => SetProperty(ref maximum, value);
+            get => _maximum;
+            set => SetProperty(ref _maximum, value);
         }
     }
 }

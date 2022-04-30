@@ -10,17 +10,17 @@ namespace HashTool.Helpers.Hashs
 {
     internal class CSharpHashBase : HashAlgorithm
     {
-        private readonly IHash algorithm;
+        private readonly IHash _algorithm;
 
         public CSharpHashBase(IHash algorithm)
         {
-            this.algorithm = algorithm;
+            _algorithm = algorithm;
         }
         public override void Initialize() =>
-            algorithm.Initialize();
+            _algorithm.Initialize();
         protected override void HashCore(byte[] array, int ibStart, int cbSize) =>
-            algorithm.TransformBytes(array, ibStart, cbSize);
+            _algorithm.TransformBytes(array, ibStart, cbSize);
         protected override byte[] HashFinal() =>
-            algorithm.TransformFinal().GetBytes();
+            _algorithm.TransformFinal().GetBytes();
     }
 }

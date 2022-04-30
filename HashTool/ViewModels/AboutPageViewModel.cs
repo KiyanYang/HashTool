@@ -31,14 +31,14 @@ namespace HashTool.ViewModels
 
         #region Fields
 
-        private static readonly HttpClient httpClient = new();
-        private static LatestVersion? latestVersionInfo;
+        private static readonly HttpClient s_httpClient = new();
+        private static LatestVersion? s_latestVersionInfo;
 
-        private bool? buttonCheckUpdateIsEnabled;
-        private string? assemblyVersion;
-        private string? updateStatusText;
+        private bool? _buttonCheckUpdateIsEnabled;
+        private string? _assemblyVersion;
+        private string? _updateStatusText;
 
-        private UpdateModel? update;
+        private UpdateModel? _update;
 
         #endregion
 
@@ -46,22 +46,22 @@ namespace HashTool.ViewModels
 
         public bool ButtonCheckUpdateIsEnabled
         {
-            get => buttonCheckUpdateIsEnabled ??= true;
-            set => SetProperty(ref buttonCheckUpdateIsEnabled, value);
+            get => _buttonCheckUpdateIsEnabled ??= true;
+            set => SetProperty(ref _buttonCheckUpdateIsEnabled, value);
         }
         public string AssemblyVersion
         {
-            get => assemblyVersion ??= GetAssemblyVersion().ToString(3);
+            get => _assemblyVersion ??= GetAssemblyVersion().ToString(3);
         }
         public string UpdateStatusText
         {
-            get => updateStatusText ??= string.Empty;
-            set => SetProperty(ref updateStatusText, value);
+            get => _updateStatusText ??= string.Empty;
+            set => SetProperty(ref _updateStatusText, value);
         }
 
         public UpdateModel Update
         {
-            get => update ??= GetInstance<UpdateModel>();
+            get => _update ??= GetInstance<UpdateModel>();
         }
 
         public ICommand CheckUpdateCommand { get; }
@@ -79,15 +79,15 @@ namespace HashTool.ViewModels
             Update.HasUpdate = false;
             UpdateStatusText = "检查更新中……";
 
-            if (await GetLatestVersion() && latestVersionInfo != null)
+            if (await GetLatestVersion() && s_latestVersionInfo != null)
             {
-                var assemblyVer = GetAssemblyVersion();
-                var ver = new Version(latestVersionInfo.Version);
+                Version assemblyVer = GetAssemblyVersion();
+                var ver = new Version(s_latestVersionInfo.Version);
                 if (ver > assemblyVer)
                 {
                     Update.HasUpdate = true;
-                    Update.Version = latestVersionInfo.Tag;
-                    Update.DownloadUrl = latestVersionInfo.GiteeDownloadUrl;
+                    Update.Version = s_latestVersionInfo.Tag;
+                    Update.DownloadUrl = s_latestVersionInfo.GiteeDownloadUrl;
                     Update.GithubUrl = $"https://github.com/KiyanYang/HashTool/releases/tag/{Update.Version}";
                     Update.GiteeUrl = $"https://gitee.com/KiyanYang/HashTool/releases/{Update.Version}";
                 }
@@ -109,11 +109,11 @@ namespace HashTool.ViewModels
             try
             {
                 string latestVersionUrl = Properties.Settings.Default.LatestVersionUrl;
-                var result = await httpClient.GetAsync(latestVersionUrl);
-                using var reader = result.Content.ReadAsStream();
+                HttpResponseMessage result = await s_httpClient.GetAsync(latestVersionUrl);
+                using Stream reader = result.Content.ReadAsStream();
 
                 var serializer = new XmlSerializer(typeof(LatestVersion));
-                latestVersionInfo = (LatestVersion?)serializer.Deserialize(reader);
+                s_latestVersionInfo = (LatestVersion?)serializer.Deserialize(reader);
                 return true;
             }
             catch (Exception)
@@ -132,18 +132,19 @@ namespace HashTool.ViewModels
 
         private void OpenUpdater()
         {
-            var res = HandyControl.Controls.MessageBox.Show("是否关闭程序并开始更新", "是否关闭并更新", MessageBoxButton.OKCancel);
+            MessageBoxResult res = HandyControl.Controls.MessageBox.Show("是否关闭程序并开始更新", "是否关闭并更新", MessageBoxButton.OKCancel);
             // 这里不要判断是否点击的是取消按钮，以防止未点击按钮（直接右上关闭消息框）的情况
             if (res != MessageBoxResult.OK)
+            {
                 return;
-
-            if (latestVersionInfo != null)
+            }
+            if (s_latestVersionInfo != null)
             {
                 var process = new Process();
                 process.StartInfo.FileName = "powershell.exe";
-                var updaterPs1 = Path.GetFullPath(@".\updater.ps1");
-                var targetPath = Path.GetFullPath(@".\");
-                string str = $"-ExecutionPolicy Bypass -File {updaterPs1} -Url {Update.DownloadUrl} -SHA256 {latestVersionInfo.SHA256_zip} -TargetPath {targetPath} -Force";
+                string updaterPs1 = Path.GetFullPath(@".\updater.ps1");
+                string targetPath = Path.GetFullPath(@".\");
+                string str = $"-ExecutionPolicy Bypass -File {updaterPs1} -Url {Update.DownloadUrl} -SHA256 {s_latestVersionInfo.SHA256_zip} -TargetPath {targetPath} -Force";
                 process.StartInfo.Arguments = str;
                 process.Start();
                 Environment.Exit(-1);
@@ -157,7 +158,9 @@ namespace HashTool.ViewModels
         private void OpenLink(string? link)
         {
             if (link == null)
+            {
                 return;
+            }
 
             Process.Start("explorer.exe", link);
         }
@@ -165,9 +168,11 @@ namespace HashTool.ViewModels
         private void OpenFile(string? path)
         {
             if (path == null)
+            {
                 return;
+            }
 
-            var fullPath = Path.GetFullPath(path);
+            string fullPath = Path.GetFullPath(path);
             Process.Start("explorer.exe", fullPath);
         }
 

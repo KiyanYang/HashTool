@@ -14,8 +14,11 @@ namespace HashTool.Models
     public class PropertiesSettingsModel : ObservableObject
     {
         private bool? _isLowerCase;
-        private StringCollection? _selectedHashAlgorithm;
+        private StringCollection? _selectedHashAlgorithms;
 
+        /// <summary>
+        /// 是否以小写字母展示结果。
+        /// </summary>
         public bool IsLowerCase
         {
             get => _isLowerCase ??= Settings.Default.IsLowerCase;
@@ -25,11 +28,21 @@ namespace HashTool.Models
                 SaveSettings(value);
             }
         }
-        public StringCollection SelectedHashAlgorithm
+
+        /// <summary>
+        /// 所选的哈希算法。
+        /// </summary>
+        public StringCollection SelectedHashAlgorithms
         {
-            get => _selectedHashAlgorithm ??= Settings.Default.SelectedHashAlgorithm;
+            get => _selectedHashAlgorithms ??= Settings.Default.SelectedHashAlgorithms;
         }
 
+        /// <summary>
+        /// 保存设置。
+        /// </summary>
+        /// <typeparam name="T">设置内支持的类型。</typeparam>
+        /// <param name="value">新值。</param>
+        /// <param name="propertyName">设置的键值。</param>
         private static void SaveSettings<T>(T value, [CallerMemberName] string? propertyName = null)
         {
             Settings.Default[propertyName] = value;

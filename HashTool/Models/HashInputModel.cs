@@ -26,21 +26,36 @@ namespace HashTool.Models
         };
         public static IReadOnlyList<string> EncodingNameItems { get; } = Encoding.GetEncodings().Select(ei => ei.Name).ToList();
 
+        /// <summary>
+        /// 输入模式。（文件，文件夹，文本）
+        /// </summary>
         public string Mode
         {
             get => _mode ??= ModeItems[0];
             set => SetProperty(ref _mode, value);
         }
+
+        /// <summary>
+        /// 输入内容。（路径或字符串）
+        /// </summary>
         public string Input
         {
             get => _input ??= string.Empty;
             set => SetProperty(ref _input, value);
         }
+
+        /// <summary>
+        /// 文本编码。（文本模式下）
+        /// </summary>
         public string EncodingName
         {
             get => _encodingName ??= "utf-8";
             set => SetProperty(ref _encodingName, value);
         }
+
+        /// <summary>
+        /// 算法复选框。
+        /// </summary>
         public List<CheckBoxModel> CheckBoxItems
         {
             get => _checkBoxItems ??= new();

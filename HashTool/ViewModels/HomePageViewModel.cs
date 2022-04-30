@@ -28,10 +28,10 @@ namespace HashTool.ViewModels
         {
             _hashInput = new();
             // 初始化哈希算法 CheckBox
-            StringCollection selectedHashAlgorithm = Properties.Settings.Default.SelectedHashAlgorithm;
+            StringCollection selectedHashAlgorithms = Properties.Settings.Default.SelectedHashAlgorithms;
             foreach (string name in new HashAlgorithmNames())
             {
-                _hashInput.CheckBoxItems.Add(new(name, selectedHashAlgorithm.Contains(name)));
+                _hashInput.CheckBoxItems.Add(new(name, selectedHashAlgorithms.Contains(name)));
             }
 
             BrowserDialogCommand = new RelayCommand(BrowserDialog);
@@ -40,7 +40,7 @@ namespace HashTool.ViewModels
             StartCommand = new RelayCommand(Start);
             ResetCommand = new RelayCommand(Reset);
             CancelCommand = new RelayCommand(Cancel);
-            SetSelectedHashAlgorithmCommand = new RelayCommand(SetSelectedHashAlgorithm);
+            SetSelectedHashAlgorithmsCommand = new RelayCommand(SetSelectedHashAlgorithms);
 
             InitializeBackgroundWorker();
         }
@@ -70,13 +70,17 @@ namespace HashTool.ViewModels
         #region Public Properties/Commands
 
         /// <summary>
-        /// 是否是文本模式
+        /// 是否是文本模式。
         /// </summary>
         public bool IsTextMode
         {
             get => _isTextMode ??= false;
             set => SetProperty(ref _isTextMode, value);
         }
+
+        /// <summary>
+        /// 左侧校验框的值。（自动去除前后空白字符）
+        /// </summary>
         public string HashValueVerify1
         {
             get => _hashValueVerify1 ??= string.Empty;
@@ -86,6 +90,10 @@ namespace HashTool.ViewModels
                 VerifyHashValue();
             }
         }
+
+        /// <summary>
+        /// 右侧校验框的值。（自动去除前后空白字符）
+        /// </summary>
         public string HashValueVerify2
         {
             get => _hashValueVerify2 ??= string.Empty;
@@ -96,31 +104,54 @@ namespace HashTool.ViewModels
             }
         }
 
+        /// <summary>
+        /// 哈希校验的结果。
+        /// </summary>
         public BadgeModel BadgeVerify
         {
             get => _badgeVerify ??= new(string.Empty, false);
             set => SetProperty(ref _badgeVerify, value);
         }
+
+        /// <summary>
+        /// 计算开始按钮。
+        /// </summary>
         public ButtonModel ButtonStart
         {
             get => _buttonStart ??= new("开始");
             set => SetProperty(ref _buttonStart, value);
         }
+
+        /// <summary>
+        /// 计算暂停按钮。
+        /// </summary>
         public ButtonModel ButtonReset
         {
             get => _buttonReset ??= new("暂停", false);
             set => SetProperty(ref _buttonReset, value);
         }
+
+        /// <summary>
+        /// 计算取消按钮。
+        /// </summary>
         public ButtonModel ButtonCancel
         {
             get => _buttonCancel ??= new("取消", false);
             set => SetProperty(ref _buttonCancel, value);
         }
+
+        /// <summary>
+        /// 哈希计算所需的输入参数。
+        /// </summary>
         public HashInputModel HashInput
         {
             get => _hashInput;
             set => SetProperty(ref _hashInput, value);
         }
+
+        /// <summary>
+        /// 哈希计算的输入模式。
+        /// </summary>
         public string HashInputMode
         {
             get => HashInput.Mode;
@@ -130,26 +161,46 @@ namespace HashTool.ViewModels
                 IsTextMode = value == "文本";
             }
         }
+
+        /// <summary>
+        /// 右侧当前对象的计算进度。
+        /// </summary>
         public ProgressBarModel ProgressBarSingle
         {
             get => _progressBarSingle ??= new(minimum: 0, maximum: 1000);
             set => SetProperty(ref _progressBarSingle, value);
         }
+
+        /// <summary>
+        /// 左侧总体对象的计算进度。
+        /// </summary>
         public ProgressBarModel ProgressBarMulti
         {
             get => _progressBarMulti ??= new(minimum: 0, maximum: 1);
             set => SetProperty(ref _progressBarMulti, value);
         }
+
+        /// <summary>
+        /// 任务栏显示的进度。
+        /// </summary>
         public ProgressBarModel TaskbarProgress
         {
             get => _taskbarProgress ??= new(minimum: 0, maximum: 1);
             set => SetProperty(ref _taskbarProgress, value);
         }
+
+        /// <summary>
+        /// 当前结果。
+        /// </summary>
         public List<HashResultModel> HashResults
         {
             get => _hashResults ??= new();
             set => SetProperty(ref _hashResults, value);
         }
+
+        /// <summary>
+        /// 历史结果。
+        /// </summary>
         public List<HashResultModel> HashResultHistory
         {
             get => _hashResultHistory ??= new();
@@ -161,7 +212,7 @@ namespace HashTool.ViewModels
         public ICommand StartCommand { get; }
         public ICommand ResetCommand { get; }
         public ICommand CancelCommand { get; }
-        public ICommand SetSelectedHashAlgorithmCommand { get; }
+        public ICommand SetSelectedHashAlgorithmsCommand { get; }
 
         #endregion
 
@@ -186,11 +237,12 @@ namespace HashTool.ViewModels
                 System.Windows.Forms.FolderBrowserDialog dialog = new();
                 if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    // 获取文件路径
+                    // 获取文件夹路径
                     HashInput.Input = dialog.SelectedPath;
                 }
             }
         }
+
         private void ShowResult(List<HashResultModel>? results)
         {
             if (results != null && results.Count > 0)
@@ -203,6 +255,7 @@ namespace HashTool.ViewModels
                 HandyControl.Controls.MessageBox.Warning("暂无计算结果！");
             }
         }
+
         private void SaveResult(List<HashResultModel>? results)
         {
             if (results != null && results.Count > 0)
@@ -238,6 +291,7 @@ namespace HashTool.ViewModels
                 HandyControl.Controls.MessageBox.Warning("暂无计算结果！");
             }
         }
+
         private void Start()
         {
             if (!_bgWorker.IsBusy)
@@ -250,6 +304,7 @@ namespace HashTool.ViewModels
                 ButtonCancel.IsEnabled = true;
             }
         }
+
         private void Reset()
         {
             if (_bgWorker.IsBusy)
@@ -267,6 +322,7 @@ namespace HashTool.ViewModels
                 }
             }
         }
+
         private void Cancel()
         {
             if (_bgWorker.IsBusy)
@@ -276,6 +332,7 @@ namespace HashTool.ViewModels
                 ButtonReset.Content = "暂停";
             }
         }
+
         private void VerifyHashValue()
         {
             if (string.IsNullOrEmpty(HashValueVerify1) || string.IsNullOrEmpty(HashValueVerify2))
@@ -297,17 +354,20 @@ namespace HashTool.ViewModels
                 }
             }
         }
+
         /// <summary>
         /// 设置 Properties.Settings.Default 中的 SelectedHashAlgorithm。
         /// </summary>
-        private void SetSelectedHashAlgorithm()
+        private void SetSelectedHashAlgorithms()
         {
             Properties.Settings setting = Properties.Settings.Default;
-            setting.SelectedHashAlgorithm.Clear();
+            setting.SelectedHashAlgorithms.Clear();
             foreach (CheckBoxModel i in HashInput.CheckBoxItems)
             {
                 if (i.IsChecked == true)
-                    setting.SelectedHashAlgorithm.Add(i.Content);
+                {
+                    setting.SelectedHashAlgorithms.Add(i.Content);
+                }
             }
             setting.Save();
         }

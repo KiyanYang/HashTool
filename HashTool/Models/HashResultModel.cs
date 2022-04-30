@@ -21,7 +21,7 @@ namespace HashTool.Models
         private List<HashResultItemModel>? _items;
 
         /// <summary>
-        /// 输入模式：文件/文件夹/文本
+        /// 输入模式：文件/文件夹/文本。
         /// </summary>
         public string InputMode
         {
@@ -30,7 +30,7 @@ namespace HashTool.Models
         }
 
         /// <summary>
-        /// 计算模式：文件流或字符串
+        /// 计算模式：文件流或字符串。
         /// </summary>
         public string Mode
         {
@@ -39,7 +39,7 @@ namespace HashTool.Models
         }
 
         /// <summary>
-        /// 计算内容：文件路径或文本
+        /// 计算内容：文件路径或文本。
         /// </summary>
         public string Content
         {
@@ -48,7 +48,7 @@ namespace HashTool.Models
         }
 
         /// <summary>
-        /// 计算内容：字符编码名称
+        /// 计算内容：字符编码名称。
         /// </summary>
         public string EncodingName
         {
@@ -57,7 +57,7 @@ namespace HashTool.Models
         }
 
         /// <summary>
-        /// 文件流计算模式下，格式化后的文件大小
+        /// 文件流计算模式下，格式化后的文件大小。
         /// </summary>
         public string FileSize
         {
@@ -66,7 +66,7 @@ namespace HashTool.Models
         }
 
         /// <summary>
-        /// 文件流计算模式下，文件最后修改时间
+        /// 文件流计算模式下，文件最后修改时间。
         /// </summary>
         public string LastWriteTime
         {
@@ -75,7 +75,7 @@ namespace HashTool.Models
         }
 
         /// <summary>
-        /// 计算开始时间
+        /// 计算开始时间。
         /// </summary>
         public string ComputeTime
         {
@@ -84,7 +84,7 @@ namespace HashTool.Models
         }
 
         /// <summary>
-        /// 计算用时
+        /// 计算用时。
         /// </summary>
         public string ComputeCost
         {
@@ -93,7 +93,7 @@ namespace HashTool.Models
         }
 
         /// <summary>
-        /// 计算结果
+        /// 计算结果。
         /// </summary>
         public List<HashResultItemModel> Items
         {
@@ -114,11 +114,18 @@ namespace HashTool.Models
         private string? _name;
         private string? _value;
 
+        /// <summary>
+        /// 算法名称。
+        /// </summary>
         public string Name
         {
             get => _name ??= string.Empty;
             set => SetProperty(ref _name, value);
         }
+
+        /// <summary>
+        /// 哈希结果。
+        /// </summary>
         public string Value
         {
             get => _value ??= string.Empty;
@@ -128,7 +135,7 @@ namespace HashTool.Models
         /// <summary>
         /// 在不更新值的情况下, 刷新内容。
         /// </summary>
-        /// <param name="propertyName">属性名称</param>
+        /// <param name="propertyName">属性名称。</param>
         public void ChangeProperty(string? propertyName = null)
         {
             base.OnPropertyChanging(propertyName);

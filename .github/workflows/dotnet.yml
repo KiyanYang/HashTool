@@ -31,15 +31,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
       - name: Set the value in pwsh
         run: |
           "CurrentDotnetVersion=$(dotnet --version)" >> $env:GITHUB_ENV
           "OutputDirectory=HashTool-$(git rev-parse --short HEAD)" >> $env:GITHUB_ENV
+
       - name: Setup .NET
         if: ${{ !startsWith(env.CurrentDotnetVersion, env.DotnetVersionPattern) }}
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: ${{ env.DotnetVersion }}
+
       - name: Cache dependencies
         uses: actions/cache@v3
         with:
@@ -49,8 +52,10 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
           restore-keys: |
             ${{ runner.os }}-nuget-
+
       - name: Restore dependencies
         run: dotnet restore
+
       - name: Build
         run: |
           dotnet build HashTool `
@@ -61,6 +66,7 @@ jobs:
             --configuration ${{ matrix.configuration }} `
             --output ./HashToolTest/bin/${{ matrix.configuration }}/${{ env.OutputDirectory }} `
             --no-restore
+
       - name: Test
         run: |
           dotnet test `
@@ -68,6 +74,7 @@ jobs:
             --output ./HashToolTest/bin/${{ matrix.configuration }}/${{ env.OutputDirectory }} `
             --no-build `
             --verbosity normal
+
       - name: Upload bin directory
         uses: actions/upload-artifact@v3
         if: success() && matrix.configuration == 'Release'

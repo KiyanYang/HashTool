@@ -1,11 +1,16 @@
-name: Bug 报告 - 表单版
-description: 提交 Bug 以帮助我们提高应用体验
-title: "[Bug] 标题"
+name: 问题报告
+description: 提交问题报告以帮助我们提高应用体验
+title: "[Bug]: "
 labels:
-  - bug
+  - "🐛 bug"
 assignees:
   - KiyanYang
 body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢你抽出宝贵的时间填写问题报告！
+
   - type: checkboxes
     id: is-existing-issue
     attributes:
@@ -14,13 +19,15 @@ body:
       options:
         - label: 我搜索了相关的议题，但是没有找到。
           required: true
+
   - type: textarea
     id: bug-description
-    attributes:
-      label: Bug 描述
-      description: 简要描述你遇到的问题。
     validations:
       required: true
+    attributes:
+      label: 问题描述
+      description: 简要描述你遇到的问题。
+
   - type: checkboxes
     id: can-reproduce-in-latest-version
     attributes:
@@ -29,8 +36,11 @@ body:
       options:
         - label: 此问题可以在最新版本中复现。
           required: true
+
   - type: textarea
     id: reproduce-steps
+    validations:
+      required: true
     attributes:
       label: 复现步骤
       description: 准确且详细地描述复现的具体步骤。
@@ -39,42 +49,40 @@ body:
         2. 点击……
         3. 滚动到……
         4. 出现……问题
-    validations:
-      required: true
+
   - type: textarea
     id: expected-behavior
+    validations:
+      required: true
     attributes:
       label: 预期行为
       description: 清晰且简洁地描述你希望看到什么样的结果。
-    validations:
-      required: true
+
   - type: textarea
     id: screenshots
     attributes:
       label: 截图
       description: 如果静态截图无法合适的描述问题，可以使用 [ScreenToGif](https://github.com/NickeManarin/ScreenToGif) 来录制 Gif 动图。
-    validations:
-      required: false
+
   - type: textarea
     id: environment
+    validations:
+      required: true
     attributes:
       label: 环境
       description: |
         例如：
           - **应用来源**: GitHub
-          - **应用版本**: v1.2.0
+          - **应用版本**: v1.3.0
           - **系统版本**: Windows 11 21H2 (22000)
       value: |
         - 应用来源：
         - 应用版本：
         - 系统版本：
-      render: markdown
-    validations:
-      required: true
+      render: Markdown
+
   - type: textarea
     id: remarks
     attributes:
       label: 备注
       description: 添加其他你认为有必要的信息。
-    validations:
-      required: false

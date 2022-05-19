@@ -10,9 +10,9 @@
 
 #### A Tool for Calculating and Verifying the Hash Value of Any File, Folder, or Text!
 
-![License GPL-3.0](https://img.shields.io/github/license/KiyanYang/HashTool)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/KiyanYang/HashTool)
-![GitHub issues](https://img.shields.io/github/issues/KiyanYang/HashTool)
+[![License GPL-3.0](https://img.shields.io/github/license/KiyanYang/HashTool)](https://github.com/KiyanYang/HashTool/blob/main/LICENSE)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/KiyanYang/HashTool)](https://github.com/KiyanYang/HashTool/releases)
+[![GitHub issues](https://img.shields.io/github/issues/KiyanYang/HashTool)](https://github.com/KiyanYang/HashTool/issues)
 [![.NET Build & Test](https://github.com/KiyanYang/HashTool/actions/workflows/dotnet.yml/badge.svg)](https://github.com/KiyanYang/HashTool/actions/workflows/dotnet.yml)
 
 </div>

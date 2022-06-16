@@ -15,6 +15,8 @@ namespace HashTool.Models
     {
         private bool? _isLowerCase;
         private StringCollection? _selectedHashAlgorithms;
+        private bool? _mainWindowTopmost;
+        private bool? _hashResultWindowTopmost;
 
         /// <summary>
         /// 是否以小写字母展示结果。
@@ -35,6 +37,32 @@ namespace HashTool.Models
         public StringCollection SelectedHashAlgorithms
         {
             get => _selectedHashAlgorithms ??= Settings.Default.SelectedHashAlgorithms;
+        }
+
+        /// <summary>
+        /// 主界面置顶。
+        /// </summary>
+        public bool MainWindowTopmost
+        {
+            get => _mainWindowTopmost ??= Settings.Default.MainWindowTopmost;
+            set
+            {
+                SetProperty(ref _mainWindowTopmost, value);
+                SaveSettings(value);
+            }
+        }
+
+        /// <summary>
+        /// 结果界面置顶。
+        /// </summary>
+        public bool HashResultWindowTopmost
+        {
+            get => _hashResultWindowTopmost ??= Settings.Default.HashResultWindowTopmost;
+            set
+            {
+                SetProperty(ref _hashResultWindowTopmost, value);
+                SaveSettings(value);
+            }
         }
 
         /// <summary>

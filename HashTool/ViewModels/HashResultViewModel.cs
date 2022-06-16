@@ -52,6 +52,7 @@ namespace HashTool.ViewModels
         private string? _hashResultListBoxColWidth;
         private Visibility? _hashResultListBoxVisibility;
         private int? _selectedIndex;
+        private PropertiesSettingsModel? _propertiesSettings;
 
         private HashResultModel _selectedHashResult;
         private ObservableCollection<HashResultModel> _hashResultItems;
@@ -60,17 +61,18 @@ namespace HashTool.ViewModels
 
         #region Public Properties/Commands
 
+        public PropertiesSettingsModel PropertiesSettings
+        {
+            get => _propertiesSettings ??= GetInstance<PropertiesSettingsModel>();
+        }
+
         /// <summary>
         /// 复选框，结果是否小写。
         /// </summary>
         public bool IsLowerCase
         {
             get => _isLowerCase ??= GetInstance<PropertiesSettingsModel>().IsLowerCase;
-            set
-            {
-                SetProperty(ref _isLowerCase, value);
-                GetInstance<PropertiesSettingsModel>().IsLowerCase = value;
-            }
+            set => SetProperty(ref _isLowerCase, value);
         }
 
         /// <summary>

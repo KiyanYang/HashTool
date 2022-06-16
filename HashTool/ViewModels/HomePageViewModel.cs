@@ -45,7 +45,7 @@ namespace HashTool.ViewModels
             InitializeBackgroundWorker();
         }
 
-        #region Fields & Private Properties
+        #region Fields
 
         private bool? _isTextMode;
         private string? _hashValueVerify1;

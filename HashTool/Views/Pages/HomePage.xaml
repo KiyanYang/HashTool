@@ -144,7 +144,7 @@
                         <CheckBox
                             Content="{Binding Content}"
                             IsChecked="{Binding IsChecked, Mode=TwoWay}"
-                            Command="{Binding DataContext.SetSelectedHashAlgorithmCommand, ElementName=checkBoxItems}" />
+                            Command="{Binding DataContext.SetSelectedHashAlgorithmsCommand, ElementName=checkBoxItems}" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

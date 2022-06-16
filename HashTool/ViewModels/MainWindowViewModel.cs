@@ -5,6 +5,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 
+using HashTool.Models;
 using HashTool.Models.Controls;
 using HashTool.Views.Pages;
 
@@ -22,14 +23,22 @@ namespace HashTool.ViewModels
 
         #region Fields
 
+        private PropertiesSettingsModel? _propertiesSettings;
+
         private Page? _currentPage;
         private HomePage? _homePage;
+        private SettingPage? _settingPage;
         private HelpPage? _helpPage;
         private AboutPage? _aboutPage;
 
         #endregion
 
         #region Public Properties/Commands
+
+        public PropertiesSettingsModel PropertiesSettings
+        {
+            get => _propertiesSettings ??= GetInstance<PropertiesSettingsModel>();
+        }
 
         public Page CurrentPage
         {
@@ -39,6 +48,11 @@ namespace HashTool.ViewModels
         public HomePage HomePage
         {
             get => _homePage ??= new();
+            set => SetProperty(ref _currentPage, value);
+        }
+        public SettingPage SettingPage
+        {
+            get => _settingPage ??= new();
             set => SetProperty(ref _currentPage, value);
         }
         public HelpPage HelpPage
@@ -66,6 +80,7 @@ namespace HashTool.ViewModels
             CurrentPage = title switch
             {
                 "主页" => HomePage,
+                "设置" => SettingPage,
                 "帮助" => HelpPage,
                 "关于" => AboutPage,
                 _ => HomePage,

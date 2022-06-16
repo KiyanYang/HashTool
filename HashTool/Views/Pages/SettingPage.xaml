@@ -1,0 +1,85 @@
+﻿<Page
+    x:Class="HashTool.Views.Pages.SettingPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:HashTool.Views.Pages"
+    mc:Ignorable="d"
+    d:DesignHeight="360"
+    d:DesignWidth="560"
+    Title="设置">
+
+    <Grid Margin="8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition MaxHeight="200" />
+        </Grid.RowDefinitions>
+
+        <Grid.Resources>
+            <!-- StackPanel: Margin -->
+            <Style
+                TargetType="StackPanel">
+                <Setter
+                    Property="Margin"
+                    Value="0,4,0,4" />
+            </Style>
+
+            <!-- CheckBox: Width, Margin, FontSize -->
+            <Style
+                TargetType="CheckBox"
+                BasedOn="{StaticResource CheckBoxBaseStyle}">
+                <Setter
+                    Property="Width"
+                    Value="200" />
+                <Setter
+                    Property="Margin"
+                    Value="6,4,6,4" />
+                <Setter
+                    Property="FontSize"
+                    Value="14" />
+            </Style>
+
+            <!-- Button: Width, Margin -->
+            <Style
+                TargetType="Button"
+                BasedOn="{StaticResource ButtonDefault}">
+                <Setter
+                    Property="Width"
+                    Value="80" />
+                <Setter
+                    Property="Margin"
+                    Value="6,0,6,0" />
+            </Style>
+        </Grid.Resources>
+
+        <StackPanel
+            Grid.Row="0"
+            HorizontalAlignment="Left">
+            <CheckBox
+                Content="{Binding IsLowerCase.Content}"
+                IsChecked="{Binding IsLowerCase.IsChecked}" />
+            <CheckBox
+                Content="{Binding MainWindowTopmost.Content}"
+                IsChecked="{Binding MainWindowTopmost.IsChecked}" />
+            <CheckBox
+                Content="{Binding HashResultWindowTopMost.Content}"
+                IsChecked="{Binding HashResultWindowTopMost.IsChecked}" />
+        </StackPanel>
+
+        <StackPanel
+            Grid.Row="1"
+            Orientation="Horizontal">
+            <Button
+                Content="保存"
+                Command="{Binding SaveSettingCommand}" />
+            <Button
+                Content="取消"
+                Command="{Binding CancelSettingCommand}" />
+        </StackPanel>
+    </Grid>
+</Page>

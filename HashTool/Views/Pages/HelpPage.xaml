@@ -19,7 +19,7 @@
                 IsHyphenationEnabled="True">
                 <Section
                     FontFamily="HarmonyOS Sans SC, 微软雅黑"
-                    FontSize="12"
+                    FontSize="14"
                     LineHeight="20">
 
                     <Section.Resources>
@@ -27,21 +27,29 @@
                         <Style TargetType="{x:Type Bold}">
                             <Setter
                                 Property="FontSize"
-                                Value="14" />
+                                Value="16" />
                         </Style>
                     </Section.Resources>
 
                     <Paragraph>
                         <Bold>哈希值对比框是否区分大小写？</Bold>
                         <LineBreak />
-                        对比时，不区分大小写，同时也会忽略前后的空白字符。但是 QuickXor 使用 Base64 编码是区分大小写的，因此比较 QuickXor 时需要自己辅助比较。
+                        对比时，不区分大小写，同时也会忽略前后的空白字符。但是 QuickXor
+                        使用 Base64 编码是区分大小写的，因此比较 QuickXor 时需要自己辅助比较。
                     </Paragraph>
 
+                    <Paragraph>
+                        <Bold>设置页面内的“结果小写”和结果页面的“结果小写”有何区别？</Bold>
+                        <LineBreak />
+                        设置页面内的“结果小写”会保存到用户配置里，而结果页面的“结果小写”是临时的，不会保存到用户配置。
+                        查看结果时，结果页面会读取用户配置作为初始值。
+                    </Paragraph>
+                    
                     <Paragraph>
                         <Bold>“关于”页面内的“更新”按钮和下方的“发行地址”有何区别？</Bold>
                         <LineBreak />
                         “更新”按钮提供“.zip”格式的下载链接，而“发行地址”提供的是此版本在
-                        GitHub 和 Gitee 上的发行地址，包括更新说明和多种格式的压缩包等。
+                        GitHub 和 Gitee 上发行版的链接地址，包括更新说明和多种格式的压缩包等。
                     </Paragraph>
 
                 </Section>

@@ -12,6 +12,7 @@
     Height="420"
     Width="740"
     MinWidth="560"
+    Topmost="{Binding PropertiesSettings.MainWindowTopmost}"
     WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
@@ -60,6 +61,10 @@
 
                 <Button
                     Content="主页"
+                    Command="{Binding ShowPageCommand}"
+                    CommandParameter="{Binding Content, RelativeSource={RelativeSource Self}}" />
+                <Button
+                    Content="设置"
                     Command="{Binding ShowPageCommand}"
                     CommandParameter="{Binding Content, RelativeSource={RelativeSource Self}}" />
                 <Button

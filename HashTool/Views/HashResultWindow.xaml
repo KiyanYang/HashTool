@@ -10,7 +10,8 @@
     mc:Ignorable="d"
     Title="Hash 结果"
     Height="400"
-    Width="800">
+    Width="800"
+    Topmost="{Binding PropertiesSettings.HashResultWindowTopmost}">
 
     <Window.Resources>
         <converters:LowerCaseConverter x:Key="LowerCaseConverter" />

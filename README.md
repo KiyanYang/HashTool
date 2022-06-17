@@ -19,17 +19,19 @@
 
 ---
 
-HashTool 支持文件、文件夹或文本的哈希计算，对于文件采用并行计算（在选择多种算法时优势明显），此外还提供了结果导出和对比框校验功能。
+HashTool 支持文件、文件夹或文本的哈希计算，选择多种算法时采用并行计算，此外还提供了结果导出和对比框校验功能。
 
 ## 环境
 
-- `.NET 6.0 Desktop Runtime - Windows x64` [点击下载](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-6.0.4-windows-x64-installer)
+- `.NET 6.0 Desktop Runtime - Windows x64` [点击下载](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-6.0.6-windows-x64-installer)
 
 ## 使用
 
 在 Releases 下载 `HashTool.zip` 或 `HashTool.7z` 解压后点击 `HashTool.exe` 运行。
 
 Releases 链接：[`GitHub`](https://github.com/KiyanYang/HashTool/releases)；[`Gitee`](https://gitee.com/KiyanYang/HashTool/releases)。
+
+> 更新功能通过 PowerShell 脚本实现，为了通过脚本[执行策略](https://docs.microsoft.com/zh-cn/powershell/module/microsoft.powershell.core/about/about_execution_policies?view=powershell-7.2)，本软件通过 `& powershell.exe -ExecutionPolicy Bypass -File ./updater.ps1` 命令执行 `Bypass` 执行策略，可能会被安全软件误报。
 
 ## 介绍
 

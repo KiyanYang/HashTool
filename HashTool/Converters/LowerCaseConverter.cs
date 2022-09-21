@@ -6,7 +6,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-using HashTool.Common;
+using HashTool.Helpers.Hashs;
 
 namespace HashTool.Converters;
 
@@ -17,7 +17,7 @@ internal sealed class LowerCaseConverter : IMultiValueConverter
         if (values.Length == 3
             && values[0] is string val
             && values[1] is string arg
-            && arg != HashAlgorithmNames.QuickXor
+            && arg != Hash.QuickXor.Name
             && values[2] is bool isLowerCase
             && isLowerCase)
             return val.ToLower();

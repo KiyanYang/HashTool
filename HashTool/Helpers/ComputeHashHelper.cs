@@ -7,54 +7,20 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Security.Cryptography;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-using HashLib4CSharp.Base;
-using HashLib4CSharp.Checksum;
-using HashLib4CSharp.Interfaces;
-
-using HashTool.Common;
 using HashTool.Helpers.Hashs;
 using HashTool.Models;
 using HashTool.Models.Controls;
-
-using static HashLib4CSharp.Base.HashFactory.Checksum.CRC;
-using static HashLib4CSharp.Base.HashFactory.Crypto;
 
 namespace HashTool.Helpers;
 
 public sealed class ComputeHashHelper
 {
-    private static readonly HashAlgorithm s_crc32 = CreateCRC(CRCModel.CRC32).ToHashAlgorithm();
-    private static readonly HashAlgorithm s_md4 = CreateMD4().ToHashAlgorithm();
-    private static readonly HashAlgorithm s_md5 = MD5.Create();
-    private static readonly HashAlgorithm s_sha1 = SHA1.Create();
-    private static readonly HashAlgorithm s_sha224 = CreateSHA2_224().ToHashAlgorithm();
-    private static readonly HashAlgorithm s_sha256 = SHA256.Create();
-    private static readonly HashAlgorithm s_sha384 = SHA384.Create();
-    private static readonly HashAlgorithm s_sha512 = SHA512.Create();
-    private static readonly HashAlgorithm s_sha3_224 = CreateSHA3_224().ToHashAlgorithm();
-    private static readonly HashAlgorithm s_sha3_256 = CreateSHA3_256().ToHashAlgorithm();
-    private static readonly HashAlgorithm s_sha3_384 = CreateSHA3_384().ToHashAlgorithm();
-    private static readonly HashAlgorithm s_sha3_512 = CreateSHA3_512().ToHashAlgorithm();
-    private static readonly HashAlgorithm s_blake2B_160 = CreateBlake2B_160().ToHashAlgorithm();
-    private static readonly HashAlgorithm s_blake2B_256 = CreateBlake2B_256().ToHashAlgorithm();
-    private static readonly HashAlgorithm s_blake2B_384 = CreateBlake2B_384().ToHashAlgorithm();
-    private static readonly HashAlgorithm s_blake2B_512 = CreateBlake2B_512().ToHashAlgorithm();
-    private static readonly HashAlgorithm s_blake2S_128 = CreateBlake2S_160().ToHashAlgorithm();
-    private static readonly HashAlgorithm s_blake2S_160 = CreateBlake2S_160().ToHashAlgorithm();
-    private static readonly HashAlgorithm s_blake2S_224 = CreateBlake2S_224().ToHashAlgorithm();
-    private static readonly HashAlgorithm s_blake2S_256 = CreateBlake2S_256().ToHashAlgorithm();
-    private static readonly HashAlgorithm s_keccak_224 = CreateKeccak_224().ToHashAlgorithm();
-    private static readonly HashAlgorithm s_keccak_256 = CreateKeccak_256().ToHashAlgorithm();
-    private static readonly HashAlgorithm s_keccak_288 = CreateKeccak_288().ToHashAlgorithm();
-    private static readonly HashAlgorithm s_keccak_384 = CreateKeccak_384().ToHashAlgorithm();
-    private static readonly HashAlgorithm s_keccak_512 = CreateKeccak_512().ToHashAlgorithm();
-    private static readonly HashAlgorithm s_quickXor = new QuickXorHash();
-    private static readonly Dictionary<string, HashAlgorithm> s_hashAlgorithmDict = new();
+    private static readonly List<Hash> s_hashs = new();
 
     /// <summary>
     /// 设置计算时需要使用的哈希算法字典。
@@ -66,43 +32,16 @@ public sealed class ComputeHashHelper
     /// <exception cref="ArgumentOutOfRangeException">调用的哈希算法不在范围之内。</exception>
     private static void SetHashAlgorithmDict(HashInputModel hashInput)
     {
-        s_hashAlgorithmDict.Clear();
-        HashAlgorithm algorithm;
+        s_hashs.Clear();
+        Hash hash;
         foreach (CheckBoxModel i in hashInput.CheckBoxItems)
         {
             if (i.IsChecked != true)
                 continue;
-            algorithm = i.Content switch
-            {
-                HashAlgorithmNames.CRC32 => s_crc32,
-                HashAlgorithmNames.MD4 => s_md4,
-                HashAlgorithmNames.MD5 => s_md5,
-                HashAlgorithmNames.SHA1 => s_sha1,
-                HashAlgorithmNames.SHA224 => s_sha224,
-                HashAlgorithmNames.SHA256 => s_sha256,
-                HashAlgorithmNames.SHA384 => s_sha384,
-                HashAlgorithmNames.SHA512 => s_sha512,
-                HashAlgorithmNames.SHA3_224 => s_sha3_224,
-                HashAlgorithmNames.SHA3_256 => s_sha3_256,
-                HashAlgorithmNames.SHA3_384 => s_sha3_384,
-                HashAlgorithmNames.SHA3_512 => s_sha3_512,
-                HashAlgorithmNames.Blake2B_160 => s_blake2B_160,
-                HashAlgorithmNames.Blake2B_256 => s_blake2B_256,
-                HashAlgorithmNames.Blake2B_384 => s_blake2B_384,
-                HashAlgorithmNames.Blake2B_512 => s_blake2B_512,
-                HashAlgorithmNames.Blake2S_128 => s_blake2S_128,
-                HashAlgorithmNames.Blake2S_160 => s_blake2S_160,
-                HashAlgorithmNames.Blake2S_224 => s_blake2S_224,
-                HashAlgorithmNames.Blake2S_256 => s_blake2S_256,
-                HashAlgorithmNames.Keccak_224 => s_keccak_224,
-                HashAlgorithmNames.Keccak_256 => s_keccak_256,
-                HashAlgorithmNames.Keccak_288 => s_keccak_288,
-                HashAlgorithmNames.Keccak_384 => s_keccak_384,
-                HashAlgorithmNames.Keccak_512 => s_keccak_512,
-                HashAlgorithmNames.QuickXor => s_quickXor,
-                _ => throw new ArgumentOutOfRangeException(nameof(hashInput), "The input.CheckBoxItems'EnumContent out of range."),
-            };
-            s_hashAlgorithmDict.Add(i.Content, algorithm);
+
+            hash = Hash.GetHashs().Where(hash => hash.Name == i.Content).FirstOrDefault() ??
+                throw new ArgumentOutOfRangeException(nameof(hashInput), "The input.CheckBoxItems'EnumContent out of range.");
+            s_hashs.Add(hash);
         }
     }
 
@@ -110,7 +49,7 @@ public sealed class ComputeHashHelper
     {
         string hash = name switch
         {
-            HashAlgorithmNames.QuickXor => HashFormatBase64(hashValue),
+            _ when name == Hash.QuickXor.Name => HashFormatBase64(hashValue),
             _ => HashFormatHex(hashValue),
         };
         return new HashResultItemModel() { Name = name, Value = hash };
@@ -135,10 +74,10 @@ public sealed class ComputeHashHelper
 
         byte[] hashValue;
         var encoding = Encoding.GetEncoding(hashInput.EncodingName);
-        foreach (string name in s_hashAlgorithmDict.Keys)
+        foreach (Hash hash in s_hashs)
         {
-            hashValue = s_hashAlgorithmDict[name].ComputeHash(encoding.GetBytes(hashInput.Input));
-            hashResult.Items.Add(BuildHashResultItem(name, hashValue));
+            hashValue = hash.Algorithm.ComputeHash(encoding.GetBytes(hashInput.Input));
+            hashResult.Items.Add(BuildHashResultItem(hash.Name, hashValue));
         }
         if (worker != null && maximum != null)
         {
@@ -187,7 +126,7 @@ public sealed class ComputeHashHelper
 
         #region 使用屏障完成多算法的并行计算
 
-        using Barrier barrier = new(s_hashAlgorithmDict.Count, (b) =>
+        using Barrier barrier = new(s_hashs.Count, (b) =>
         {
             readLength = fileStream.Read(buffer, 0, bufferSize);
 
@@ -198,7 +137,7 @@ public sealed class ComputeHashHelper
         });
 
         // 定义本地函数，先屏障同步并完成读取文件、报告进度等操作，再并行计算
-        void action(HashAlgorithm hashAlgorithm)
+        void action(Hash hash)
         {
             while (readLength > 0)
             {
@@ -209,24 +148,24 @@ public sealed class ComputeHashHelper
                     break;
                 }
                 barrier.SignalAndWait();
-                hashAlgorithm.TransformBlock(buffer, 0, readLength, null, 0);
+                hash.Algorithm.TransformBlock(buffer, 0, readLength, null, 0);
             }
         }
 
         // 开启并行动作
-        Parallel.ForEach(s_hashAlgorithmDict.Values, action);
+        Parallel.ForEach(s_hashs, action);
 
         #endregion
 
         // 判断是否进行最后一次哈希计算
         if (!worker.CancellationPending)
         {
-            foreach (KeyValuePair<string, HashAlgorithm> kvp in s_hashAlgorithmDict)
+            foreach (Hash hash in s_hashs)
             {
-                kvp.Value.TransformFinalBlock(buffer, 0, 0);
-                if (kvp.Value.Hash is byte[] hashValue)
+                hash.Algorithm.TransformFinalBlock(buffer, 0, 0);
+                if (hash.Algorithm.Hash is byte[] hashValue)
                 {
-                    HashResultItemModel s = BuildHashResultItem(kvp.Key, hashValue);
+                    HashResultItemModel s = BuildHashResultItem(hash.Name, hashValue);
                     hashResult.Items.Add(s);
                 }
             }
@@ -281,10 +220,4 @@ public sealed class ComputeHashHelper
     }
 
     #endregion
-}
-
-public static class HashLib4CSharpExtensions
-{
-    public static HashAlgorithm ToHashAlgorithm(this IHash hash) =>
-        HashFactory.Adapter.CreateHashAlgorithmFromHash(hash);
 }

@@ -11,8 +11,8 @@ using System.Threading;
 
 using CommunityToolkit.Mvvm.Input;
 
-using HashTool.Common;
 using HashTool.Helpers;
+using HashTool.Helpers.Hashs;
 using HashTool.Models;
 using HashTool.Models.Controls;
 using HashTool.Views;
@@ -28,9 +28,13 @@ public sealed partial class HomePageViewModel : ObservableObject
         _hashInput = new();
         // 初始化哈希算法 CheckBox
         StringCollection selectedHashAlgorithms = Properties.Settings.Default.SelectedHashAlgorithms;
-        foreach (string name in new HashAlgorithmNames())
+        foreach (Hash hash in Hash.GetHashs())
         {
-            _hashInput.CheckBoxItems.Add(new() { Content = name, IsChecked = selectedHashAlgorithms.Contains(name) });
+            _hashInput.CheckBoxItems.Add(new()
+            {
+                Content = hash.Name,
+                IsChecked = selectedHashAlgorithms.Contains(hash.Name)
+            });
         }
 
         InitializeBackgroundWorker();

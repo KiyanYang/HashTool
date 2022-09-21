@@ -8,19 +8,18 @@ using System.Windows;
 using HashTool.Models;
 using HashTool.ViewModels;
 
-namespace HashTool.Views
-{
-    /// <summary>
-    /// HashResultWindow.xaml 的交互逻辑
-    /// </summary>
-    public partial class HashResultWindow : Window
-    {
-        public HashResultWindow(List<HashResultModel> hashResultModels)
-        {
-            InitializeComponent();
+namespace HashTool.Views;
 
-            HashResultViewModel vm = new(hashResultModels);
-            DataContext = vm;
-        }
+/// <summary>
+/// HashResultWindow.xaml 的交互逻辑
+/// </summary>
+public sealed partial class HashResultWindow : Window
+{
+    public HashResultWindow(List<HashResultModel> hashResultModels)
+    {
+        InitializeComponent();
+
+        HashResultViewModel vm = new(hashResultModels);
+        DataContext = vm;
     }
 }

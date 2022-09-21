@@ -4,16 +4,15 @@
 
 using System.Windows.Controls;
 
-namespace HashTool.Views.Pages
+namespace HashTool.Views.Pages;
+
+/// <summary>
+/// HelpPage.xaml 的交互逻辑
+/// </summary>
+public sealed partial class HelpPage : Page
 {
-    /// <summary>
-    /// HelpPage.xaml 的交互逻辑
-    /// </summary>
-    public partial class HelpPage : Page
+    public HelpPage()
     {
-        public HelpPage()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

@@ -2,42 +2,22 @@
 // Licensed under the GNU General Public License v3.0.
 // See LICENSE file in the project root for full license information.
 
-using CommunityToolkit.Mvvm.ComponentModel;
+namespace HashTool.Models;
 
-namespace HashTool.Models
+internal sealed partial class UpdateModel : ObservableObject
 {
-    internal class UpdateModel : ObservableObject
-    {
-        private bool? _hasUpdate;
-        private string? _version;
-        private string? _downloadUrl;
-        private string? _githubUrl;
-        private string? _giteeUrl;
+    [ObservableProperty]
+    private bool? _hasUpdate;
 
-        public bool? HasUpdate
-        {
-            get => _hasUpdate;
-            set => SetProperty(ref _hasUpdate, value);
-        }
-        public string? Version
-        {
-            get => _version;
-            set => SetProperty(ref _version, value);
-        }
-        public string? DownloadUrl
-        {
-            get => _downloadUrl;
-            set => SetProperty(ref _downloadUrl, value);
-        }
-        public string? GithubUrl
-        {
-            get => _githubUrl;
-            set => SetProperty(ref _githubUrl, value);
-        }
-        public string? GiteeUrl
-        {
-            get => _giteeUrl;
-            set => SetProperty(ref _giteeUrl, value);
-        }
-    }
+    [ObservableProperty]
+    private string? _version;
+
+    [ObservableProperty]
+    private string? _downloadUrl;
+
+    [ObservableProperty]
+    private string? _githubUrl;
+
+    [ObservableProperty]
+    private string? _giteeUrl;
 }

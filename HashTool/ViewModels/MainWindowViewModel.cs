@@ -3,90 +3,86 @@
 // See LICENSE file in the project root for full license information.
 
 using System.Windows.Controls;
-using System.Windows.Input;
+
+using CommunityToolkit.Mvvm.Input;
 
 using HashTool.Models;
 using HashTool.Models.Controls;
 using HashTool.Views.Pages;
 
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+namespace HashTool.ViewModels;
 
-namespace HashTool.ViewModels
+internal sealed partial class MainWindowViewModel : ObservableObject
 {
-    internal class MainWindowViewModel : ObservableObject
+    public MainWindowViewModel()
     {
-        public MainWindowViewModel()
-        {
-            ShowPageCommand = new RelayCommand<string>(ShowPage);
-        }
-
-        #region Fields
-
-        private PropertiesSettingsModel? _propertiesSettings;
-
-        private Page? _currentPage;
-        private HomePage? _homePage;
-        private SettingPage? _settingPage;
-        private HelpPage? _helpPage;
-        private AboutPage? _aboutPage;
-
-        #endregion
-
-        #region Public Properties/Commands
-
-        public PropertiesSettingsModel PropertiesSettings
-        {
-            get => _propertiesSettings ??= GetInstance<PropertiesSettingsModel>();
-        }
-
-        public Page CurrentPage
-        {
-            get => _currentPage ??= HomePage;
-            set => SetProperty(ref _currentPage, value);
-        }
-        public HomePage HomePage
-        {
-            get => _homePage ??= new();
-            set => SetProperty(ref _currentPage, value);
-        }
-        public SettingPage SettingPage
-        {
-            get => _settingPage ??= new();
-            set => SetProperty(ref _currentPage, value);
-        }
-        public HelpPage HelpPage
-        {
-            get => _helpPage ??= new();
-            set => SetProperty(ref _currentPage, value);
-        }
-        public AboutPage AboutPage
-        {
-            get => _aboutPage ??= new();
-            set => SetProperty(ref _currentPage, value);
-        }
-        public ProgressBarModel TaskbarProgress
-        {
-            get => HomePage.TaskbarProgress;
-        }
-        public ICommand ShowPageCommand { get; }
-
-        #endregion
-
-        #region Helper
-
-        private void ShowPage(string? title)
-        {
-            CurrentPage = title switch
-            {
-                "主页" => HomePage,
-                "设置" => SettingPage,
-                "帮助" => HelpPage,
-                "关于" => AboutPage,
-                _ => HomePage,
-            };
-        }
-
-        #endregion
     }
+
+    #region Fields
+
+    private PropertiesSettingsModel? _propertiesSettings;
+
+    private Page? _currentPage;
+    private HomePage? _homePage;
+    private SettingPage? _settingPage;
+    private HelpPage? _helpPage;
+    private AboutPage? _aboutPage;
+
+    #endregion
+
+    #region Public Properties
+
+    public PropertiesSettingsModel PropertiesSettings
+    {
+        get => _propertiesSettings ??= GetInstance<PropertiesSettingsModel>();
+    }
+
+    public Page CurrentPage
+    {
+        get => _currentPage ??= HomePage;
+        set => SetProperty(ref _currentPage, value);
+    }
+    public HomePage HomePage
+    {
+        get => _homePage ??= new();
+        set => SetProperty(ref _currentPage, value);
+    }
+    public SettingPage SettingPage
+    {
+        get => _settingPage ??= new();
+        set => SetProperty(ref _currentPage, value);
+    }
+    public HelpPage HelpPage
+    {
+        get => _helpPage ??= new();
+        set => SetProperty(ref _currentPage, value);
+    }
+    public AboutPage AboutPage
+    {
+        get => _aboutPage ??= new();
+        set => SetProperty(ref _currentPage, value);
+    }
+    public ProgressBarModel TaskbarProgress
+    {
+        get => HomePage.TaskbarProgress;
+    }
+
+    #endregion
+
+    #region Command
+
+    [RelayCommand]
+    private void ShowPage(string? title)
+    {
+        CurrentPage = title switch
+        {
+            "主页" => HomePage,
+            "设置" => SettingPage,
+            "帮助" => HelpPage,
+            "关于" => AboutPage,
+            _ => HomePage,
+        };
+    }
+
+    #endregion
 }

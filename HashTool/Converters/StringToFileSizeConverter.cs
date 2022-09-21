@@ -8,21 +8,20 @@ using System.Windows.Data;
 
 using HashTool.Helpers;
 
-namespace HashTool.Converters
+namespace HashTool.Converters;
+
+internal sealed class StringToFileSizeConverter : IValueConverter
 {
-    internal class StringToFileSizeConverter : IValueConverter
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        if (long.TryParse((string)value, out long val))
         {
-            if (long.TryParse((string)value, out long val))
-            {
-                return FileSizeFormatHelper.Format(val);
-            }
-            return string.Empty;
+            return FileSizeFormatHelper.Format(val);
         }
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
+        return string.Empty;
+    }
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
     }
 }

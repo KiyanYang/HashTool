@@ -6,19 +6,18 @@ using System.Windows.Controls;
 
 using HashTool.ViewModels;
 
-namespace HashTool.Views.Pages
-{
-    /// <summary>
-    /// AboutPage.xaml 的交互逻辑
-    /// </summary>
-    public partial class AboutPage : Page
-    {
-        public AboutPage()
-        {
-            InitializeComponent();
+namespace HashTool.Views.Pages;
 
-            AboutPageViewModel aboutViewModel = new();
-            DataContext = aboutViewModel;
-        }
+/// <summary>
+/// AboutPage.xaml 的交互逻辑
+/// </summary>
+public sealed partial class AboutPage : Page
+{
+    public AboutPage()
+    {
+        InitializeComponent();
+
+        AboutPageViewModel aboutViewModel = new();
+        DataContext = aboutViewModel;
     }
 }

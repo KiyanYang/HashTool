@@ -16,118 +16,117 @@ using HashTool.Models;
 
 using YamlDotNet.Serialization;
 
-namespace HashTool.Helpers
+namespace HashTool.Helpers;
+
+internal static class SerializerHelper
 {
-    internal static class SerializerHelper
+    public static void Json<T>(string path, List<T> list)
     {
-        public static void Json<T>(string path, List<T> list)
+        var options = new JsonSerializerOptions
         {
-            var options = new JsonSerializerOptions
-            {
-                Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
-                WriteIndented = true,
-            };
-            string jsonString = JsonSerializer.Serialize(list, options);
-            File.WriteAllTextAsync(path, jsonString);
-        }
-
-        public static void Yaml<T>(string path, List<T> list)
-        {
-            ISerializer serializer = new SerializerBuilder().Build();
-            string yaml = serializer.Serialize(list);
-            File.WriteAllTextAsync(path, yaml);
-        }
-
-        public static void Text<T>(string path, List<T> list)
-        {
-            ISerializer serializer = new SerializerBuilder().Build();
-            StringBuilder stringBulider = new();
-            foreach (T item in list)
-            {
-                if (item != null)
-                {
-                    stringBulider.AppendLine(serializer.Serialize(item));
-                }
-            }
-            File.WriteAllTextAsync(path, stringBulider.ToString());
-        }
-
-        public static void Xml(string path, List<Dictionary<string, string>> list)
-        {
-            XmlWriterSettings settings = new();
-            settings.Indent = true;
-            settings.IndentChars = "    ";
-
-            using var writer = XmlWriter.Create(path, settings);
-            var xmlResult = new HashResultRoot()
-            {
-                HashResultItems = list.Select(dict => new HashResultItem()
-                {
-                    Items = dict.Select(kv => new Item() { id = kv.Key, value = kv.Value }).ToArray()
-                }).ToArray()
-            };
-
-            XmlSerializer serializer = new(typeof(HashResultRoot));
-            serializer.Serialize(writer, xmlResult);
-        }
-
-        public static Dictionary<string, string> BuildHashResult(HashResultModel hashResult)
-        {
-            Dictionary<string, string> dict = new();
-
-            // 下面的顺序即为储存时的顺序
-            dict.Add("输入模式", hashResult.InputMode);
-            dict.Add("计算模式", hashResult.Mode);
-            dict.Add("计算内容", hashResult.Content);
-            if (hashResult.Mode == "字符串")
-            {
-                dict.Add("字符编码", hashResult.EncodingName);
-            }
-            else if (hashResult.Mode == "文件流")
-            {
-                dict.Add("文件大小", hashResult.FileSize);
-                dict.Add("文件修改时间", hashResult.LastWriteTime);
-            }
-
-            dict.Add("计算开始时间", hashResult.ComputeTime);
-            dict.Add("计算用时", hashResult.ComputeCost);
-            hashResult.Items.ForEach(i => dict.Add(i.Name, i.Value));
-
-            return dict;
-        }
-
-        public static List<Dictionary<string, string>> BuildHashResult(List<HashResultModel> hashResults)
-        {
-            List<Dictionary<string, string>> list = new();
-
-            hashResults.ForEach(i => list.Add(BuildHashResult(i)));
-
-            return list;
-        }
-
-        #region XmlSerializer Helper
-
-        [XmlRoot("HashTool")]
-        private class HashResultRoot
-        {
-            [XmlElement("Result")]
-            public HashResultItem[]? HashResultItems;
-        }
-
-        private class HashResultItem
-        {
-            [XmlElement("Item")]
-            public Item[]? Items;
-        }
-
-        private class Item
-        {
-            [XmlAttribute]
-            public string? id;
-            [XmlText]
-            public string? value;
-        }
-
-        #endregion  XmlSerializer Helper
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All),
+            WriteIndented = true,
+        };
+        string jsonString = JsonSerializer.Serialize(list, options);
+        File.WriteAllTextAsync(path, jsonString);
     }
+
+    public static void Yaml<T>(string path, List<T> list)
+    {
+        ISerializer serializer = new SerializerBuilder().Build();
+        string yaml = serializer.Serialize(list);
+        File.WriteAllTextAsync(path, yaml);
+    }
+
+    public static void Text<T>(string path, List<T> list)
+    {
+        ISerializer serializer = new SerializerBuilder().Build();
+        StringBuilder stringBulider = new();
+        foreach (T item in list)
+        {
+            if (item != null)
+            {
+                stringBulider.AppendLine(serializer.Serialize(item));
+            }
+        }
+        File.WriteAllTextAsync(path, stringBulider.ToString());
+    }
+
+    public static void Xml(string path, List<Dictionary<string, string>> list)
+    {
+        XmlWriterSettings settings = new();
+        settings.Indent = true;
+        settings.IndentChars = "    ";
+
+        using var writer = XmlWriter.Create(path, settings);
+        var xmlResult = new HashResultRoot()
+        {
+            HashResultItems = list.Select(dict => new HashResultItem()
+            {
+                Items = dict.Select(kv => new Item() { id = kv.Key, value = kv.Value }).ToArray()
+            }).ToArray()
+        };
+
+        XmlSerializer serializer = new(typeof(HashResultRoot));
+        serializer.Serialize(writer, xmlResult);
+    }
+
+    public static Dictionary<string, string> BuildHashResult(HashResultModel hashResult)
+    {
+        Dictionary<string, string> dict = new();
+
+        // 下面的顺序即为储存时的顺序
+        dict.Add("输入模式", hashResult.InputMode);
+        dict.Add("计算模式", hashResult.Mode);
+        dict.Add("计算内容", hashResult.Content);
+        if (hashResult.Mode == "字符串")
+        {
+            dict.Add("字符编码", hashResult.EncodingName);
+        }
+        else if (hashResult.Mode == "文件流")
+        {
+            dict.Add("文件大小", hashResult.FileSize);
+            dict.Add("文件修改时间", hashResult.LastWriteTime);
+        }
+
+        dict.Add("计算开始时间", hashResult.ComputeTime);
+        dict.Add("计算用时", hashResult.ComputeCost);
+        hashResult.Items.ForEach(i => dict.Add(i.Name, i.Value));
+
+        return dict;
+    }
+
+    public static List<Dictionary<string, string>> BuildHashResult(List<HashResultModel> hashResults)
+    {
+        List<Dictionary<string, string>> list = new();
+
+        hashResults.ForEach(i => list.Add(BuildHashResult(i)));
+
+        return list;
+    }
+
+    #region XmlSerializer Helper
+
+    [XmlRoot("HashTool")]
+    private sealed class HashResultRoot
+    {
+        [XmlElement("Result")]
+        public HashResultItem[]? HashResultItems;
+    }
+
+    private sealed class HashResultItem
+    {
+        [XmlElement("Item")]
+        public Item[]? Items;
+    }
+
+    private sealed class Item
+    {
+        [XmlAttribute]
+        public string? id;
+        [XmlText]
+        public string? value;
+    }
+
+    #endregion  XmlSerializer Helper
 }

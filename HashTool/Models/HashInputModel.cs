@@ -7,59 +7,39 @@ using System.Text;
 using System.Linq;
 using HashTool.Models.Controls;
 
-using CommunityToolkit.Mvvm.ComponentModel;
+namespace HashTool.Models;
 
-namespace HashTool.Models
+public sealed partial class HashInputModel : ObservableObject
 {
-    public class HashInputModel : ObservableObject
+    public static IReadOnlyList<string> ModeItems { get; } = new[]
     {
-        private string? _mode;
-        private string? _input;
-        private string? _encodingName;
-        private List<CheckBoxModel>? _checkBoxItems;
+        "文件",
+        "文件夹",
+        "文本",
+    };
+    public static IReadOnlyList<string> EncodingNameItems { get; } = Encoding.GetEncodings().Select(ei => ei.Name).ToList();
 
-        public static IReadOnlyList<string> ModeItems { get; } = new[]
-        {
-            "文件",
-            "文件夹",
-            "文本",
-        };
-        public static IReadOnlyList<string> EncodingNameItems { get; } = Encoding.GetEncodings().Select(ei => ei.Name).ToList();
+    /// <summary>
+    /// 输入模式。（文件，文件夹，文本）
+    /// </summary>
+    [ObservableProperty]
+    private string _mode = ModeItems[0];
 
-        /// <summary>
-        /// 输入模式。（文件，文件夹，文本）
-        /// </summary>
-        public string Mode
-        {
-            get => _mode ??= ModeItems[0];
-            set => SetProperty(ref _mode, value);
-        }
+    /// <summary>
+    /// 输入内容。（路径或字符串）
+    /// </summary>
+    [ObservableProperty]
+    private string _input = string.Empty;
 
-        /// <summary>
-        /// 输入内容。（路径或字符串）
-        /// </summary>
-        public string Input
-        {
-            get => _input ??= string.Empty;
-            set => SetProperty(ref _input, value);
-        }
+    /// <summary>
+    /// 文本编码。（文本模式下）
+    /// </summary>
+    [ObservableProperty]
+    private string _encodingName = "utf-8";
 
-        /// <summary>
-        /// 文本编码。（文本模式下）
-        /// </summary>
-        public string EncodingName
-        {
-            get => _encodingName ??= "utf-8";
-            set => SetProperty(ref _encodingName, value);
-        }
-
-        /// <summary>
-        /// 算法复选框。
-        /// </summary>
-        public List<CheckBoxModel> CheckBoxItems
-        {
-            get => _checkBoxItems ??= new();
-            set => SetProperty(ref _checkBoxItems, value);
-        }
-    }
+    /// <summary>
+    /// 算法复选框。
+    /// </summary>
+    [ObservableProperty]
+    private List<CheckBoxModel> _checkBoxItems = new();
 }

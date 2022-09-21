@@ -2,84 +2,60 @@
 // Licensed under the GNU General Public License v3.0.
 // See LICENSE file in the project root for full license information.
 
-using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
 
 using HashTool.Models;
 using HashTool.Models.Controls;
 
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+namespace HashTool.ViewModels;
 
-namespace HashTool.ViewModels
+internal sealed partial class SettingPageViewModel : ObservableObject
 {
-    internal class SettingPageViewModel : ObservableObject
+    public SettingPageViewModel()
     {
-        public SettingPageViewModel()
-        {
-            SaveSettingCommand = new RelayCommand(SaveSetting);
-            CancelSettingCommand = new RelayCommand(CancelSetting);
-        }
-
-        #region Fields
-
-        private PropertiesSettingsModel _propertiesSettings = GetInstance<PropertiesSettingsModel>();
-
-        private CheckBoxModel? _isLowerCase;
-        private CheckBoxModel? _mainWindowTopmost;
-        private CheckBoxModel? _hashResultWindowTopMost;
-
-        #endregion
-
-        #region Public Properties/Commands
-
-        /// <summary>
-        /// 结果小写。
-        /// </summary>
-        public CheckBoxModel IsLowerCase
-        {
-            get => _isLowerCase ??= new("结果小写", _propertiesSettings.IsLowerCase);
-            set => SetProperty(ref _isLowerCase, value);
-        }
-
-        /// <summary>
-        /// 主界面置顶。
-        /// </summary>
-        public CheckBoxModel MainWindowTopmost
-        {
-            get => _mainWindowTopmost ??= new("主界面置顶", _propertiesSettings.MainWindowTopmost);
-            set => SetProperty(ref _mainWindowTopmost, value);
-        }
-
-        /// <summary>
-        /// 结果界面置顶。
-        /// </summary>
-        public CheckBoxModel HashResultWindowTopMost
-        {
-            get => _hashResultWindowTopMost ??= new("结果界面置顶", _propertiesSettings.HashResultWindowTopmost);
-            set => SetProperty(ref _hashResultWindowTopMost, value);
-        }
-
-        public ICommand SaveSettingCommand { get; }
-        public ICommand CancelSettingCommand { get; }
-
-        #endregion
-
-        #region Helpers
-
-        private void SaveSetting()
-        {
-            _propertiesSettings.IsLowerCase = IsLowerCase.IsChecked ?? false;
-            _propertiesSettings.MainWindowTopmost = MainWindowTopmost.IsChecked ?? false;
-            _propertiesSettings.HashResultWindowTopmost = HashResultWindowTopMost.IsChecked ?? false;
-        }
-
-        private void CancelSetting()
-        {
-            IsLowerCase.IsChecked = _propertiesSettings.IsLowerCase;
-            MainWindowTopmost.IsChecked = _propertiesSettings.MainWindowTopmost;
-            HashResultWindowTopMost.IsChecked = _propertiesSettings.HashResultWindowTopmost;
-        }
-
-        #endregion
     }
+
+    private static PropertiesSettingsModel s_propertiesSettings = GetInstance<PropertiesSettingsModel>();
+
+    #region Public Properties
+
+    /// <summary>
+    /// 结果小写。
+    /// </summary>
+    [ObservableProperty]
+    private CheckBoxModel _isLowerCase = new() { Content = "结果小写", IsChecked = s_propertiesSettings.IsLowerCase };
+
+    /// <summary>
+    /// 主界面置顶。
+    /// </summary>
+    [ObservableProperty]
+    private CheckBoxModel _mainWindowTopmost = new() { Content = "主界面置顶", IsChecked = s_propertiesSettings.MainWindowTopmost };
+
+    /// <summary>
+    /// 结果界面置顶。
+    /// </summary>
+    [ObservableProperty]
+    private CheckBoxModel _hashResultWindowTopMost = new() { Content = "结果界面置顶", IsChecked = s_propertiesSettings.HashResultWindowTopmost };
+
+    #endregion
+
+    #region Command
+
+    [RelayCommand]
+    private void SaveSetting()
+    {
+        s_propertiesSettings.IsLowerCase = IsLowerCase.IsChecked ?? false;
+        s_propertiesSettings.MainWindowTopmost = MainWindowTopmost.IsChecked ?? false;
+        s_propertiesSettings.HashResultWindowTopmost = HashResultWindowTopMost.IsChecked ?? false;
+    }
+
+    [RelayCommand]
+    private void CancelSetting()
+    {
+        IsLowerCase.IsChecked = s_propertiesSettings.IsLowerCase;
+        MainWindowTopmost.IsChecked = s_propertiesSettings.MainWindowTopmost;
+        HashResultWindowTopMost.IsChecked = s_propertiesSettings.HashResultWindowTopmost;
+    }
+
+    #endregion
 }

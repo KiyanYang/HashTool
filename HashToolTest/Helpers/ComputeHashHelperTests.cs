@@ -39,13 +39,13 @@ namespace HashTool.Helpers.Tests
 
             HashInputModel hashInput = new();
             hashInput.Mode = "文本";
-            hashInput.CheckBoxItems.Add(new(HashAlgorithmNames.CRC32, true));
-            hashInput.CheckBoxItems.Add(new(HashAlgorithmNames.MD5, true));
-            hashInput.CheckBoxItems.Add(new(HashAlgorithmNames.SHA1, true));
-            hashInput.CheckBoxItems.Add(new(HashAlgorithmNames.SHA256, true));
-            hashInput.CheckBoxItems.Add(new(HashAlgorithmNames.SHA384, true));
-            hashInput.CheckBoxItems.Add(new(HashAlgorithmNames.SHA512, true));
-            hashInput.CheckBoxItems.Add(new(HashAlgorithmNames.QuickXor, true));
+            hashInput.CheckBoxItems.Add(new() { Content = HashAlgorithmNames.CRC32, IsChecked = true });
+            hashInput.CheckBoxItems.Add(new() { Content = HashAlgorithmNames.MD5, IsChecked = true });
+            hashInput.CheckBoxItems.Add(new() { Content = HashAlgorithmNames.SHA1, IsChecked = true });
+            hashInput.CheckBoxItems.Add(new() { Content = HashAlgorithmNames.SHA256, IsChecked = true });
+            hashInput.CheckBoxItems.Add(new() { Content = HashAlgorithmNames.SHA384, IsChecked = true });
+            hashInput.CheckBoxItems.Add(new() { Content = HashAlgorithmNames.SHA512, IsChecked = true });
+            hashInput.CheckBoxItems.Add(new() { Content = HashAlgorithmNames.QuickXor, IsChecked = true });
 
             foreach (var kvp in textInput)
             {

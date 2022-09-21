@@ -17,6 +17,11 @@ trim_trailing_whitespace = true
 generated_code = true
 end_of_line = crlf
 tab_width = 4
+dotnet_style_qualification_for_field = false:suggestion
+dotnet_style_qualification_for_property = false:suggestion
+dotnet_style_qualification_for_method = false:suggestion
+dotnet_style_qualification_for_event = false:suggestion
+dotnet_style_operator_placement_when_wrapping = beginning_of_line
 
 # C# files
 [*.cs]
@@ -64,7 +69,7 @@ dotnet_naming_style.pascal_case_style.capitalization = pascal_case
 # static fields should have s_ prefix
 dotnet_naming_rule.static_fields_should_have_prefix.severity = suggestion
 dotnet_naming_rule.static_fields_should_have_prefix.symbols  = static_fields
-dotnet_naming_rule.static_fields_should_have_prefix.style    = static_prefix_style
+dotnet_naming_rule.static_fields_should_have_prefix.style = static_prefix_style
 dotnet_naming_symbols.static_fields.applicable_kinds   = field
 dotnet_naming_symbols.static_fields.required_modifiers = static
 dotnet_naming_symbols.static_fields.applicable_accessibilities = private, internal, private_protected
@@ -155,6 +160,7 @@ csharp_space_between_square_brackets = false
 
 # License header
 file_header_template = Copyright (c) Kiyan Yang. All rights reserved.\nLicensed under the GNU General Public License v3.0.\nSee LICENSE file in the project root for full license information.
+csharp_style_prefer_parameter_null_checking = true:suggestion
 
 # C++ Files
 [*.{cpp,h,in}]

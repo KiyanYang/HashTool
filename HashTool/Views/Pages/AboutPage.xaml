@@ -1,17 +1,17 @@
 ﻿<Page
-    x:Name="page"
     x:Class="HashTool.Views.Pages.AboutPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:HashTool.Views.Pages"
-    xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:converter="clr-namespace:HashTool.Converters"
-    mc:Ignorable="d"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:local="clr-namespace:HashTool.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="page"
+    Title="关于"
     d:DesignHeight="360"
     d:DesignWidth="560"
-    Title="关于">
+    mc:Ignorable="d">
 
     <Page.Resources>
         <converter:Boolean2VisibilityReConverter x:Key="Boolean2VisibilityReConverter" />
@@ -20,9 +20,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="300" />
-            <ColumnDefinition
-                MaxWidth="500"
-                Width="*" />
+            <ColumnDefinition Width="*" MaxWidth="500" />
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -30,47 +28,29 @@
         </Grid.RowDefinitions>
 
         <hc:SimpleStackPanel
-            Grid.Column="0"
             Grid.Row="0"
+            Grid.Column="0"
             Orientation="Vertical">
 
             <hc:SimpleStackPanel.Resources>
                 <!-- hc.SimpleStackPanel: Orientation, Margin -->
                 <Style TargetType="hc:SimpleStackPanel">
-                    <Setter
-                        Property="Orientation"
-                        Value="Horizontal" />
-                    <Setter
-                        Property="Margin"
-                        Value="0,4,0,4" />
+                    <Setter Property="Orientation" Value="Horizontal" />
+                    <Setter Property="Margin" Value="0,4,0,4" />
                 </Style>
 
                 <!-- Button: Width, Margin -->
-                <Style
-                    TargetType="Button"
-                    BasedOn="{StaticResource ButtonDefault}">
-                    <Setter
-                        Property="Width"
-                        Value="80" />
-                    <Setter
-                        Property="Margin"
-                        Value="6,0,6,0" />
+                <Style BasedOn="{StaticResource ButtonDefault}" TargetType="Button">
+                    <Setter Property="Width" Value="80" />
+                    <Setter Property="Margin" Value="6,0,6,0" />
                 </Style>
 
                 <!-- TextBlock: Width, Margin, VerticalAlignment, TextAlignment -->
                 <Style TargetType="TextBlock">
-                    <Setter
-                        Property="Width"
-                        Value="80" />
-                    <Setter
-                        Property="Margin"
-                        Value="6,0,6,0" />
-                    <Setter
-                        Property="VerticalAlignment"
-                        Value="Center" />
-                    <Setter
-                        Property="TextAlignment"
-                        Value="Center" />
+                    <Setter Property="Width" Value="80" />
+                    <Setter Property="Margin" Value="6,0,6,0" />
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="TextAlignment" Value="Center" />
                 </Style>
             </hc:SimpleStackPanel.Resources>
 
@@ -78,15 +58,15 @@
             <hc:SimpleStackPanel>
                 <TextBlock Text="项目地址" />
                 <Button
-                    Content="GitHub"
                     BorderBrush="Transparent"
                     Command="{Binding OpenLinkCommand}"
-                    CommandParameter="https://github.com/KiyanYang/HashTool" />
+                    CommandParameter="https://github.com/KiyanYang/HashTool"
+                    Content="GitHub" />
                 <Button
-                    Content="Gitee"
                     BorderBrush="Transparent"
                     Command="{Binding OpenLinkCommand}"
-                    CommandParameter="https://gitee.com/KiyanYang/HashTool" />
+                    CommandParameter="https://gitee.com/KiyanYang/HashTool"
+                    Content="Gitee" />
             </hc:SimpleStackPanel>
 
             <!-- TextBlock 当前版本, 版本号; Button 检查更新 -->
@@ -94,54 +74,50 @@
                 <TextBlock Text="当前版本" />
                 <TextBlock Text="{Binding AssemblyVersion}" />
                 <Button
+                    Command="{Binding CheckUpdateCommand}"
                     Content="检查更新"
-                    IsEnabled="{Binding ButtonCheckUpdateIsEnabled}"
-                    Command="{Binding CheckUpdateCommand}" />
+                    IsEnabled="{Binding ButtonCheckUpdateIsEnabled}" />
             </hc:SimpleStackPanel>
 
             <!-- TextBlock 新版本, 版本号; Button 更新 -->
             <hc:SimpleStackPanel Visibility="{Binding Update.HasUpdate, Converter={StaticResource Boolean2VisibilityConverter}}">
                 <TextBlock Text="新版本" />
                 <TextBlock Text="{Binding Update.Version}" />
-                <Button
-                    Content="更新"
-                    Command="{Binding UpdateCommand}" />
+                <Button Command="{Binding UpdateCommand}" Content="更新" />
             </hc:SimpleStackPanel>
 
             <!-- TextBlock 发行地址; Button 打开发行地址 -->
             <hc:SimpleStackPanel Visibility="{Binding Update.HasUpdate, Converter={StaticResource Boolean2VisibilityConverter}}">
                 <TextBlock Text="发行地址" />
                 <Button
-                    Content="GitHub"
                     BorderBrush="Transparent"
                     Command="{Binding OpenLinkCommand}"
-                    CommandParameter="{Binding Update.GithubUrl}" />
+                    CommandParameter="{Binding Update.GithubUrl}"
+                    Content="GitHub" />
                 <Button
-                    Content="Gitee"
                     BorderBrush="Transparent"
                     Command="{Binding OpenLinkCommand}"
-                    CommandParameter="{Binding Update.GiteeUrl}" />
+                    CommandParameter="{Binding Update.GiteeUrl}"
+                    Content="Gitee" />
             </hc:SimpleStackPanel>
 
             <Button
                 Width="120"
                 Margin="6,20,0,0"
-                BorderBrush="Transparent"
+                HorizontalAlignment="Left"
                 Background="Transparent"
-                Foreground="#0969da"
-                Content="开放源代码许可"
+                BorderBrush="Transparent"
                 Command="{Binding OpenFileCommand}"
                 CommandParameter="./ThirdPartyNotices.html"
-                HorizontalAlignment="Left" />
+                Content="开放源代码许可"
+                Foreground="#0969da" />
         </hc:SimpleStackPanel>
 
         <hc:SimplePanel
-            Grid.Column="1"
             Grid.Row="0"
+            Grid.Column="1"
             Visibility="{Binding Update.HasUpdate, Converter={StaticResource Boolean2VisibilityReConverter}}">
-            <TextBlock
-                HorizontalAlignment="Left"
-                Text="{Binding UpdateStatusText}" />
+            <TextBlock HorizontalAlignment="Left" Text="{Binding UpdateStatusText}" />
         </hc:SimplePanel>
     </Grid>
 </Page>

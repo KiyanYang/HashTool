@@ -10,14 +10,15 @@ using System.IO;
 using System.Threading;
 using System.Windows.Input;
 
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+
 using HashTool.Common;
 using HashTool.Helpers;
 using HashTool.Models;
 using HashTool.Models.Controls;
 using HashTool.Views;
 
-using Microsoft.Toolkit.Mvvm.ComponentModel;
-using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.Win32;
 
 namespace HashTool.ViewModels

@@ -12,41 +12,47 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+using HashLib4CSharp.Base;
+using HashLib4CSharp.Checksum;
+using HashLib4CSharp.Interfaces;
+
 using HashTool.Common;
 using HashTool.Helpers.Hashs;
 using HashTool.Models;
 using HashTool.Models.Controls;
 
+using static HashLib4CSharp.Base.HashFactory.Checksum.CRC;
+using static HashLib4CSharp.Base.HashFactory.Crypto;
+
 namespace HashTool.Helpers
 {
     public class ComputeHashHelper
     {
-        private static readonly HashAlgorithm s_crc32 = CRC.CreateCRC32();
-        private static readonly HashAlgorithm s_md2 = CSharpHash.CreateMD2();
-        private static readonly HashAlgorithm s_md4 = CSharpHash.CreateMD4();
+        private static readonly HashAlgorithm s_crc32 = CreateCRC(CRCModel.CRC32).ToHashAlgorithm();
+        private static readonly HashAlgorithm s_md4 = CreateMD4().ToHashAlgorithm();
         private static readonly HashAlgorithm s_md5 = MD5.Create();
         private static readonly HashAlgorithm s_sha1 = SHA1.Create();
-        private static readonly HashAlgorithm s_sha224 = CSharpHash.CreateSHA2_224();
+        private static readonly HashAlgorithm s_sha224 = CreateSHA2_224().ToHashAlgorithm();
         private static readonly HashAlgorithm s_sha256 = SHA256.Create();
         private static readonly HashAlgorithm s_sha384 = SHA384.Create();
         private static readonly HashAlgorithm s_sha512 = SHA512.Create();
-        private static readonly HashAlgorithm s_sha3_224 = CSharpHash.CreateSHA3_224();
-        private static readonly HashAlgorithm s_sha3_256 = CSharpHash.CreateSHA3_256();
-        private static readonly HashAlgorithm s_sha3_384 = CSharpHash.CreateSHA3_384();
-        private static readonly HashAlgorithm s_sha3_512 = CSharpHash.CreateSHA3_512();
-        private static readonly HashAlgorithm s_blake2B_160 = CSharpHash.CreateBlake2B_160();
-        private static readonly HashAlgorithm s_blake2B_256 = CSharpHash.CreateBlake2B_256();
-        private static readonly HashAlgorithm s_blake2B_384 = CSharpHash.CreateBlake2B_384();
-        private static readonly HashAlgorithm s_blake2B_512 = CSharpHash.CreateBlake2B_512();
-        private static readonly HashAlgorithm s_blake2S_128 = CSharpHash.CreateBlake2S_128();
-        private static readonly HashAlgorithm s_blake2S_160 = CSharpHash.CreateBlake2S_160();
-        private static readonly HashAlgorithm s_blake2S_224 = CSharpHash.CreateBlake2S_224();
-        private static readonly HashAlgorithm s_blake2S_256 = CSharpHash.CreateBlake2S_256();
-        private static readonly HashAlgorithm s_keccak_224 = CSharpHash.CreateKeccak_224();
-        private static readonly HashAlgorithm s_keccak_256 = CSharpHash.CreateKeccak_256();
-        private static readonly HashAlgorithm s_keccak_288 = CSharpHash.CreateKeccak_288();
-        private static readonly HashAlgorithm s_keccak_384 = CSharpHash.CreateKeccak_384();
-        private static readonly HashAlgorithm s_keccak_512 = CSharpHash.CreateKeccak_512();
+        private static readonly HashAlgorithm s_sha3_224 = CreateSHA3_224().ToHashAlgorithm();
+        private static readonly HashAlgorithm s_sha3_256 = CreateSHA3_256().ToHashAlgorithm();
+        private static readonly HashAlgorithm s_sha3_384 = CreateSHA3_384().ToHashAlgorithm();
+        private static readonly HashAlgorithm s_sha3_512 = CreateSHA3_512().ToHashAlgorithm();
+        private static readonly HashAlgorithm s_blake2B_160 = CreateBlake2B_160().ToHashAlgorithm();
+        private static readonly HashAlgorithm s_blake2B_256 = CreateBlake2B_256().ToHashAlgorithm();
+        private static readonly HashAlgorithm s_blake2B_384 = CreateBlake2B_384().ToHashAlgorithm();
+        private static readonly HashAlgorithm s_blake2B_512 = CreateBlake2B_512().ToHashAlgorithm();
+        private static readonly HashAlgorithm s_blake2S_128 = CreateBlake2S_160().ToHashAlgorithm();
+        private static readonly HashAlgorithm s_blake2S_160 = CreateBlake2S_160().ToHashAlgorithm();
+        private static readonly HashAlgorithm s_blake2S_224 = CreateBlake2S_224().ToHashAlgorithm();
+        private static readonly HashAlgorithm s_blake2S_256 = CreateBlake2S_256().ToHashAlgorithm();
+        private static readonly HashAlgorithm s_keccak_224 = CreateKeccak_224().ToHashAlgorithm();
+        private static readonly HashAlgorithm s_keccak_256 = CreateKeccak_256().ToHashAlgorithm();
+        private static readonly HashAlgorithm s_keccak_288 = CreateKeccak_288().ToHashAlgorithm();
+        private static readonly HashAlgorithm s_keccak_384 = CreateKeccak_384().ToHashAlgorithm();
+        private static readonly HashAlgorithm s_keccak_512 = CreateKeccak_512().ToHashAlgorithm();
         private static readonly HashAlgorithm s_quickXor = new QuickXorHash();
         private static readonly Dictionary<string, HashAlgorithm> s_hashAlgorithmDict = new();
 
@@ -69,7 +75,6 @@ namespace HashTool.Helpers
                 algorithm = i.Content switch
                 {
                     HashAlgorithmNames.CRC32 => s_crc32,
-                    HashAlgorithmNames.MD2 => s_md2,
                     HashAlgorithmNames.MD4 => s_md4,
                     HashAlgorithmNames.MD5 => s_md5,
                     HashAlgorithmNames.SHA1 => s_sha1,
@@ -273,4 +278,10 @@ namespace HashTool.Helpers
 
         #endregion
     }
+}
+
+public static class HashLib4CSharpExtensions
+{
+    public static HashAlgorithm ToHashAlgorithm(this IHash hash) =>
+        HashFactory.Adapter.CreateHashAlgorithmFromHash(hash);
 }

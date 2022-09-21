@@ -7,7 +7,7 @@ using System.Text;
 using System.Linq;
 using HashTool.Models.Controls;
 
-using Microsoft.Toolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace HashTool.Models
 {

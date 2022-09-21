@@ -4,7 +4,7 @@
 
 using System.Collections.Generic;
 
-using Microsoft.Toolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace HashTool.Models
 {

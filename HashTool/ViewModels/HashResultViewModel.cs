@@ -9,10 +9,10 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 
-using HashTool.Models;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
-using Microsoft.Toolkit.Mvvm.ComponentModel;
-using Microsoft.Toolkit.Mvvm.Input;
+using HashTool.Models;
 
 namespace HashTool.ViewModels
 {

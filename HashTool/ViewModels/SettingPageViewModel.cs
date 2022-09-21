@@ -7,8 +7,8 @@ using System.Windows.Input;
 using HashTool.Models;
 using HashTool.Models.Controls;
 
-using Microsoft.Toolkit.Mvvm.ComponentModel;
-using Microsoft.Toolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace HashTool.ViewModels
 {

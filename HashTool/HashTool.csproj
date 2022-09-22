@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows7.0</TargetFramework>
@@ -7,8 +7,8 @@
     <UseWPF>True</UseWPF>
     <UseWindowsForms>True</UseWindowsForms>
     <ApplicationIcon>Resource\HashTool.ico</ApplicationIcon>
-    <AssemblyVersion>1.3.1.0</AssemblyVersion>
-    <FileVersion>1.3.1.0</FileVersion>
+    <AssemblyVersion>1.4.0.0</AssemblyVersion>
+    <FileVersion>1.4.0.0</FileVersion>
     <Configurations>Debug;Release</Configurations>
     <RestorePackagesWithLockFile>True</RestorePackagesWithLockFile>
   </PropertyGroup>

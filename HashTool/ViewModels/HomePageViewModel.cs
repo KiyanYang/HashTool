@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Threading;
 
 using CommunityToolkit.Mvvm.Input;
@@ -213,38 +214,39 @@ public sealed partial class HomePageViewModel : ObservableObject
     [RelayCommand]
     private void SaveResult(List<HashResultModel>? results)
     {
-        if (results != null && results.Count > 0)
-        {
-            SaveFileDialog saveFileDialog = new()
-            {
-                FileName = $"HashTool 结果_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}",
-                Filter = "YAML (*.yaml)|*.yaml|JSON (*.json)|*.json|纯文本 (*.txt)|*.txt|XML (*.xml)|*.xml",
-                RestoreDirectory = true
-            };
-
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                List<Dictionary<string, string>> res = SerializerHelper.BuildHashResult(results);
-                switch (saveFileDialog.FilterIndex)
-                {
-                    case 1:
-                        SerializerHelper.Yaml(saveFileDialog.FileName, res);
-                        break;
-                    case 2:
-                        SerializerHelper.Json(saveFileDialog.FileName, res);
-                        break;
-                    case 3:
-                        SerializerHelper.Text(saveFileDialog.FileName, res);
-                        break;
-                    case 4:
-                        SerializerHelper.Xml(saveFileDialog.FileName, res);
-                        break;
-                }
-            }
-        }
-        else
+        if (results == null || results.Count <= 0)
         {
             HandyControl.Controls.MessageBox.Warning("暂无计算结果！");
+            return;
+        }
+
+        SaveFileDialog saveFileDialog = new()
+        {
+            FileName = $"HashTool 结果_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}",
+            Filter = "YAML (*.yaml)|*.yaml|JSON (*.json)|*.json|纯文本 (*.txt)|*.txt|XML (*.xml)|*.xml",
+            RestoreDirectory = true
+        };
+
+        if (saveFileDialog.ShowDialog() != true)
+        {
+            return;
+        }
+
+        List<Dictionary<string, string>> res = SerializerHelper.BuildHashResult(results);
+        switch (saveFileDialog.FilterIndex)
+        {
+            case 1:
+                SerializerHelper.Yaml(saveFileDialog.FileName, res);
+                break;
+            case 2:
+                SerializerHelper.Json(saveFileDialog.FileName, res);
+                break;
+            case 3:
+                SerializerHelper.Text(saveFileDialog.FileName, res);
+                break;
+            case 4:
+                SerializerHelper.Xml(saveFileDialog.FileName, res);
+                break;
         }
     }
 
@@ -300,13 +302,10 @@ public sealed partial class HomePageViewModel : ObservableObject
     {
         Properties.Settings setting = Properties.Settings.Default;
         setting.SelectedHashAlgorithms.Clear();
-        foreach (CheckBoxModel i in HashInput.CheckBoxItems)
-        {
-            if (i.IsChecked == true)
-            {
-                setting.SelectedHashAlgorithms.Add(i.Content);
-            }
-        }
+        HashInput.CheckBoxItems.Where(i => i.IsChecked == true)
+            .Select(i => i.Content)
+            .ToList()
+            .ForEach(i => setting.SelectedHashAlgorithms.Add(i));
         setting.Save();
     }
 

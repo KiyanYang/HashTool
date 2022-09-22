@@ -37,8 +37,10 @@ namespace HashTool.Helpers.Tests
                 },
             };
 
-            HashInputModel hashInput = new();
-            hashInput.Mode = "文本";
+            HashInputModel hashInput = new()
+            {
+                Mode = "文本"
+            };
             hashInput.CheckBoxItems.Add(new() { Content = Hash.CRC32.Name, IsChecked = true });
             hashInput.CheckBoxItems.Add(new() { Content = Hash.MD5.Name, IsChecked = true });
             hashInput.CheckBoxItems.Add(new() { Content = Hash.SHA1.Name, IsChecked = true });

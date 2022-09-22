@@ -15,7 +15,7 @@ internal sealed partial class SettingPageViewModel : ObservableObject
     {
     }
 
-    private static PropertiesSettingsModel s_propertiesSettings = GetInstance<PropertiesSettingsModel>();
+    private static readonly PropertiesSettingsModel s_propertiesSettings = GetInstance<PropertiesSettingsModel>();
 
     #region Public Properties
 

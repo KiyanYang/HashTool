@@ -7,10 +7,12 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:HashTool.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:HashTool.ViewModels"
     Title="HashTool 哈希校验工具"
     Width="740"
     Height="420"
     MinWidth="560"
+    d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
     Topmost="{Binding PropertiesSettings.MainWindowTopmost}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">

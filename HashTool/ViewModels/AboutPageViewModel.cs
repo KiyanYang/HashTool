@@ -9,7 +9,6 @@ using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 using System.Xml.Serialization;
 
 using CommunityToolkit.Mvvm.Input;
@@ -18,14 +17,10 @@ using HashTool.Models;
 
 namespace HashTool.ViewModels;
 
-internal sealed class AboutPageViewModel : ObservableObject
+internal sealed partial class AboutPageViewModel : ObservableObject
 {
     public AboutPageViewModel()
     {
-        CheckUpdateCommand = new RelayCommand(CheckUpdate);
-        UpdateCommand = new RelayCommand(OpenUpdater);
-        OpenLinkCommand = new RelayCommand<string>(OpenLink);
-        OpenFileCommand = new RelayCommand<string>(OpenFile);
     }
 
     #region Fields
@@ -63,15 +58,11 @@ internal sealed class AboutPageViewModel : ObservableObject
         get => _update ??= GetInstance<UpdateModel>();
     }
 
-    public ICommand CheckUpdateCommand { get; }
-    public ICommand UpdateCommand { get; }
-    public ICommand OpenLinkCommand { get; }
-    public ICommand OpenFileCommand { get; }
-
     #endregion
 
-    #region Helper
+    #region Command
 
+    [RelayCommand]
     private async void CheckUpdate()
     {
         ButtonCheckUpdateIsEnabled = false;
@@ -103,32 +94,7 @@ internal sealed class AboutPageViewModel : ObservableObject
         ButtonCheckUpdateIsEnabled = true;
     }
 
-    private static async Task<bool> GetLatestVersion()
-    {
-        try
-        {
-            string latestVersionUrl = Properties.Settings.Default.LatestVersionUrl;
-            HttpResponseMessage result = await s_httpClient.GetAsync(latestVersionUrl);
-            using Stream reader = result.Content.ReadAsStream();
-
-            var serializer = new XmlSerializer(typeof(LatestVersion));
-            s_latestVersionInfo = (LatestVersion?)serializer.Deserialize(reader);
-            return true;
-        }
-        catch (Exception)
-        {
-            // 之后的版本写入日志
-            return false;
-        }
-    }
-
-    private static Version GetAssemblyVersion()
-    {
-        Assembly assem = Assembly.GetExecutingAssembly();
-        AssemblyName assemName = assem.GetName();
-        return assemName.Version ?? new Version(1, 0, 0, 0);
-    }
-
+    [RelayCommand]
     private void OpenUpdater()
     {
         MessageBoxResult res = HandyControl.Controls.MessageBox.Show("是否关闭程序并开始更新", "是否关闭并更新", MessageBoxButton.OKCancel);
@@ -154,6 +120,7 @@ internal sealed class AboutPageViewModel : ObservableObject
         }
     }
 
+    [RelayCommand]
     private void OpenLink(string? link)
     {
         if (link == null)
@@ -164,6 +131,7 @@ internal sealed class AboutPageViewModel : ObservableObject
         Process.Start("explorer.exe", link);
     }
 
+    [RelayCommand]
     private void OpenFile(string? path)
     {
         if (path == null)
@@ -173,6 +141,35 @@ internal sealed class AboutPageViewModel : ObservableObject
 
         string fullPath = Path.GetFullPath(path);
         Process.Start("explorer.exe", fullPath);
+    }
+
+    #endregion Command
+
+    #region Helper
+
+    private static async Task<bool> GetLatestVersion()
+    {
+        try
+        {
+            string latestVersionUrl = Properties.Settings.Default.LatestVersionUrl;
+            HttpResponseMessage result = await s_httpClient.GetAsync(latestVersionUrl);
+            using Stream reader = result.Content.ReadAsStream();
+
+            var serializer = new XmlSerializer(typeof(LatestVersion));
+            s_latestVersionInfo = serializer.Deserialize(reader) as LatestVersion;
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
+    private static Version GetAssemblyVersion()
+    {
+        Assembly assem = Assembly.GetExecutingAssembly();
+        AssemblyName assemName = assem.GetName();
+        return assemName.Version ?? new Version(1, 0, 0, 0);
     }
 
     #endregion

@@ -8,7 +8,9 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:local="clr-namespace:HashTool.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:HashTool.ViewModels"
     Title="主页"
+    d:DataContext="{d:DesignInstance Type=viewmodels:HomePageViewModel}"
     d:DesignHeight="360"
     d:DesignWidth="560"
     mc:Ignorable="d">

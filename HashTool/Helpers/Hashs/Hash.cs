@@ -74,8 +74,6 @@ public sealed class Hash : GenericEnum<string>
         Algorithm = hashAlgorithm;
     }
 
-    public Hash() : base(string.Empty) { }
-
     public static IEnumerable<Hash> GetHashs()
     {
         yield return CRC32;

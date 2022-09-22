@@ -54,9 +54,11 @@ internal static class SerializerHelper
 
     public static void Xml(string path, List<Dictionary<string, string>> list)
     {
-        XmlWriterSettings settings = new();
-        settings.Indent = true;
-        settings.IndentChars = "    ";
+        XmlWriterSettings settings = new()
+        {
+            Indent = true,
+            IndentChars = "    "
+        };
 
         using var writer = XmlWriter.Create(path, settings);
         var xmlResult = new HashResultRoot()
@@ -73,12 +75,12 @@ internal static class SerializerHelper
 
     public static Dictionary<string, string> BuildHashResult(HashResultModel hashResult)
     {
-        Dictionary<string, string> dict = new();
-
-        // 下面的顺序即为储存时的顺序
-        dict.Add("输入模式", hashResult.InputMode);
-        dict.Add("计算模式", hashResult.Mode);
-        dict.Add("计算内容", hashResult.Content);
+        Dictionary<string, string> dict = new()
+        {   // 下面的顺序即为储存时的顺序
+            { "输入模式", hashResult.InputMode },
+            { "计算模式", hashResult.Mode },
+            { "计算内容", hashResult.Content }
+        };
         if (hashResult.Mode == "字符串")
         {
             dict.Add("字符编码", hashResult.EncodingName);

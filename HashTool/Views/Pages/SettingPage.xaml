@@ -5,7 +5,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:HashTool.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:HashTool.ViewModels"
     Title="设置"
+    d:DataContext="{d:DesignInstance Type=viewmodels:SettingPageViewModel}"
     d:DesignHeight="360"
     d:DesignWidth="560"
     mc:Ignorable="d">

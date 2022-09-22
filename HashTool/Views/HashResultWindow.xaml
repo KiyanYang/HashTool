@@ -7,9 +7,11 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:HashTool.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:HashTool.ViewModels"
     Title="Hash 结果"
     Width="800"
     Height="400"
+    d:DataContext="{d:DesignInstance Type=viewmodels:HashResultViewModel}"
     Topmost="{Binding PropertiesSettings.HashResultWindowTopmost}"
     mc:Ignorable="d">
 

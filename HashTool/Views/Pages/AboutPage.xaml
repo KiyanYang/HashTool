@@ -7,8 +7,10 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:local="clr-namespace:HashTool.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="clr-namespace:HashTool.ViewModels"
     x:Name="page"
     Title="关于"
+    d:DataContext="{d:DesignInstance Type=viewmodels:AboutPageViewModel}"
     d:DesignHeight="360"
     d:DesignWidth="560"
     mc:Ignorable="d">
@@ -83,7 +85,7 @@
             <hc:SimpleStackPanel Visibility="{Binding Update.HasUpdate, Converter={StaticResource Boolean2VisibilityConverter}}">
                 <TextBlock Text="新版本" />
                 <TextBlock Text="{Binding Update.Version}" />
-                <Button Command="{Binding UpdateCommand}" Content="更新" />
+                <Button Command="{Binding OpenUpdaterCommand}" Content="更新" />
             </hc:SimpleStackPanel>
 
             <!-- TextBlock 发行地址; Button 打开发行地址 -->

@@ -10,7 +10,6 @@
     <AssemblyVersion>1.4.0.0</AssemblyVersion>
     <FileVersion>1.4.0.0</FileVersion>
     <Configurations>Debug;Release</Configurations>
-    <RestorePackagesWithLockFile>True</RestorePackagesWithLockFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>portable</DebugType>
@@ -23,7 +22,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
-    <PackageReference Include="HandyControl" Version="3.4.0" />
+    <PackageReference Include="HandyControl" Version="3.3.0" />
     <PackageReference Include="HashLib4CSharp" Version="1.5.0" />
     <PackageReference Include="YamlDotNet" Version="12.0.2" />
   </ItemGroup>

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows7.0</TargetFramework>
@@ -18,12 +18,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>none</DebugType>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="MainWindow.xaml.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Remove="MainWindow.xaml" />
-  </ItemGroup>
   <ItemGroup>
     <Content Include="Resource\HashTool.ico" />
   </ItemGroup>
@@ -51,11 +45,5 @@
     <None Update="updater.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <EditorConfigFiles Remove="E:\YangKe\Documents\VS\HashTool\HashTool\.editorconfig" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="E:\YangKe\Documents\VS\HashTool\HashTool\.editorconfig" />
   </ItemGroup>
 </Project>

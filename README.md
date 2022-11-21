@@ -21,11 +21,11 @@
 
 HashTool 支持文件、文件夹或文本的哈希计算，选择多种算法时采用并行计算，此外还提供了结果导出和对比框校验功能。
 
-**本项目不再进行功能更新，新项目 [HashTool.WinUI](https://github.com/KiyanYang/DotVast.HashTool.WinUI)。**
+**本项目不再进行功能更新，新项目 [DotVast.HashTool.WinUI](https://github.com/KiyanYang/DotVast.HashTool.WinUI)。**
 
 ## 环境
 
-- `.NET 6.0 Desktop Runtime - Windows x64` [点击下载](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-desktop-6.0.9-windows-x64-installer)
+- `.NET 6.0 Desktop Runtime - Windows x64` [点击下载](https://dotnet.microsoft.com/zh-cn/download)
 
 ## 使用
 

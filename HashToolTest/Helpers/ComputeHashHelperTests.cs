@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 using HashTool.Helpers.Hashs;
 using HashTool.Models;
@@ -59,18 +59,6 @@ namespace HashTool.Helpers.Tests
                     Assert.AreEqual(kvp.Value[j.Name], j.Value);
                 }
             }
-        }
-
-        [TestMethod()]
-        public void HashFileTest()
-        {
-
-        }
-
-        [TestMethod()]
-        public void HashFolderTest()
-        {
-
         }
     }
 }

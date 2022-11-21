@@ -1,4 +1,4 @@
-﻿// Copyright (c) Kiyan Yang. All rights reserved.
+// Copyright (c) Kiyan Yang. All rights reserved.
 // Licensed under the GNU General Public License v3.0.
 // See LICENSE file in the project root for full license information.
 
@@ -49,8 +49,8 @@ public sealed class ComputeHashHelper
     {
         string hash = name switch
         {
-            _ when name == Hash.QuickXor.Name => HashFormatBase64(hashValue),
-            _ => HashFormatHex(hashValue),
+            _ when name == Hash.QuickXor.Name => Convert.ToBase64String(hashValue),
+            _ => Convert.ToHexString(hashValue),
         };
         return new HashResultItemModel() { Name = name, Value = hash };
     }
@@ -200,24 +200,4 @@ public sealed class ComputeHashHelper
         }
         return hashResults;
     }
-
-    #region 格式化哈希值 bytes -> string
-
-    private static string HashFormatHex(byte[] data)
-    {
-        StringBuilder sBuilder = new(data.Length << 1);
-
-        foreach (byte b in data)
-        {
-            sBuilder.Append($"{b:X2}");
-        }
-
-        return sBuilder.ToString();
-    }
-    private static string HashFormatBase64(byte[] data)
-    {
-        return Convert.ToBase64String(data);
-    }
-
-    #endregion
 }

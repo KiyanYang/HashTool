@@ -1,4 +1,4 @@
-﻿// Copyright (c) Kiyan Yang. All rights reserved.
+// Copyright (c) Kiyan Yang. All rights reserved.
 // Licensed under the GNU General Public License v3.0.
 // See LICENSE file in the project root for full license information.
 
@@ -62,10 +62,7 @@ internal sealed partial class MainWindowViewModel : ObservableObject
         get => _aboutPage ??= new();
         set => SetProperty(ref _currentPage, value);
     }
-    public ProgressBarModel TaskbarProgress
-    {
-        get => HomePage.TaskbarProgress;
-    }
+    public ProgressBarModel TaskbarProgress => HomePage.TaskbarProgress;
 
     #endregion
 

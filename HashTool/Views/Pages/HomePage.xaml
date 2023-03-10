@@ -1,13 +1,11 @@
-﻿<Page
+<Page
     x:Class="HashTool.Views.Pages.HomePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converter="clr-namespace:HashTool.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:hc="https://handyorg.github.io/handycontrol"
-    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-    xmlns:local="clr-namespace:HashTool.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converter="clr-namespace:HashTool.Converters"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:viewmodels="clr-namespace:HashTool.ViewModels"
     Title="主页"
     d:DataContext="{d:DesignInstance Type=viewmodels:HomePageViewModel}"

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Kiyan Yang. All rights reserved.
+// Copyright (c) Kiyan Yang. All rights reserved.
 // Licensed under the GNU General Public License v3.0.
 // See LICENSE file in the project root for full license information.
 
@@ -303,9 +303,8 @@ public sealed partial class HomePageViewModel : ObservableObject
         Properties.Settings setting = Properties.Settings.Default;
         setting.SelectedHashAlgorithms.Clear();
         HashInput.CheckBoxItems.Where(i => i.IsChecked == true)
-            .Select(i => i.Content)
             .ToList()
-            .ForEach(i => setting.SelectedHashAlgorithms.Add(i));
+            .ForEach(i => setting.SelectedHashAlgorithms.Add(i.Content));
         setting.Save();
     }
 

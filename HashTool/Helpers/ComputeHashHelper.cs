@@ -47,11 +47,10 @@ public sealed class ComputeHashHelper
 
     private static HashResultItemModel BuildHashResultItem(string name, byte[] hashValue)
     {
-        string hash = name switch
-        {
-            _ when name == Hash.QuickXor.Name => Convert.ToBase64String(hashValue),
-            _ => Convert.ToHexString(hashValue),
-        };
+        string hash = name == Hash.QuickXor.Name
+            ? Convert.ToBase64String(hashValue)
+            : Convert.ToHexString(hashValue);
+
         return new HashResultItemModel() { Name = name, Value = hash };
     }
 
@@ -163,11 +162,8 @@ public sealed class ComputeHashHelper
             foreach (Hash hash in s_hashs)
             {
                 hash.Algorithm.TransformFinalBlock(buffer, 0, 0);
-                if (hash.Algorithm.Hash is byte[] hashValue)
-                {
-                    HashResultItemModel s = BuildHashResultItem(hash.Name, hashValue);
-                    hashResult.Items.Add(s);
-                }
+                HashResultItemModel s = BuildHashResultItem(hash.Name, hash.Algorithm.Hash!);
+                hashResult.Items.Add(s);
             }
             stopWatch.Stop();
             hashResult.ComputeCost = $"{stopWatch.Elapsed.TotalSeconds:N3} 秒";

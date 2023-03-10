@@ -1,4 +1,4 @@
-﻿// Copyright (c) Kiyan Yang. All rights reserved.
+// Copyright (c) Kiyan Yang. All rights reserved.
 // Licensed under the GNU General Public License v3.0.
 // See LICENSE file in the project root for full license information.
 
@@ -6,13 +6,13 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Serialization;
 
 using CommunityToolkit.Mvvm.Input;
 
+using HashTool.Helpers;
 using HashTool.Models;
 
 namespace HashTool.ViewModels;
@@ -23,57 +23,47 @@ internal sealed partial class AboutPageViewModel : ObservableObject
     {
     }
 
-    #region Fields
-
     private static readonly HttpClient s_httpClient = new();
     private static LatestVersion? s_latestVersionInfo;
 
-    private bool? _buttonCheckUpdateIsEnabled;
-    private string? _assemblyVersion;
-    private string? _updateStatusText;
+    #region Public Properties
 
-    private UpdateModel? _update;
+    public string AppVersion => RuntimeHelper.AppVersion.ToString();
 
-    #endregion
+    [ObservableProperty]
+    private string _updateStatusText = string.Empty;
 
-    #region Public Properties/Commands
-
-    public bool ButtonCheckUpdateIsEnabled
-    {
-        get => _buttonCheckUpdateIsEnabled ??= true;
-        set => SetProperty(ref _buttonCheckUpdateIsEnabled, value);
-    }
-    public string AssemblyVersion
-    {
-        get => _assemblyVersion ??= GetAssemblyVersion().ToString(3);
-    }
-    public string UpdateStatusText
-    {
-        get => _updateStatusText ??= string.Empty;
-        set => SetProperty(ref _updateStatusText, value);
-    }
-
-    public UpdateModel Update
-    {
-        get => _update ??= GetInstance<UpdateModel>();
-    }
+    public UpdateModel Update { get; } = GetInstance<UpdateModel>();
 
     #endregion
 
     #region Command
 
     [RelayCommand]
-    private async void CheckUpdate()
+    private async Task CheckUpdateAsync()
     {
-        ButtonCheckUpdateIsEnabled = false;
         Update.HasUpdate = false;
         UpdateStatusText = "检查更新中……";
 
-        if (await GetLatestVersion() && s_latestVersionInfo != null)
+        bool _hasLatestVersionInfo = false;
+        try
         {
-            Version assemblyVer = GetAssemblyVersion();
+            string latestVersionUrl = Properties.Settings.Default.LatestVersionUrl;
+            HttpResponseMessage result = await s_httpClient.GetAsync(latestVersionUrl);
+            using Stream reader = result.Content.ReadAsStream();
+            var serializer = new XmlSerializer(typeof(LatestVersion));
+            s_latestVersionInfo = serializer.Deserialize(reader) as LatestVersion;
+            _hasLatestVersionInfo = true;
+        }
+        catch (Exception)
+        {
+        }
+
+        if (_hasLatestVersionInfo && s_latestVersionInfo != null)
+        {
+            Version appVersion = RuntimeHelper.AppVersion;
             var ver = new Version(s_latestVersionInfo.Version);
-            if (ver > assemblyVer)
+            if (ver > appVersion)
             {
                 Update.HasUpdate = true;
                 Update.Version = s_latestVersionInfo.Tag;
@@ -91,7 +81,6 @@ internal sealed partial class AboutPageViewModel : ObservableObject
             Update.HasUpdate = false;
             UpdateStatusText = "检查更新失败！";
         }
-        ButtonCheckUpdateIsEnabled = true;
     }
 
     [RelayCommand]
@@ -144,35 +133,6 @@ internal sealed partial class AboutPageViewModel : ObservableObject
     }
 
     #endregion Command
-
-    #region Helper
-
-    private static async Task<bool> GetLatestVersion()
-    {
-        try
-        {
-            string latestVersionUrl = Properties.Settings.Default.LatestVersionUrl;
-            HttpResponseMessage result = await s_httpClient.GetAsync(latestVersionUrl);
-            using Stream reader = result.Content.ReadAsStream();
-
-            var serializer = new XmlSerializer(typeof(LatestVersion));
-            s_latestVersionInfo = serializer.Deserialize(reader) as LatestVersion;
-            return true;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
-    }
-
-    private static Version GetAssemblyVersion()
-    {
-        Assembly assem = Assembly.GetExecutingAssembly();
-        AssemblyName assemName = assem.GetName();
-        return assemName.Version ?? new Version(1, 0, 0, 0);
-    }
-
-    #endregion
 }
 
 /// <summary>

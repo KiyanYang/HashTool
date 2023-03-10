@@ -1,11 +1,9 @@
-﻿// Copyright (c) Kiyan Yang. All rights reserved.
+// Copyright (c) Kiyan Yang. All rights reserved.
 // Licensed under the GNU General Public License v3.0.
 // See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
 using System.Windows;
 
 using CommunityToolkit.Mvvm.Input;
@@ -18,63 +16,19 @@ public sealed partial class HashResultViewModel : ObservableObject
 {
     public HashResultViewModel(List<HashResultModel> hashResults)
     {
-        #region 初始化 HashResults
-
         _selectedHashResult = hashResults[0];
         _hashResultItems = new(hashResults);
-
-        #endregion
-
-        #region 初始化 ListBox 参数
-
-        if (hashResults.Count > 1)
-        {
-            _hashResultListBoxColWidth = "*";
-            _hashResultListBoxVisibility = Visibility.Visible;
-        }
-        else
-        {
-            _hashResultListBoxColWidth = "Auto";
-            _hashResultListBoxVisibility = Visibility.Collapsed;
-        }
-
-        #endregion
     }
-
-    #region Fields
-
-    private bool? _isLowerCase;
-    private PropertiesSettingsModel? _propertiesSettings;
-
-    #endregion
 
     #region Public Properties
 
-    public PropertiesSettingsModel PropertiesSettings
-    {
-        get => _propertiesSettings ??= GetInstance<PropertiesSettingsModel>();
-    }
+    public PropertiesSettingsModel PropertiesSettings => GetInstance<PropertiesSettingsModel>();
 
     /// <summary>
-    /// 复选框，结果是否小写。
-    /// </summary>
-    public bool IsLowerCase
-    {
-        get => _isLowerCase ??= GetInstance<PropertiesSettingsModel>().IsLowerCase;
-        set => SetProperty(ref _isLowerCase, value);
-    }
-
-    /// <summary>
-    /// 左侧结果列表的列宽。
+    /// 结果是否小写。
     /// </summary>
     [ObservableProperty]
-    private string _hashResultListBoxColWidth = "Auto";
-
-    /// <summary>
-    /// 左侧结果列表的可见性。
-    /// </summary>
-    [ObservableProperty]
-    private Visibility _hashResultListBoxVisibility = Visibility.Visible;
+    private bool _isLowerCase = GetInstance<PropertiesSettingsModel>().IsLowerCase;
 
     /// <summary>
     /// 当前所选择项目的索引。
@@ -97,21 +51,6 @@ public sealed partial class HashResultViewModel : ObservableObject
     #endregion
 
     #region Command
-
-    [RelayCommand]
-    private void ViewInExplorer(string? path)
-    {
-        if (path == null)
-        {
-            return;
-        }
-
-        string fullPath = Path.GetFullPath(path);
-        Process p = new();
-        p.StartInfo.FileName = "explorer.exe";
-        p.StartInfo.Arguments = $"/select, {fullPath}";
-        p.Start();
-    }
 
     [RelayCommand]
     private void CopyToClipboard(string? text)

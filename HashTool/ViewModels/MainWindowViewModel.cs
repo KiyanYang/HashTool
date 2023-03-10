@@ -18,51 +18,14 @@ internal sealed partial class MainWindowViewModel : ObservableObject
     {
     }
 
-    #region Fields
-
-    private PropertiesSettingsModel? _propertiesSettings;
-
-    private Page? _currentPage;
-    private HomePage? _homePage;
-    private SettingPage? _settingPage;
-    private HelpPage? _helpPage;
-    private AboutPage? _aboutPage;
-
-    #endregion
-
     #region Public Properties
 
-    public PropertiesSettingsModel PropertiesSettings
-    {
-        get => _propertiesSettings ??= GetInstance<PropertiesSettingsModel>();
-    }
+    public PropertiesSettingsModel PropertiesSettings => GetInstance<PropertiesSettingsModel>();
 
-    public Page CurrentPage
-    {
-        get => _currentPage ??= HomePage;
-        set => SetProperty(ref _currentPage, value);
-    }
-    public HomePage HomePage
-    {
-        get => _homePage ??= new();
-        set => SetProperty(ref _currentPage, value);
-    }
-    public SettingPage SettingPage
-    {
-        get => _settingPage ??= new();
-        set => SetProperty(ref _currentPage, value);
-    }
-    public HelpPage HelpPage
-    {
-        get => _helpPage ??= new();
-        set => SetProperty(ref _currentPage, value);
-    }
-    public AboutPage AboutPage
-    {
-        get => _aboutPage ??= new();
-        set => SetProperty(ref _currentPage, value);
-    }
-    public ProgressBarModel TaskbarProgress => HomePage.TaskbarProgress;
+    [ObservableProperty]
+    private Page _currentPage = GetInstance<HomePage>();
+
+    public ProgressBarModel TaskbarProgress => GetInstance<HomePage>().TaskbarProgress;
 
     #endregion
 
@@ -73,11 +36,11 @@ internal sealed partial class MainWindowViewModel : ObservableObject
     {
         CurrentPage = title switch
         {
-            "主页" => HomePage,
-            "设置" => SettingPage,
-            "帮助" => HelpPage,
-            "关于" => AboutPage,
-            _ => HomePage,
+            "主页" => GetInstance<HomePage>(),
+            "设置" => GetInstance<SettingPage>(),
+            "帮助" => GetInstance<HelpPage>(),
+            "关于" => GetInstance<AboutPage>(),
+            _ => GetInstance<HomePage>(),
         };
     }
 

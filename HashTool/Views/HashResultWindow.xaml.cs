@@ -1,4 +1,4 @@
-﻿// Copyright (c) Kiyan Yang. All rights reserved.
+// Copyright (c) Kiyan Yang. All rights reserved.
 // Licensed under the GNU General Public License v3.0.
 // See LICENSE file in the project root for full license information.
 
@@ -15,11 +15,24 @@ namespace HashTool.Views;
 /// </summary>
 public sealed partial class HashResultWindow : Window
 {
-    public HashResultWindow(List<HashResultModel> hashResultModels)
+    public HashResultWindow(List<HashResultModel> hashResults)
     {
         InitializeComponent();
 
-        HashResultViewModel vm = new(hashResultModels);
+        if (hashResults.Count > 1)
+        {
+            HashResultListBoxCol.Width = new(1, GridUnitType.Star);
+            HashResultListBox.Visibility = Visibility.Visible;
+            HashResultSplitter.Visibility = Visibility.Visible;
+        }
+        else
+        {
+            HashResultListBoxCol.Width = new(0, GridUnitType.Auto);
+            HashResultListBox.Visibility = Visibility.Collapsed;
+            HashResultSplitter.Visibility = Visibility.Collapsed;
+        }
+
+        HashResultViewModel vm = new(hashResults);
         DataContext = vm;
     }
 }

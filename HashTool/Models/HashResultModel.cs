@@ -1,4 +1,4 @@
-﻿// Copyright (c) Kiyan Yang. All rights reserved.
+// Copyright (c) Kiyan Yang. All rights reserved.
 // Licensed under the GNU General Public License v3.0.
 // See LICENSE file in the project root for full license information.
 
@@ -76,14 +76,4 @@ public sealed partial class HashResultItemModel : ObservableObject
     /// </summary>
     [ObservableProperty]
     private string _value = string.Empty;
-
-    /// <summary>
-    /// 在不更新值的情况下, 刷新内容。
-    /// </summary>
-    /// <param name="propertyName">属性名称。</param>
-    public void ChangeProperty(string? propertyName = null)
-    {
-        base.OnPropertyChanging(propertyName);
-        base.OnPropertyChanged(propertyName);
-    }
 }

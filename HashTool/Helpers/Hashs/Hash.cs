@@ -1,8 +1,7 @@
-﻿// Copyright (c) Kiyan Yang. All rights reserved.
+// Copyright (c) Kiyan Yang. All rights reserved.
 // Licensed under the GNU General Public License v3.0.
 // See LICENSE file in the project root for full license information.
 
-using System.Collections;
 using System.Collections.Generic;
 
 using HashLib4CSharp.Checksum;
@@ -20,10 +19,7 @@ public sealed class Hash : GenericEnum<string>
 {
     public string Name => base._value;
 
-    public Crypto.HashAlgorithm Algorithm
-    {
-        get;
-    }
+    public Crypto.HashAlgorithm Algorithm { get; }
 
     // CRC
     public static readonly Hash CRC32 = new("CRC32", CreateCRC(CRCModel.CRC32).ToHashAlgorithm());
